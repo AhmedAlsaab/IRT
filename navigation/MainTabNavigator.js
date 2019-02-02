@@ -68,6 +68,5 @@ export default createBottomTabNavigator({
   JourneyStack,
   TicketsStack,
   WalletStack,
-  AccountStack,
-  
+  AccountStack
 });
