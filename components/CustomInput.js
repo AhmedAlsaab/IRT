@@ -1,5 +1,4 @@
-import React, { Component } from 'react'
-import { TextInput, View, StyleSheet } from 'react-native'
+import { TextInput, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const CustomInput = props => {

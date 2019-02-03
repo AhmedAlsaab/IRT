@@ -3,13 +3,25 @@ import { TextInput, Platform, StatusBar, StyleSheet, View, Picker } from 'react-
 import { Content, Container, Header, Body, Title, Right, Left, Button, Text } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
-//Custom Components
-import CustomInput from '../components/CustomInput';
-
 class RegistrationScreen extends Component {
 
   state = {
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
     type: 'passenger'
+  }
+
+  onSubmit = () => {
+    //Check if fields are valid
+
+    //Send data to the server
+  
+    //Go to Login Screen
+    console.log('send data to server')
   }
 
   render() {
@@ -26,24 +38,42 @@ class RegistrationScreen extends Component {
           <View style={styles.title}>
             <Text style={styles.title}>CREATE ACCOUNT</Text>
           </View>
-          <CustomInput icon="md-person" placeholder="First Name" />
-          <CustomInput icon="md-person" placeholder="Last Name" />
-          <CustomInput icon="md-phone-portrait" placeholder="Phone Number" />
-          <CustomInput icon="md-mail" placeholder="Email" />
-          <CustomInput icon="md-lock" placeholder="Password" />
-          <CustomInput icon="md-lock" placeholder="Password Confirm" />
+          <View style={styles.inputContainer}>
+            <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
+            <TextInput placeholder='First Name' style={styles.input} onChangeText={(text) => this.setState({firstName: text})} value={this.state.firstName}></TextInput>
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
+            <TextInput placeholder='Last Name' style={styles.input} onChangeText={(text) => this.setState({lastName: text})}></TextInput>
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons name="md-phone-portrait" size={32} style={styles.inputIcons}></Ionicons>
+            <TextInput placeholder='Phone Number' style={styles.input} onChangeText={(text) => this.setState({phoneNumber: text})}></TextInput>
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons name="md-mail" size={32} style={styles.inputIcons}></Ionicons>
+            <TextInput placeholder='Email' style={styles.input} onChangeText={(text) => this.setState({email: text})}></TextInput>
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons name="md-lock" size={32} style={styles.inputIcons}></Ionicons>
+            <TextInput placeholder='Password' secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({password: text})}></TextInput>
+          </View>
+          <View style={styles.inputContainer}>
+            <Ionicons name="md-lock" size={32} style={styles.inputIcons}></Ionicons>
+            <TextInput placeholder='Password Confirm' secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({passwordConfirm: text})}></TextInput>
+          </View>
           <View style={styles.inputContainer}>
             <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
             <View style={styles.inputContainerPicker}>
               <Text>I am a </Text>
-              <Picker style={styles.inputPicker} selectedValue={this.state.language} onValueChange={(itemValue, itemIndex) => this.setState({ language: itemValue })}>
+              <Picker name="type" style={styles.inputPicker} selectedValue={this.state.type} onValueChange={(itemValue, itemIndex) => this.setState({type: itemValue}) }>
                 <Picker.Item label="Passenger" value="passenger" />
                 <Picker.Item label="Driver" value="driver" />
               </Picker>
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <Button danger style={styles.button}>
+            <Button danger style={styles.button} onPress={this.onSubmit}>
               <Text>REGISTER</Text>
             </Button>
           </View>
@@ -53,7 +83,7 @@ class RegistrationScreen extends Component {
   }
 }
 
-const width = '80%';
+const width = '80%'
 const buttonWidth = '50%';
 
 const styles = StyleSheet.create({
@@ -73,7 +103,7 @@ const styles = StyleSheet.create({
     marginBottom: 10
   },
   input: {
-    margin: 10
+    padding: 10
   },
   inputIcons: {
     width: 50,
