@@ -1,10 +1,11 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Linking, Text } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import GlobalHeader from './components/GlobalHeader';
 import AppNavigator from './navigation/AppNavigator';
 import RegistrationScreen from './screens/RegistrationScreen';
 import JourneyScreen from './screens/JourneyScreen';
+import { Permissions } from 'expo';
 
 export default class App extends React.Component {
   static navigationOptions = {
@@ -13,6 +14,17 @@ export default class App extends React.Component {
   state = {
     isLoadingComplete: false
   };
+
+  permissionFlow = async () => {
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+
+    this.setState({ status });
+
+    if (status !== 'granted') {
+      Linking.openURL('app-settings');
+      return;
+    }
+  }
 
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
@@ -29,6 +41,9 @@ export default class App extends React.Component {
           <View style={styles.container}>
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
             <GlobalHeader />
+            <Text onPress={this.permissionFlow}>
+              Location Permissions: {this.state.status}
+            </Text>
             <AppNavigator />
             </View>
         );
