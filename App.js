@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, Linking, Text } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, Linking, Text, FlatList } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import GlobalHeader from './components/GlobalHeader';
 import AppNavigator from './navigation/AppNavigator';
@@ -12,7 +12,8 @@ export default class App extends React.Component {
     header: null,
   };
   state = {
-    isLoadingComplete: false
+    isLoadingComplete: false,
+    data:[]
   };
 
   // Asks the user for permission to turn on location 
@@ -30,7 +31,15 @@ export default class App extends React.Component {
 
 
   
+  fetchData= async() =>{
+    const response = await fetch('http://192.168.0.33:3000/users');
+    const users = await response.json();
+    this.setState({data: users});
+  }
 
+  componentDidMount(){
+    this.fetchData();
+  }
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
@@ -49,6 +58,16 @@ export default class App extends React.Component {
             <Text onPress={this.permissionFlow}>
               Click on me! Location Permissions: {this.state.status}
             </Text>
+
+            <FlatList 
+              data={this.state.data}
+              keyExtractor={(item,index) => index.toString()}
+              renderItem={({item}) =>
+              <View style={{backgroundColor:'#abc123', padding:10, margin: 10}}>
+                <Text>{item.forename}</Text>
+              </View>
+            }
+            />
             <AppNavigator />
             </View>
         );
