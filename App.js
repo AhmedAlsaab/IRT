@@ -15,6 +15,7 @@ export default class App extends React.Component {
     isLoadingComplete: false
   };
 
+  // Asks the user for permission to turn on location 
   permissionFlow = async () => {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
 
@@ -25,6 +26,10 @@ export default class App extends React.Component {
       return;
     }
   }
+
+
+
+  
 
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
@@ -42,7 +47,7 @@ export default class App extends React.Component {
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
             <GlobalHeader />
             <Text onPress={this.permissionFlow}>
-              Location Permissions: {this.state.status}
+              Click on me! Location Permissions: {this.state.status}
             </Text>
             <AppNavigator />
             </View>

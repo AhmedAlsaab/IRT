@@ -1,33 +1,103 @@
-import React, { Component } from 'react'
-import { ScrollView, Platform, StatusBar, StyleSheet, View, Picker } from 'react-native'
-import { Content, Container, Header, Body, Title, Right, Left, Button, Text } from 'native-base';
-import { Ionicons } from '@expo/vector-icons';
+import React, { Component } from "react";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  TouchableHighlight,
+  Keyboard,
+  ScrollView, Platform, StatusBar,
+} from "react-native";
+import apiKey from "../google_api_key";
+import _ from "lodash";
+import { Content, Container, Button, Text } from 'native-base';
 
-//Custom Components
-import CustomInput from '../components/CustomInput';
+export default class JourneyScreen extends Component {
+    static navigationOptions = {
+        header: null,
+      };
 
-class JourneyScreen extends Component {
-  static navigationOptions = {
-    header: null,
-  };
-  state = {
-    type: 'passenger'
+      // Temporary states --> These should be in app.js
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: "",
+      latitude: 0,
+      longitude: 0,
+      locationPredictions: []
+    };
+    this.startPositionDebounced = _.debounce(
+      this.startPosition,
+      1000
+    );
+  }
+
+  // Not working atm
+  componentDidMount() {
+    //Get current location and set initial region to this
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        this.setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        });
+      },
+      error => this.setState({ error: error.message }),
+      { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 }
+    );
+  }
+
+  async startPosition(destination) {
+    this.setState({ destination });
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${apiKey}&input={${destination}}&location=${
+      this.state.latitude
+    },${this.state.longitude}&radius=2000`;
+    const result = await fetch(apiUrl);
+    const jsonResult = await result.json();
+    this.setState({
+      locationPredictions: jsonResult.predictions
+    });
+    console.log(jsonResult);
+  }
+// Populate the input field with selected prediction
+  pressedPrediction(prediction) {
+    console.log(prediction);
+    Keyboard.dismiss();
+    this.setState({
+      locationPredictions: [],
+      destination: prediction.description
+    });
+    Keyboard;
   }
 
   render() {
+    const locationPredictions = this.state.locationPredictions.map(
+      prediction => (
+        <TouchableHighlight
+          key={prediction.id}
+          onPress={() => this.pressedPrediction(prediction)}
+        >
+          <Text style={styles.locationSuggestion}>
+            {prediction.description}
+          </Text>
+        </TouchableHighlight>
+      )
+    );
+
     return (
-      <ScrollView> 
-      <Container>
+    <ScrollView> 
+        <Container>        
+            <TextInput
+            placeholder="Enter location.."
+            style={styles.destinationInput}
+            onChangeText={destination => {
+            this.setState({ destination });
+            this.startPositionDebounced(destination);
+            }}
+            value={this.state.destination}
+        />
+        {locationPredictions}
         <Content contentContainerStyle={styles.contentContainer}>
-          
-          <CustomInput icon="md-pin" placeholder="From" />
-          <CustomInput icon="md-flag" placeholder="To" />
-          <CustomInput icon="md-calendar" placeholder="dd/mm/yyyy" />
-          <CustomInput icon="md-time" placeholder="Time" />
-        
-          
           <View style={styles.buttonContainer}>
-          
             <Button danger style={styles.button}>
               <Text>SEARCH</Text>
             </Button>
@@ -35,36 +105,30 @@ class JourneyScreen extends Component {
         </Content>
       </Container>
       </ScrollView>
-    )
+    );
   }
 }
 
 const width = '80%';
 const buttonWidth = '50%';
 
+
 const styles = StyleSheet.create({
-  container: {
-    ...Platform.select({
-      android: {
-        marginTop: StatusBar.currentHeight,
-      }
-    }),
+  destinationInput: {
+    borderWidth: 0.5,
+    borderColor: "grey",
+    height: 40,
+    marginTop: 50,
+    marginLeft: 5,
+    marginRight: 5,
+    padding: 5,
+    backgroundColor: "white"
   },
-  inputContainer: {
-    flexDirection: 'row',
-    borderBottomWidth: 2,
-    borderBottomColor: '#ff6666',
-    alignItems: 'center',
-    width,
-    marginBottom: 10
-  },
-  input: {
-    margin: 10
-  },
-  inputIcons: {
-    width: 50,
-    padding: 10,
-    textAlign: 'center'
+  locationSuggestion: {
+    backgroundColor: "white",
+    padding: 5,
+    fontSize: 18,
+    borderWidth: 0.5
   },
   flex_1: {
     flex: 1,
@@ -75,23 +139,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center'
   },
-  title: {
-    textAlign: 'left',
-    paddingTop: 20,
-    paddingBottom: 5,
-    width
-  },
-  inputPicker: {
-    borderWidth: 2,
-    borderColor: '#ff0000',
-  },
-  inputContainerPicker: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  inputPicker: {
-    height: 50,
-    width: 350
+  map: {
+    ...StyleSheet.absoluteFillObject
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -107,5 +156,3 @@ const styles = StyleSheet.create({
     color: '#000000'
   }
 });
-
-export default JourneyScreen;
