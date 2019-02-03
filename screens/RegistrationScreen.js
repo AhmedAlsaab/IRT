@@ -6,22 +6,41 @@ import { Ionicons } from '@expo/vector-icons';
 class RegistrationScreen extends Component {
 
   state = {
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    email: '',
-    password: '',
-    passwordConfirm: '',
-    type: 'passenger'
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
+    type: "passenger"
   }
 
   onSubmit = () => {
-    //Check if fields are valid
-
     //Send data to the server
-  
+    const data = {
+      "firstName": this.state.firstName,
+      "lastName": this.state.lastName,
+      "phoneNumber": this.state.phoneNumber,
+      "email": this.state.email,
+      "password": this.state.password,
+      "type": this.state.type,
+      "date": null
+    }
+
     //Go to Login Screen
-    console.log('send data to server')
+    fetch("https://10.22.201.102:3000/add/user", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    .then(function(response){
+      return response.json();
+    })
+    .catch(function(error) {
+      console.log("There has been a problem with your fetch operation: " + error.message);
+    });
   }
 
   render() {
