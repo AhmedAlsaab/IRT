@@ -16,6 +16,9 @@ class RegistrationScreen extends Component {
   }
 
   onSubmit = () => {
+    //Check input fields are correct
+
+    
     //Send data to the server
     const data = {
       "firstName": this.state.firstName,
@@ -27,21 +30,19 @@ class RegistrationScreen extends Component {
       "date": null
     }
 
-    //Go to Login Screen
-    fetch("https://10.22.201.102:3000/add/user", {
+    fetch("http://10.22.201.102:3000/add/user", {
       method: "POST",
       headers: {
+        "Accept": "application/json",
         "Content-Type": "application/json"
       },
       body: JSON.stringify(data)
     })
-    .then(function(response){
-      return response.json();
-    })
-    .catch(function(error) {
-      console.log("There has been a problem with your fetch operation: " + error.message);
-    });
-  }
+
+    //if succeccful navigate to login screen
+
+    //if unsuccessful throw error
+  } 
 
   render() {
     return (
@@ -103,7 +104,7 @@ class RegistrationScreen extends Component {
 }
 
 const width = '80%'
-const buttonWidth = '50%';
+const buttonWidth = '40%';
 
 const styles = StyleSheet.create({
   container: {
