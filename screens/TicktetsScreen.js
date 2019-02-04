@@ -23,6 +23,8 @@ export default class LinksScreen extends React.Component {
   render() {
     return (
       <ScrollView style={styles.container}>
+      <Text>Below is a list of student names and student numbers, if you cannot see it, 
+        it means that the server is not running or not connecting to your database - Check Teams!</Text>
         <FlatList 
               data={this.state.data}
               keyExtractor={(item,index) => index.toString()}
