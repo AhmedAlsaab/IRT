@@ -3,7 +3,6 @@ import { Platform, StatusBar, StyleSheet, View, Linking, Text, FlatList } from '
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import GlobalHeader from './components/GlobalHeader';
 import AppNavigator from './navigation/AppNavigator';
-// import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import JourneyScreen from './screens/JourneyScreen';
 import { Permissions } from 'expo';
