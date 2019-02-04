@@ -27,9 +27,20 @@ app.get('/', (req, res) => {
     })
 })
 
-app.post('/add/user', (req, res) => {
-    connection.query("INSERT INTO user (email, password, forename, surname, phone_number, date_created) VALUES ('"+ req.body.email +"', '"+ req.body.password +"', '"+ req.body.firstName +"', '"+ req.body.lastName +"', '"+ req.body.phoneNumber +"', '"+ req.body.date +"')", (error, rows, fields) => {
-        if(error) console.log(error);
+app.post('/register', (req, res) => {
+    connection.query("INSERT INTO user (email, password, forename, surname, phone_number, date_created) VALUES (?, ?, ?, ?, ?, ?)", 
+    [req.body.email, req.body.password, req.body.firstName, req.body.lastName, req.body.phoneNumber, new Date()],
+    (error, rows, fields) => {
+        if(error) throw error;
+    })
+})
+
+app.post('/login', (req, res) => {
+    connection.query("SELECT * FROM user WHERE email = ? and password = ?",
+    [req.body.email, req.body.password],
+    (error, rows, fields) => {
+        if(error) throw error;
+        res.send(rows[0])
     })
 })
 

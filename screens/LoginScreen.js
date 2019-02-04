@@ -1,26 +1,56 @@
-import React, { Component } from 'react'
-import { Platform, StyleSheet, StatusBar, View, TextInput } from 'react-native'
-import { Container, Content, Header, Body, Title, Left, Right, Button, Text } from 'native-base';
+import React, { Component } from 'react';
+import { Platform, StyleSheet, StatusBar, View, TextInput, Image, Dimensions } from 'react-native';
+import { Container, Content, Button, Text } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 
 export default class loginScreen extends Component {
 
     state = {
-        email: '',
-        password: ''
+        email: 'passenger@passenger.com',
+        password: '123'
     }
+
+    onLoginClick = () => {
+        if (this.state.email == '' || this.state.password == ''){
+            //Show Error Message
+            
+            return;
+        }
+
+        const data = {
+            email: this.state.email,
+            password: this.state.password
+        }
+
+        fetch("http://10.22.201.102:3000/login", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then((response) => response.json())
+        .then((responseJSON) => {
+            switch(responseJSON.fk_user_type_id){
+                case 1:
+                    this.props.navigation.navigate('Passenger');
+
+                case 2:
+                    this.props.navigation.navigate('Driver');
+            }
+        })
+    }
+
+    onRegisterClick = () => { this.props.navigation.navigate('Register'); }
 
     render() {
         return (
-            <Container style={styles.container}>
-                <Header>
-                    <Left style={styles.flex_1} />
-                    <Body style={styles.flex_1}>
-                        <Title>Login</Title>
-                    </Body>
-                    <Right style={styles.flex_1} />
-                </Header>
+            <Container style={styles.container}>       
                 <Content contentContainerStyle={styles.contentContainer}>
+                    <View style={styles.imageContainer}>
+                        <Image resizeMode={'contain'} style={styles.image} source={require('../assets/images/four_line/TFW_four_line_mono_negative_rgb.png')} />
+                    </View>
                     <View style={styles.titleContainer}>
                         <Text style={styles.title}>Login</Text>
                     </View>
@@ -36,13 +66,13 @@ export default class loginScreen extends Component {
                         <Text style={styles.forgotPassword}>Forgot your password?</Text>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <Button danger style={styles.button} onPress={this.onSubmit}>
-                            <Text>REGISTER</Text>
+                        <Button danger style={styles.button} onPress={this.onLoginClick}>
+                            <Text>LOGIN</Text>
                         </Button>
                     </View>
                     <View style={styles.registerContainer}>
                         <Text>Dont have an account?</Text>
-                        <Text style={styles.registerText}>REGISTER</Text>
+                        <Text style={styles.registerText} onPress={this.onRegisterClick}>REGISTER</Text>
                     </View>
                 </Content>
             </Container>
@@ -50,8 +80,9 @@ export default class loginScreen extends Component {
     }
 }
 
-const width = '80%'
+const width = '70%'
 const buttonWidth = '40%';
+const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
     container: {
@@ -70,6 +101,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     input: {
+        flex: 1,
         padding: 10
     },
     inputIcons: {
@@ -87,7 +119,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     titleContainer: {
-        paddingTop: 20,
+        paddingTop: 30,
         paddingBottom: 5,
         width
     },
@@ -121,6 +153,15 @@ const styles = StyleSheet.create({
     },
     registerText: {
         color: '#ff0000'
+    },
+    imageContainer: {
+        height: 250,
+        backgroundColor: '#ff0000'
+    },
+    image: {
+        flex: 1,
+        alignSelf: 'stretch',
+        width: window.width,
+        height: window.height
     }
-    
 });

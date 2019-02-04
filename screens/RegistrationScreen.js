@@ -26,11 +26,10 @@ class RegistrationScreen extends Component {
       "phoneNumber": this.state.phoneNumber,
       "email": this.state.email,
       "password": this.state.password,
-      "type": this.state.type,
-      "date": null
+      "type": this.state.type
     }
 
-    fetch("http://10.22.201.102:3000/add/user", {
+    fetch("http://10.22.201.102:3000/register", {
       method: "POST",
       headers: {
         "Accept": "application/json",
