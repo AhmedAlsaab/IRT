@@ -28,15 +28,7 @@ export default class App extends React.Component {
     }
   }
 
-  fetchData= async() =>{
-    const response = await fetch('http://192.168.0.33:3000/users');
-    const users = await response.json();
-    this.setState({data: users});
-  }
 
-  componentDidMount(){
-    this.fetchData();
-  }
   render() {
     if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
@@ -56,17 +48,7 @@ export default class App extends React.Component {
               Click on me! Location Permissions: {this.state.status}
             </Text>
 
-            <FlatList 
-              data={this.state.data}
-              keyExtractor={(item,index) => index.toString()}
-              renderItem={({item}) =>
-              <View style={{backgroundColor:'#abc123', padding:10, margin: 10}}>
-                <Text>{item.forename}</Text>
-                <Text>{item.surname}</Text>
-                <Text>{item.student_no}</Text>
-              </View>
-            }
-            />
+            
             <AppNavigator />
             </View>
         );
