@@ -28,9 +28,6 @@ export default class App extends React.Component {
     }
   }
 
-
-
-  
   fetchData= async() =>{
     const response = await fetch('http://192.168.0.33:3000/users');
     const users = await response.json();
@@ -65,6 +62,8 @@ export default class App extends React.Component {
               renderItem={({item}) =>
               <View style={{backgroundColor:'#abc123', padding:10, margin: 10}}>
                 <Text>{item.forename}</Text>
+                <Text>{item.surname}</Text>
+                <Text>{item.student_no}</Text>
               </View>
             }
             />

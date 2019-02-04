@@ -37,16 +37,3 @@ app.get('/users', function(req, res){
         }
     })
 });
-
-// app.get('/test', function(req, res){
-//     let post = {student_no: '20060105', surname: 'Doe', forename: 'John'};
-//     let sql = 'INSERT INTO students SET ?';
-//     let query = con.query('select * from students', function(error, rows, fields){
-//         if(error) console.log(error)
-
-//         else{
-//             console.log(rows);
-//             res.send(rows);
-//         }
-//     })
-// })
