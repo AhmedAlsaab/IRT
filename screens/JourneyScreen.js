@@ -21,9 +21,14 @@ export default class JourneyScreen extends Component {
     super(props);
     this.state = {
       error: "",
+      inputValue: "",
    //   latitude: 0,
    //   longitude: 0,
-      locationPredictions: []
+      locationPredictions: [],
+      placeID: "",
+      street:"",
+      city:"",
+      country:""
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
@@ -70,22 +75,55 @@ export default class JourneyScreen extends Component {
     console.log(jsonResult);
   }
 // Populate the input field with selected prediction
-  pressedPrediction(prediction) {
+  pressedPrediction(
+    prediction, 
+    selectedPredictionID, 
+    selectedPredictionStreet,
+    selectedPredictionCity,
+    selectedPredictionCountry
+    ) {
     console.log(prediction);
+    console.log(selectedPredictionID);
+    console.log(selectedPredictionStreet);
+    console.log(selectedPredictionCity);
+    console.log(selectedPredictionCountry);
     Keyboard.dismiss();
     this.setState({
       locationPredictions: [],
-      destination: prediction.description
+      destination: prediction.description,
+      placeID: selectedPredictionID,
+      street: selectedPredictionStreet,
+      city: selectedPredictionCity,
+      country: selectedPredictionCountry
     });
     Keyboard;
   }
 
+  onSubmit = () => {
+
+    const data = {
+      StartLocationID: this.state.placeID,
+      StartLocationStreet: this.state.street,
+      StartLocationCity: this.state.city,
+      StartLocationCountry: this.state.country
+    }
+
+    console.log(data)
+  } 
+
   render() {
     const locationPredictions = this.state.locationPredictions.map(
       prediction => (
-        <TouchableHighlight
+        <TouchableHighlight         
+          onPress={() => this.pressedPrediction(
+            prediction,
+            prediction.place_id,
+            prediction.terms[0].value,
+            prediction.terms[1].value,
+            prediction.terms[2].value
+            )
+          }
           key={prediction.id}
-          onPress={() => this.pressedPrediction(prediction)}
         >
           <Text style={styles.locationSuggestion}>
             {prediction.description}
@@ -93,7 +131,7 @@ export default class JourneyScreen extends Component {
         </TouchableHighlight>
       )
     );
-
+// Search box
     return (
     <ScrollView> 
         <Container>        
@@ -103,13 +141,14 @@ export default class JourneyScreen extends Component {
             onChangeText={destination => {
             this.setState({ destination });
             this.startPositionDebounced(destination);
+            this.setState({inputValue: destination})
             }}
             value={this.state.destination}
         />
         {locationPredictions}
         <Content contentContainerStyle={styles.contentContainer}>
           <View style={styles.buttonContainer}>
-            <Button danger style={styles.button}>
+            <Button danger style={styles.button} onPress={this.onSubmit}>
               <Text>SEARCH</Text>
             </Button>
           </View>
