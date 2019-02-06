@@ -5,6 +5,9 @@ var bodyParser = require('body-parser')
 var mysql = require('mysql');
 var app = express();
 
+var bcrypt = require('bcryptjs');
+var saltRounds = 10;
+
 app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
@@ -16,7 +19,7 @@ var connection = mysql.createConnection({
 })
 
 connection.connect((error) => {
-    if(!!error) console.log(error.message)
+    if(error) throw error
     else console.log('Connected to MySQL Database')
 })
 
@@ -28,20 +31,39 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    connection.query("INSERT INTO user (email, password, forename, surname, phone_number, date_created) VALUES (?, ?, ?, ?, ?, ?)", 
-    [req.body.email, req.body.password, req.body.firstName, req.body.lastName, req.body.phoneNumber, new Date()],
-    (error, rows, fields) => {
-        if(error) throw error;
-    })
+    //Check if user exists
+    connection.query("SELECT * FROM user WHERE email = ?",
+        [req.body.email],
+        (error, rows, fields) => {
+            if (rows.length >= 1 || error) {  console.log("user exists"); return res.send({ status: 0 })}
+            else {
+                bcrypt.genSalt(10, (error, salt) => {
+                    bcrypt.hash(req.body.password, salt, (error, hash) => {
+                        connection.query("INSERT INTO user (email, password, salt, forename, surname, phone_number, date_created, fk_user_type_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        [req.body.email, hash, salt, req.body.firstName, req.body.lastName, req.body.phoneNumber, new Date(), req.body.type],
+                        (error, rows, fields) => {
+                            console.log(error)
+                            if (error) throw error;    
+                            return res.send({ status: 1 })
+                        })
+                    })
+                })
+            }
+        })
 })
 
 app.post('/login', (req, res) => {
-    connection.query("SELECT * FROM user WHERE email = ? and password = ?",
-    [req.body.email, req.body.password],
-    (error, rows, fields) => {
-        if(error) throw error;
-        res.send(rows[0])
-    })
+    connection.query("SELECT * FROM user WHERE email = ? LIMIT 1",
+        [req.body.email],
+        (error, rows, fields) => {
+            if (error) throw error
+            if (rows < 1) return res.send({ status: 0 })
+
+            bcrypt.compare(req.body.password + rows[0].salt, rows[0].password, (error, success) => {
+                if (error) return res.send({ status: 0 })
+                else return res.send(rows[0])
+            })
+        })
 })
 
 app.listen(3000);

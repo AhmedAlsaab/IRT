@@ -6,8 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 export default class loginScreen extends Component {
 
     state = {
-        email: 'passenger@passenger.com',
-        password: '123'
+        email: '12@12.com',
+        password: '123456789'
     }
 
     onLoginClick = () => {
@@ -17,10 +17,7 @@ export default class loginScreen extends Component {
             return;
         }
 
-        const data = {
-            email: this.state.email,
-            password: this.state.password
-        }
+        const data = this.state;
 
         fetch("http://10.22.201.102:3000/login", {
             method: "POST",
@@ -32,6 +29,7 @@ export default class loginScreen extends Component {
         })
         .then((response) => response.json())
         .then((responseJSON) => {
+            console.log(responseJSON)
             switch(responseJSON.fk_user_type_id){
                 case 1:
                     this.props.navigation.navigate('Passenger');
@@ -143,7 +141,8 @@ const styles = StyleSheet.create({
     },
     button: {
         width: buttonWidth,
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: '#ff0000'
     },
     registerContainer: {
         flexDirection: 'column',
