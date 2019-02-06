@@ -7,7 +7,7 @@ import {
   Keyboard,
   ScrollView, Platform, StatusBar,
 } from "react-native";
-import apiKey from "../google_api_key";
+import API_KEY from "../google_api_key";
 import _ from "lodash";
 import { Content, Container, Button, Text } from 'native-base';
 
@@ -48,7 +48,7 @@ export default class JourneyScreen extends Component {
 
   async startPosition(destination) {
     this.setState({ destination });
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${apiKey}&input={${destination}}&location=${
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${API_KEY}&input={${destination}}&location=${
       this.state.latitude
     },${this.state.longitude}&radius=2000`;
     const result = await fetch(apiUrl);
