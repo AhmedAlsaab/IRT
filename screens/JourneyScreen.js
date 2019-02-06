@@ -102,12 +102,21 @@ export default class JourneyScreen extends Component {
   onSubmit = () => {
 
     const data = {
-      StartLocationID: this.state.placeID,
-      StartLocationStreet: this.state.street,
-      StartLocationCity: this.state.city,
-      StartLocationCountry: this.state.country
+      "place_id": this.state.placeID,
+      "street": this.state.street,
+      "city": this.state.city,
+      "country": this.state.country
     }
 
+    fetch('http://192.168.0.33:3000/booking/startlocation',
+    {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
     console.log(data)
   } 
 
@@ -149,7 +158,7 @@ export default class JourneyScreen extends Component {
         <Content contentContainerStyle={styles.contentContainer}>
           <View style={styles.buttonContainer}>
             <Button danger style={styles.button} onPress={this.onSubmit}>
-              <Text>SEARCH</Text>
+              <Text>BOOK</Text>
             </Button>
           </View>
         </Content>

@@ -37,3 +37,12 @@ app.get('/users', function(req, res){
         }
     })
 });
+// connection.query("INSERT INTO user (email, password, forename, surname, phone_number, date_created) VALUES ('"+ req.body.email +"', '"+ req.body.password +"', '"+ req.body.firstName +"', '"+ req.body.lastName +"', '"+ req.body.phoneNumber +"', '"+ req.body.date +"')", (error, rows, fields) => {
+//     if(error) console.log(error);
+
+app.post('/booking/startlocation', (req, res) => {
+    con.query("INSERT INTO startlocation (place_id, street, city, country) VALUES ('"+ req.body.place_id +"', '"+ req.body.street + "', '"+ req.body.city +"', '"+ req.body.country +"')", (error, rows, fields) => {
+        if(error) console.log(error);
+        
+    })
+});
