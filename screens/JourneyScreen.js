@@ -6,29 +6,71 @@ import {
   TouchableHighlight,
   Keyboard,
   ScrollView, Platform, StatusBar,
+  Animated,
+  Image,
 } from "react-native";
 import apiKey from "../google_api_key";
 import _ from "lodash";
-import { Content, Container, Button, Text } from 'native-base';
+import { Content, Container, Button, Text, DatePicker, Item, Input } from 'native-base';
 
 export default class JourneyScreen extends Component {
-    static navigationOptions = {
-        header: null,
-      };
+  static navigationOptions = {
+    header: null,
+  };
 
-      // Temporary states --> These should be in app.js
+  // Temporary states --> These should be in app.js
   constructor(props) {
     super(props);
     this.state = {
       error: "",
       latitude: 0,
       longitude: 0,
-      locationPredictions: []
+      locationPredictions: [],
+      chosenDate: new Date(),
+      expanded: false,
+      animation: new Animated.Value(),
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
       1000
     );
+  }
+
+  // Toggle advanced search option.
+  toggleAdvanced = () => {
+    //Step 1
+    let initialValue = this.state.expanded ? this.state.maxHeight + this.state.minHeight : this.state.minHeight,
+      finalValue = this.state.expanded ? this.state.minHeight : this.state.maxHeight + this.state.minHeight;
+
+    this.setState({
+      expanded: !this.state.expanded  //Step 2
+    });
+
+    this.state.animation.setValue(initialValue);  //Step 3
+    Animated.spring(     //Step 4
+      this.state.animation,
+      {
+        toValue: finalValue
+      }
+    ).start();  //Step 5
+  }
+
+  // Set the height of the advanced search options panel when button is clicked.
+  setMaxHeight = (event) => {
+    this.setState({
+      maxHeight: event.nativeEvent.layout.height
+    });
+  }
+
+  setMinHeight = (event) => {
+    this.setState({
+      minHeight: event.nativeEvent.layout.height
+    });
+  }
+
+  // Set the date state when user selects a day.
+  setDate = (newDate) => {
+    this.setState({ chosenDate: newDate });
   }
 
   // Not working atm
@@ -50,7 +92,7 @@ export default class JourneyScreen extends Component {
     this.setState({ destination });
     const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${apiKey}&input={${destination}}&location=${
       this.state.latitude
-    },${this.state.longitude}&radius=2000`;
+      },${this.state.longitude}&radius=2000`;
     const result = await fetch(apiUrl);
     const jsonResult = await result.json();
     this.setState({
@@ -58,7 +100,7 @@ export default class JourneyScreen extends Component {
     });
     console.log(jsonResult);
   }
-// Populate the input field with selected prediction
+  // Populate the input field with selected prediction
   pressedPrediction(prediction) {
     console.log(prediction);
     Keyboard.dismiss();
@@ -84,45 +126,96 @@ export default class JourneyScreen extends Component {
     );
 
     return (
-    <ScrollView> 
-        <Container>        
-            <TextInput
-            placeholder="Enter location.."
-            style={styles.destinationInput}
-            onChangeText={destination => {
-            this.setState({ destination });
-            this.startPositionDebounced(destination);
-            }}
-            value={this.state.destination}
-        />
-        {locationPredictions}
-        <Content contentContainerStyle={styles.contentContainer}>
-          <View style={styles.buttonContainer}>
-            <Button danger style={styles.button}>
-              <Text>SEARCH</Text>
-            </Button>
-          </View>
-        </Content>
-      </Container>
+      <ScrollView>
+        <Container style={styles.contentContainer}>
+          <Content>
+            <View style={styles.secondaryButtonContainer}>
+              <Button bordered light style={styles.secondaryButton}>
+                <Text style={styles.secondaryButtontext}>
+                  FAVOUITE/RECENT JOURNEYS
+              </Text>
+              </Button>
+            </View>
+            <Item>
+              <Input
+                placeholder="Enter location.."
+                placeholderTextColor="#d3d3d3"
+                onChangeText={destination => {
+                  this.setState({ destination });
+                  this.startPositionDebounced(destination);
+                }}
+                value={this.state.destination}
+                style={styles.input}
+              />
+            </Item>
+            {locationPredictions}
+            <Item>
+              <Input
+                placeholder="From"
+                placeholderTextColor="#d3d3d3"
+                style={styles.input}
+              />
+            </Item>
+            <Item>
+              <Input
+                placeholder="To"
+                placeholderTextColor="#d3d3d3"
+                style={styles.input}
+              />
+            </Item>
+            <DatePicker
+              placeHolderText="Date"
+              placeHolderTextStyle={{ color: "#d3d3d3" }}
+              onDateChange={this.setDate}
+              style={styles.input}
+            />
+
+            {/* Advanced search fields, expands on button click. */}
+            <Animated.View>
+              <Item>
+                <Input
+                  placeholder="Number of passengers"
+                  placeholderTextColor="#d3d3d3"
+                  style={styles.input}
+                />
+              </Item>
+              <Item>
+                <Input
+                  placeholder="Number of wheelchairs"
+                  placeholderTextColor="#d3d3d3"
+                  style={styles.input}
+                />
+              </Item>
+            </Animated.View>
+            
+            {/* Advanced search button, toggles advanced fields */}
+            <View style={styles.secondaryButtonContainer}>
+              <Button
+                bordered
+                light
+                style={styles.secondaryButton}
+                onPress={this.expandAdvanced}
+              >
+                <Text style={styles.secondaryButtontext}>
+                  ADVANCED SEARCH
+                </Text>
+              </Button>
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button danger style={styles.button}>
+                <Text>SEARCH</Text>
+              </Button>
+            </View>
+          </Content>
+        </Container>
       </ScrollView>
     );
   }
 }
 
-const width = '80%';
-const buttonWidth = '50%';
-
-
 const styles = StyleSheet.create({
-  destinationInput: {
-    borderWidth: 0.5,
-    borderColor: "grey",
-    height: 40,
-    marginTop: 50,
-    marginLeft: 5,
-    marginRight: 5,
-    padding: 5,
-    backgroundColor: "white"
+  input: {
+    fontSize: 16,
   },
   locationSuggestion: {
     backgroundColor: "white",
@@ -135,24 +228,41 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   contentContainer: {
+    width: '80%',
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'center'
+    alignSelf: 'center',
   },
   map: {
     ...StyleSheet.absoluteFillObject
   },
   buttonContainer: {
     flexDirection: 'row',
+    alignSelf: 'center',
+    marginTop: 15,
     alignItems: 'center',
-    marginTop: 15
   },
   button: {
-    width: buttonWidth,
+    width: '100%',
     justifyContent: 'center',
     color: '#ff6666'
   },
   buttontext: {
     color: '#000000'
+  },
+  secondaryButtonContainer: {
+    flexDirection: 'row',
+    marginTop: 15
+  },
+  secondaryButton: {
+    width: '100%',
+    justifyContent: 'center',
+    borderColor: '#ff0000',
+  },
+  secondaryButtontext: {
+    color: '#ff0000',
+  },
+  placeholderStyle: {
+    color: '#d3d3d3',
   }
 });
