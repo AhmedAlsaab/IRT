@@ -6,12 +6,12 @@ import { Ionicons } from '@expo/vector-icons';
 class RegistrationScreen extends Component {
 
   state = {
-    firstName: "yeet",
-    lastName: "dab",
-    phoneNumber: "4343434",
-    email: "driver@driver.com",
-    password: "Computer79",
-    passwordConfirm: "Computer79",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+    email: "",
+    password: "",
+    passwordConfirm: "",
     type: 1,
     errors: []
   }
