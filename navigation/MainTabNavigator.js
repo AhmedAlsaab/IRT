@@ -7,23 +7,11 @@ import JourneyScreen from '../screens/JourneyScreen';
 import TicktetsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/AccountsScreen';
 import WalletScreen from '../screens/WalletScreen';
-import TempScreen from '../screens/TempScreen';
 
 
 
-const TempStack = createStackNavigator({
-  Temp: TempScreen,
-});
 
-TempStack.navigationOptions = {
-  tabBarLabel: 'Temp',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-bus' : 'md-bus'}
-    />
-  ),
-};
+
 
 
 const JourneyStack = createStackNavigator({
@@ -87,7 +75,6 @@ AccountStack.navigationOptions = {
 
 
 export default createBottomTabNavigator({
-  TempStack,
   JourneyStack,
   TicketsStack,
   WalletStack,

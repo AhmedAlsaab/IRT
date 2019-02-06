@@ -16,13 +16,13 @@ export default class JourneyScreen extends Component {
         header: null,
       };
 
-      // Temporary states --> These should be in app.js
+  // Temporary states --> These should be in app.js
   constructor(props) {
     super(props);
     this.state = {
       error: "",
-      latitude: 0,
-      longitude: 0,
+   //   latitude: 0,
+   //   longitude: 0,
       locationPredictions: []
     };
     this.startPositionDebounced = _.debounce(
@@ -32,25 +32,36 @@ export default class JourneyScreen extends Component {
   }
 
   // Not working atm
-  componentDidMount() {
-    //Get current location and set initial region to this
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        });
-      },
-      error => this.setState({ error: error.message }),
-      { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 }
-    );
-  }
+  // componentDidMount() {
+  //   //Get current location and set initial region to this
+  //   navigator.geolocation.getCurrentPosition(
+  //     position => {
+  //       this.setState({
+  //         latitude: position.coords.latitude,
+  //         longitude: position.coords.longitude
+  //       });
+  //     },
+  //     error => this.setState({ error: error.message }),
+  //     { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 }
+  //   );
+  // }
+
+// `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${API_KEY}&input=${destination}&location=${this.state.latitude},${this.state.longitude}&radius=2000`
+
+//  https://maps.googleapis.com/maps/api/place/autocomplete/xml?input=Amoeba&types=establishment&location=37.76999,-122.44696&radius=500&strictbounds&key=YOUR_API_KEY
+
+// https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Stop&types=geocode&location=51.481583,-3.179090&radius=3000&key={API_KEY}
+
+
+// Restricited search to cardiff - Check Coords
+// Radius of search is 3000 meters from location coords
+// Strictbounds ensures that no suggestions appear that are not within these paramaters
+
 
   async startPosition(destination) {
     this.setState({ destination });
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${API_KEY}&input={${destination}}&location=${
-      this.state.latitude
-    },${this.state.longitude}&radius=2000`;
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${destination}
+    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
     const result = await fetch(apiUrl);
     const jsonResult = await result.json();
     this.setState({
