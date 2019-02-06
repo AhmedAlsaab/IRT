@@ -2,45 +2,21 @@ import React, { Component } from 'react';
 import { TextInput, Platform, StatusBar, StyleSheet, View, Picker, Image, Dimensions } from 'react-native';
 import { Content, Container, Button, Text, Accordion } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
-import { validateAll } from 'indicative';
 
 class RegistrationScreen extends Component {
 
   state = {
-    firstName: "",
-    lastName: "",
-    phoneNumber: "",
-    email: "",
-    password: "",
-    passwordConfirm: "",
+    firstName: "yeet",
+    lastName: "dab",
+    phoneNumber: "4343434",
+    email: "driver@driver.com",
+    password: "Computer79",
+    passwordConfirm: "Computer79",
     type: 1,
-    errors: null,
-    error: null
-  }
-
-  componentDidUpdate() {
-    if (this.state.error != null) setTimeout(() => this.setState({ error: null }), 3000);
+    errors: []
   }
 
   onSubmit = () => {
-
-    const messages = {
-      'required': '{{ field }} is required',
-      'min': 'Minimum of {{ argument.0 }} characters',
-      'max': 'Maximum of {{ argument.0 }} characters',
-      'same': 'Password must match'
-    }
-
-    //Check input fields are correct
-    const rules = {
-      firstName: 'required|min:1|max:45',
-      lastName: 'required|min:1|max:45',
-      phoneNumber: 'required|min:5|max:45',
-      email: 'required|email|max:100',
-      password: 'required|min:8|max:45',
-      passwordConfirm: 'same:password',
-    }
-
     //Send data to the server
     const data = {
       "firstName": this.state.firstName,
@@ -48,41 +24,41 @@ class RegistrationScreen extends Component {
       "phoneNumber": this.state.phoneNumber,
       "email": this.state.email,
       "password": this.state.password,
+      "passwordConfirm": this.state.passwordConfirm,
       "type": this.state.type
     }
 
-    validateAll(data, rules, messages)
-      .then(() => {
-        fetch("http://10.22.201.102:3000/register", {
-          method: "POST",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        })
-          .then((response) => response.json())
-          .then((responseJSON) => {
-            console.log(responseJSON)
-            if (responseJSON.status != 1) {
-              //Throw error
-              //Account already exists
-              this.setState({
-                error: "Account already exists"
-              })
-
-              return;
-            }
-
-            this.props.navigation.navigate("Login")
-          })
-          .catch(error => console.log(error))
+    fetch("http://10.22.201.102:3000/register", {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+      .then((response) => response.json())
+      .then((responseJSON) => {
+        switch (responseJSON.status) {
+          //Success
+          case 10:
+             this.props.navigation.navigate("Login")
+             break;
+          //User Exists
+          case 1:
+            this.setState({
+              errors: [{title: "Errors", content: "Account already exists"}]
+            })
+            break;
+          //Input Validation Failed
+          case 0:
+            this.setState({
+              errors: this.parseErrors(responseJSON.errors)
+            })
+            break;
+        }
       })
-      .catch((messageErrors) => {
-        this.setState({
-          errors: this.parseErrors(messageErrors)
-        })
-      })
+      .catch(error => console.log(error))
+
   }
 
 
@@ -93,116 +69,79 @@ class RegistrationScreen extends Component {
     }
 
     for (var i = 0; i < errorList.length; i++) {
-      errors.content += errorList[i].message + "\n"
+      errors.content += errorList[i].msg + "\n"
     }
 
     return [errors]
   }
 
-  // findElement = (stateName) => {
-  //   const { errors } = this.state;
-
-  //   for (var i = 0; i < errors.length; i++) {
-  //     if (errors[i]["field"] == stateName) {
-  //       return errors[i];
-  //     }
-  //   }
-
-  //   return null;
-  // }
+  onAccountClick = () => { return this.props.navigation.navigate('Login') }
 
   render() {
     return (
       <Container style={styles.container}>
         <Content>
-
           <View style={styles.imageContainer}>
             <Image resizeMode={'contain'} style={styles.image} source={require('../assets/images/two_line/TFW_two_line_mono_negative_rgb.png')} />
           </View>
-
-          {this.state.errors && !!this.state.errors.length && <Accordion dataArray={this.state.errors} icon="add" expandedIcon="remove" contentStyle={styles.errorStyle} expanded={0}/>}
+          {this.state.errors && !!this.state.errors.length && <Accordion dataArray={this.state.errors} icon="add" expandedIcon="remove" contentStyle={styles.errorStyle} expanded={0} />}
+          {this.state.error &&  <Accordion dataArray={this.state.error} icon="add" expandedIcon="remove" contentStyle={styles.errorStyle} expanded={0} />}
 
           <View style={styles.contentContainer}>
-            <View style={styles.title}>
-              <Text style={styles.title}>CREATE ACCOUNT</Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title}>Create Account</Text>
             </View>
-
-            {this.state.error && <Text style={styles.error}>{this.state.error}</Text>}
-            <View style={styles.inputWrapper}>
-              <View style={styles.inputContainer}>
-                <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
-                <TextInput placeholder='First Name' style={styles.input} onChangeText={(text) => this.setState({ firstName: text })} value={this.state.firstName} value={this.state.firstName}></TextInput>
-              </View>
-              {/* {this.findElement('firstName') && <Text style={styles.error}>{this.findElement('firstName').message}</Text>} */}
+            <View style={styles.inputContainer}>
+              <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
+              <TextInput placeholder='First Name' style={styles.input} onChangeText={(text) => this.setState({ firstName: text })} value={this.state.firstName} value={this.state.firstName}></TextInput>
             </View>
-
-            <View style={styles.inputWrapper}>
-              <View style={styles.inputContainer}>
-                <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
-                <TextInput placeholder='Last Name' style={styles.input} onChangeText={(text) => this.setState({ lastName: text })} value={this.state.lastName}></TextInput>
-              </View>
-              {/* {this.findElement('lastName') && <Text style={styles.error}>{this.findElement('lastName').message}</Text>} */}
+            <View style={styles.inputContainer}>
+              <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
+              <TextInput placeholder='Last Name' style={styles.input} onChangeText={(text) => this.setState({ lastName: text })} value={this.state.lastName}></TextInput>
             </View>
-
-            <View style={styles.inputWrapper}>
-              <View style={styles.inputContainer}>
-                <Ionicons name="md-phone-portrait" size={32} style={styles.inputIcons}></Ionicons>
-                <TextInput placeholder='Phone Number' style={styles.input} onChangeText={(text) => this.setState({ phoneNumber: text })} value={this.state.phoneNumber}></TextInput>
-              </View>
-              {/* {this.findElement('phoneNumber') && <Text style={styles.error}>{this.findElement('phoneNumber').message}</Text>} */}
+            <View style={styles.inputContainer}>
+              <Ionicons name="md-phone-portrait" size={32} style={styles.inputIcons}></Ionicons>
+              <TextInput placeholder='Phone Number' style={styles.input} onChangeText={(text) => this.setState({ phoneNumber: text })} value={this.state.phoneNumber}></TextInput>
             </View>
-
-            <View style={styles.inputWrapper}>
-              <View style={styles.inputContainer}>
-                <Ionicons name="md-mail" size={32} style={styles.inputIcons}></Ionicons>
-                <TextInput placeholder='Email' style={styles.input} onChangeText={(text) => this.setState({ email: text })} value={this.state.email}></TextInput>
-              </View>
-              {/* {this.findElement('email') && <Text style={styles.error}>{this.findElement('email').message}</Text>} */}
+            <View style={styles.inputContainer}>
+              <Ionicons name="md-mail" size={32} style={styles.inputIcons}></Ionicons>
+              <TextInput placeholder='Email' style={styles.input} onChangeText={(text) => this.setState({ email: text })} value={this.state.email}></TextInput>
             </View>
-
-            <View style={styles.inputWrapper}>
-              <View style={styles.inputContainer}>
-                <Ionicons name="md-lock" size={32} style={styles.inputIcons}></Ionicons>
-                <TextInput placeholder='Password' secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({ password: text })} value={this.state.password}></TextInput>
-              </View>
-              {/* {this.findElement('password') && <Text style={styles.error}>{this.findElement('password').message}</Text>} */}
+            <View style={styles.inputContainer}>
+              <Ionicons name="md-lock" size={32} style={styles.inputIcons}></Ionicons>
+              <TextInput placeholder='Password' secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({ password: text })} value={this.state.password}></TextInput>
             </View>
-
-            <View style={styles.inputWrapper}>
-              <View style={styles.inputContainer}>
-                <Ionicons name="md-lock" size={32} style={styles.inputIcons}></Ionicons>
-                <TextInput placeholder='Password Confirm' secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({ passwordConfirm: text })} value={this.state.passwordConfirm}></TextInput>
-              </View>
-              {/* {this.findElement('passwordConfirm') && <Text style={styles.error}>{this.findElement('passwordConfirm').message}</Text>} */}
+            <View style={styles.inputContainer}>
+              <Ionicons name="md-lock" size={32} style={styles.inputIcons}></Ionicons>
+              <TextInput placeholder='Password Confirm' secureTextEntry={true} style={styles.input} onChangeText={(text) => this.setState({ passwordConfirm: text })} value={this.state.passwordConfirm}></TextInput>
             </View>
-
-            <View style={styles.inputWrapper}>
-              <View style={styles.inputContainer}>
-                <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
-                <View style={styles.inputContainerPicker}>
-                  <Text>I am a </Text>
-                  <Picker name="type" style={styles.inputPicker} selectedValue={this.state.type} onValueChange={(itemValue, itemIndex) => this.setState({ type: parseint(itemValue) })}>
-                    <Picker.Item label="Passenger" value="1" />
-                    <Picker.Item label="Driver" value="2" />
-                  </Picker>
-                </View>
+            <View style={styles.inputContainer}>
+              <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
+              <View style={styles.inputContainerPicker}>
+                <Text>I am a </Text>
+                <Picker name="type" style={styles.inputPicker} selectedValue={this.state.type} onValueChange={(itemValue, itemIndex) => this.setState({ type: parseint(itemValue) })}>
+                  <Picker.Item label="Passenger" value="1" />
+                  <Picker.Item label="Driver" value="2" />
+                </Picker>
               </View>
             </View>
-
             <View style={styles.buttonContainer}>
               <Button danger style={styles.button} onPress={this.onSubmit}>
                 <Text>REGISTER</Text>
               </Button>
             </View>
+            <View style={styles.registerContainer}>
+              <Text>Have an account?</Text>
+              <Text style={styles.registerText} onPress={this.onAccountClick}>LOGIN</Text>
+            </View>
           </View>
-
         </Content>
       </Container>
     )
   }
 }
 
-const width = '80%';
+const width = '70%';
 const buttonWidth = '40%';
 const window = Dimensions.get('window');
 
@@ -214,23 +153,30 @@ const styles = StyleSheet.create({
       }
     }),
   },
-  inputWrapper: {
-    flexDirection: 'column',
-    width
-  },
   inputContainer: {
     flexDirection: 'row',
     borderBottomWidth: 2,
     borderBottomColor: '#ff0000',
-    alignItems: 'center'
+    alignItems: 'center',
+    width
   },
-  errorStyle:{
+  errorStyle: {
     fontWeight: 'bold',
     backgroundColor: '#f4f4f4'
   },
   input: {
     flex: 1,
     padding: 10
+  },
+  registerContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    width,
+    marginTop: 25,
+    marginBottom: 20
+  },
+  registerText: {
+    color: '#ff0000'
   },
   inputIcons: {
     width: 50,
@@ -246,11 +192,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center'
   },
-  title: {
-    textAlign: 'left',
-    paddingTop: 20,
+  titleContainer: {
+    paddingTop: 30,
     paddingBottom: 5,
     width
+  },
+  title: {
+    textAlign: 'left',
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'gray'
   },
   inputPicker: {
     borderWidth: 2,

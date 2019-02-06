@@ -54,8 +54,7 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `transport`.`user` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `email` VARCHAR(100) NOT NULL,
-  `password` VARCHAR(50) NOT NULL,
-  `salt` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(100) NOT NULL,
   `forename` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NULL,
   `phone_number` VARCHAR(45) NOT NULL,
@@ -64,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`user` (
   `fk_address_id` INT NULL,
   `fk_user_type_id` INT NULL,
   PRIMARY KEY (`user_id`),
-  INDEX `fk_user_accessibility1_idx` (`fk_accessibility_id` ASC),
+  INDEX `fk_user_accessibility1_idx` (`fk_accessibility_id` ASC) ,
   INDEX `fk_user_address1_idx` (`fk_address_id` ASC) ,
   INDEX `fk_user_user_type1_idx` (`fk_user_type_id` ASC) ,
   CONSTRAINT `fk_user_accessibility1`

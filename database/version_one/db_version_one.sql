@@ -59,13 +59,13 @@ CREATE TABLE IF NOT EXISTS `transport`.`user` (
   `surname` VARCHAR(45) NULL,
   `phone_number` VARCHAR(45) NOT NULL,
   `date_created` DATETIME NOT NULL,
-  `fk_accessibility_id` INT NOT NULL,
-  `fk_address_id` INT NOT NULL,
-  `fk_user_type_id` INT NOT NULL,
+  `fk_accessibility_id` INT NULL,
+  `fk_address_id` INT NULL,
+  `fk_user_type_id` INT NULL,
   PRIMARY KEY (`user_id`),
-  INDEX `fk_user_accessibility1_idx` (`fk_accessibility_id` ASC),
-  INDEX `fk_user_address1_idx` (`fk_address_id` ASC),
-  INDEX `fk_user_user_type1_idx` (`fk_user_type_id` ASC),
+  INDEX `fk_user_accessibility1_idx` (`fk_accessibility_id` ASC) ,
+  INDEX `fk_user_address1_idx` (`fk_address_id` ASC) ,
+  INDEX `fk_user_user_type1_idx` (`fk_user_type_id` ASC) ,
   CONSTRAINT `fk_user_accessibility1`
     FOREIGN KEY (`fk_accessibility_id`)
     REFERENCES `transport`.`accessibility` (`id`)
@@ -129,9 +129,9 @@ CREATE TABLE IF NOT EXISTS `transport`.`user_journey` (
   `fk_user_id` INT NOT NULL,
   `fk_ticket_id` INT NOT NULL,
   `paid` TINYINT NOT NULL DEFAULT 0,
-  INDEX `fk_journey_has_user_user1_idx` (`fk_user_id` ASC),
-  INDEX `fk_journey_has_user_journey1_idx` (`fk_journey_id` ASC),
-  INDEX `fk_user_journey_ticket1_idx` (`fk_ticket_id` ASC),
+  INDEX `fk_journey_has_user_user1_idx` (`fk_user_id` ASC) ,
+  INDEX `fk_journey_has_user_journey1_idx` (`fk_journey_id` ASC) ,
+  INDEX `fk_user_journey_ticket1_idx` (`fk_ticket_id` ASC) ,
   PRIMARY KEY (`fk_journey_id`, `fk_user_id`),
   CONSTRAINT `fk_journey_has_user_journey1`
     FOREIGN KEY (`fk_journey_id`)
@@ -168,9 +168,9 @@ CREATE TABLE IF NOT EXISTS `transport`.`journey_coordinate` (
   `fk_journey_id` INT NOT NULL,
   `fk_coordinate_id` INT NOT NULL,
   `fk_coordinate_type_id` INT NOT NULL,
-  INDEX `fk_journey_has_coordinate_coordinate1_idx` (`fk_coordinate_id` ASC),
-  INDEX `fk_journey_has_coordinate_journey1_idx` (`fk_journey_id` ASC),
-  INDEX `fk_journey_coordinate_coordinate_type1_idx` (`fk_coordinate_type_id` ASC),
+  INDEX `fk_journey_has_coordinate_coordinate1_idx` (`fk_coordinate_id` ASC) ,
+  INDEX `fk_journey_has_coordinate_journey1_idx` (`fk_journey_id` ASC) ,
+  INDEX `fk_journey_coordinate_coordinate_type1_idx` (`fk_coordinate_type_id` ASC) ,
   CONSTRAINT `fk_journey_has_coordinate_journey1`
     FOREIGN KEY (`fk_journey_id`)
     REFERENCES `transport`.`journey` (`journey_id`)
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`vehicle` (
   `currently_driven` TINYINT NOT NULL DEFAULT 0,
   `fk_vehicle_type_id` INT NOT NULL,
   PRIMARY KEY (`vehicle_id`, `fk_vehicle_type_id`),
-  INDEX `fk_vehicle_vehicle_type1_idx` (`fk_vehicle_type_id` ASC),
+  INDEX `fk_vehicle_vehicle_type1_idx` (`fk_vehicle_type_id` ASC) ,
   CONSTRAINT `fk_vehicle_vehicle_type1`
     FOREIGN KEY (`fk_vehicle_type_id`)
     REFERENCES `transport`.`vehicle_type` (`vehicle_type_id`)
@@ -228,8 +228,8 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `transport`.`user_vehicle` (
   `fk_user_id` INT NOT NULL,
   `fk_vehicle_id` INT NOT NULL,
-  INDEX `fk_user_has_vehicle_vehicle1_idx` (`fk_vehicle_id` ASC),
-  INDEX `fk_user_has_vehicle_user1_idx` (`fk_user_id` ASC),
+  INDEX `fk_user_has_vehicle_vehicle1_idx` (`fk_vehicle_id` ASC) ,
+  INDEX `fk_user_has_vehicle_user1_idx` (`fk_user_id` ASC) ,
   PRIMARY KEY (`fk_user_id`, `fk_vehicle_id`),
   CONSTRAINT `fk_user_has_vehicle_user1`
     FOREIGN KEY (`fk_user_id`)
