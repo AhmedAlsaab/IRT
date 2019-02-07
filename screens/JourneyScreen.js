@@ -29,7 +29,7 @@ export default class JourneyScreen extends Component {
       latitude: 0,
       longitude: 0,
       locationPredictions: [],
-      
+
       isCollapsed: true,
       isDatePickerVisible: false,
       isTimePickerVisible: false,
@@ -47,6 +47,7 @@ export default class JourneyScreen extends Component {
     );
   }
 
+  // Sets the state when each input is changed
   handleFromChange = (event) => {
     this.setState({from: event.target.value})
   }
