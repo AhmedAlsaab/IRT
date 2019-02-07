@@ -12,7 +12,9 @@ import {
 import Collapsible from 'react-native-collapsible';
 import apiKey from "../google_api_key";
 import _ from "lodash";
-import { Content, Container, Button, Text, DatePicker, Item, Input } from 'native-base';
+import { Content, Container, Button, Text, DatePicker, Item, Input, StyleProvider } from 'native-base';
+import getTheme from '../native-base-theme/components';
+import platform from '../native-base-theme/variables/platform';
 
 export default class JourneyScreen extends Component {
   static navigationOptions = {
@@ -100,96 +102,110 @@ export default class JourneyScreen extends Component {
     );
 
     return (
-      <ScrollView>
-        <Container style={styles.contentContainer}>
-          <Content>
-            <View style={styles.secondaryButtonContainer}>
-              <Button bordered light style={styles.secondaryButton}>
-                <Text style={styles.secondaryButtontext}>
-                  FAVOUITE/RECENT JOURNEYS
+      <StyleProvider style={getTheme(platform)}>
+        <ScrollView>
+          <Container style={styles.contentContainer}>
+            <Content>
+
+              <View style={styles.secondaryButtonContainer}>
+                <Button bordered danger style={styles.secondaryButton}>
+                  <Text style={styles.secondaryButtontext}>
+                    FAVOUITE/RECENT JOURNEYS
               </Text>
-              </Button>
-            </View>
-            <Item>
-              <Input
-                placeholder="Enter location.."
-                placeholderTextColor="#d3d3d3"
-                onChangeText={destination => {
-                  this.setState({ destination });
-                  this.startPositionDebounced(destination);
-                }}
-                value={this.state.destination}
-                style={styles.input}
-              />
-            </Item>
-            {locationPredictions}
-            <Item>
-              <Input
-                placeholder="From"
-                placeholderTextColor="#d3d3d3"
-                style={styles.input}
-              />
-            </Item>
-            <Item>
-              <Input
-                placeholder="To"
-                placeholderTextColor="#d3d3d3"
-                style={styles.input}
-              />
-            </Item>
-            <DatePicker
-              placeHolderText="Date"
-              placeHolderTextStyle={{ color: "#d3d3d3" }}
-              onDateChange={this.setDate}
-              style={styles.input}
-            />
-
-            {/* Advanced search fields, expands on button click. */}
-            <Collapsible collapsed={this.state.isCollapsed}>
-              <View>
-                <Item>
-                  <Input
-                    placeholder="Number of passengers"
-                    placeholderTextColor="#d3d3d3"
-                    style={styles.input}
-                  />
-                </Item>
-                <Item>
-                  <Input
-                    placeholder="Number of wheelchairs"
-                    placeholderTextColor="#d3d3d3"
-                    style={styles.input}
-                  />
-                </Item>
+                </Button>
               </View>
-            </Collapsible>
 
-            {/* Advanced search button, toggles advanced fields */}
-            <View style={styles.secondaryButtonContainer}>
-              <Button bordered light
-                style={styles.secondaryButton}
-                onPress={this.toggleAdvanced}
-              >
-                <Text style={styles.secondaryButtontext}>
-                  {this.state.isCollapsed? 'ADVANCED SEARCH' : 'BASIC SEARCH'}
-                </Text>
-              </Button>
-            </View>
-            <View style={styles.buttonContainer}>
-              <Button danger style={styles.button}>
-                <Text>SEARCH</Text>
-              </Button>
-            </View>
-          </Content>
-        </Container>
-      </ScrollView>
+              <Item>
+                <Input
+                  placeholder="Enter location.."
+                  placeholderTextColor="#d3d3d3"
+                  onChangeText={destination => {
+                    this.setState({ destination });
+                    this.startPositionDebounced(destination);
+                  }}
+                  value={this.state.destination}
+                  style={styles.input}
+                />
+              </Item>
+
+              {locationPredictions}
+
+              <Item>
+                <Input
+                  placeholder="From"
+                  placeholderTextColor="#d3d3d3"
+                  style={styles.input}
+                />
+              </Item>
+
+              <Item>
+                <Input
+                  placeholder="To"
+                  placeholderTextColor="#d3d3d3"
+                  style={styles.input}
+                />
+              </Item>
+
+              <View>
+                <DatePicker
+                  placeHolderText="Date"
+                  placeHolderTextStyle={{ color: "#d3d3d3" }}
+                  onDateChange={this.setDate}
+                />
+              </View>
+
+              {/* Advanced search fields, expands on button click. */}
+              <Collapsible collapsed={this.state.isCollapsed}>
+                <View>
+                  <Item>
+                    <Input
+                      placeholder="Number of passengers"
+                      placeholderTextColor="#d3d3d3"
+                      style={styles.input}
+                    />
+                  </Item>
+                  <Item>
+                    <Input
+                      placeholder="Number of wheelchairs"
+                      placeholderTextColor="#d3d3d3"
+                      style={styles.input}
+                    />
+                  </Item>
+                </View>
+              </Collapsible>
+
+              {/* Advanced search button, toggles advanced fields */}
+              <View style={styles.secondaryButtonContainer}>
+                <Button bordered danger
+                  style={styles.secondaryButton}
+                  onPress={this.toggleAdvanced}
+                >
+                  <Text style={styles.secondaryButtontext}>
+                    {this.state.isCollapsed ? 'ADVANCED SEARCH' : 'BASIC SEARCH'}
+                  </Text>
+                </Button>
+              </View>
+              <View style={styles.buttonContainer}>
+                <Button danger style={styles.button}>
+                  <Text>SEARCH</Text>
+                </Button>
+              </View>
+            </Content>
+          </Container>
+        </ScrollView>
+      </StyleProvider>
     );
   }
 }
 
 const styles = StyleSheet.create({
   input: {
-    fontSize: 16,
+    marginTop: 10,
+  },
+  dateInput: {
+    height: 60,
+    borderBottomWidth: 1,
+    borderBottomColor: '#d3d3d3',
   },
   locationSuggestion: {
     backgroundColor: "white",
@@ -226,17 +242,13 @@ const styles = StyleSheet.create({
   },
   secondaryButtonContainer: {
     flexDirection: 'row',
-    marginTop: 15
+    marginTop: 25,
   },
   secondaryButton: {
     width: '100%',
     justifyContent: 'center',
-    borderColor: '#ff0000',
   },
   secondaryButtontext: {
     color: '#ff0000',
-  },
-  placeholderStyle: {
-    color: '#d3d3d3',
   },
 });
