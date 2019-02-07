@@ -9,6 +9,7 @@ import {
   Animated,
   Image,
 } from "react-native";
+import Collapsible from 'react-native-collapsible';
 import apiKey from "../google_api_key";
 import _ from "lodash";
 import { Content, Container, Button, Text, DatePicker, Item, Input } from 'native-base';
@@ -27,8 +28,7 @@ export default class JourneyScreen extends Component {
       longitude: 0,
       locationPredictions: [],
       chosenDate: new Date(),
-      expanded: false,
-      animation: new Animated.Value(),
+      isCollapsed: true,
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
@@ -36,36 +36,10 @@ export default class JourneyScreen extends Component {
     );
   }
 
-  // Toggle advanced search option.
   toggleAdvanced = () => {
-    //Step 1
-    let initialValue = this.state.expanded ? this.state.maxHeight + this.state.minHeight : this.state.minHeight,
-      finalValue = this.state.expanded ? this.state.minHeight : this.state.maxHeight + this.state.minHeight;
-
     this.setState({
-      expanded: !this.state.expanded  //Step 2
-    });
-
-    this.state.animation.setValue(initialValue);  //Step 3
-    Animated.spring(     //Step 4
-      this.state.animation,
-      {
-        toValue: finalValue
-      }
-    ).start();  //Step 5
-  }
-
-  // Set the height of the advanced search options panel when button is clicked.
-  setMaxHeight = (event) => {
-    this.setState({
-      maxHeight: event.nativeEvent.layout.height
-    });
-  }
-
-  setMinHeight = (event) => {
-    this.setState({
-      minHeight: event.nativeEvent.layout.height
-    });
+      isCollapsed: !this.state.isCollapsed
+    })
   }
 
   // Set the date state when user selects a day.
@@ -171,33 +145,33 @@ export default class JourneyScreen extends Component {
             />
 
             {/* Advanced search fields, expands on button click. */}
-            <Animated.View>
-              <Item>
-                <Input
-                  placeholder="Number of passengers"
-                  placeholderTextColor="#d3d3d3"
-                  style={styles.input}
-                />
-              </Item>
-              <Item>
-                <Input
-                  placeholder="Number of wheelchairs"
-                  placeholderTextColor="#d3d3d3"
-                  style={styles.input}
-                />
-              </Item>
-            </Animated.View>
-            
+            <Collapsible collapsed={this.state.isCollapsed}>
+              <View>
+                <Item>
+                  <Input
+                    placeholder="Number of passengers"
+                    placeholderTextColor="#d3d3d3"
+                    style={styles.input}
+                  />
+                </Item>
+                <Item>
+                  <Input
+                    placeholder="Number of wheelchairs"
+                    placeholderTextColor="#d3d3d3"
+                    style={styles.input}
+                  />
+                </Item>
+              </View>
+            </Collapsible>
+
             {/* Advanced search button, toggles advanced fields */}
             <View style={styles.secondaryButtonContainer}>
-              <Button
-                bordered
-                light
+              <Button bordered light
                 style={styles.secondaryButton}
-                onPress={this.expandAdvanced}
+                onPress={this.toggleAdvanced}
               >
                 <Text style={styles.secondaryButtontext}>
-                  ADVANCED SEARCH
+                  {this.state.isCollapsed? 'ADVANCED SEARCH' : 'BASIC SEARCH'}
                 </Text>
               </Button>
             </View>
@@ -264,5 +238,5 @@ const styles = StyleSheet.create({
   },
   placeholderStyle: {
     color: '#d3d3d3',
-  }
+  },
 });
