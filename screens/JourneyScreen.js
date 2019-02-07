@@ -1,18 +1,17 @@
 import React, { Component } from "react";
 import {
   StyleSheet,
-  TextInput,
   View,
   TouchableHighlight,
   Keyboard,
-  ScrollView, Platform, StatusBar,
-  Animated,
-  Image,
+  ScrollView,
+  TouchableOpacity
 } from "react-native";
 import Collapsible from 'react-native-collapsible';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 import apiKey from "../google_api_key";
 import _ from "lodash";
-import { Content, Container, Button, Text, DatePicker, Item, Input, StyleProvider } from 'native-base';
+import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 
@@ -29,8 +28,10 @@ export default class JourneyScreen extends Component {
       latitude: 0,
       longitude: 0,
       locationPredictions: [],
-      chosenDate: new Date(),
       isCollapsed: true,
+      isDatePickerVisible: false,
+      isTimePickerVisible: false,
+      date: new Date(),
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
@@ -38,16 +39,32 @@ export default class JourneyScreen extends Component {
     );
   }
 
+  // Toggles advanced search inputs
   toggleAdvanced = () => {
     this.setState({
       isCollapsed: !this.state.isCollapsed
     })
   }
 
-  // Set the date state when user selects a day.
-  setDate = (newDate) => {
-    this.setState({ chosenDate: newDate });
-  }
+  // Functionality to show/hide the date picker and to set the state
+  _showDatePicker = () => this.setState({ isDatePickerVisible: true });
+  _hideDatePicker = () => this.setState({ isDatePickerVisible: false });
+
+  _handleDatePicked = (newDate) => {
+    this.setState({ date: newDate });
+    console.log(this.state.date)
+    this._hideDatePicker();
+  };
+
+  // Functionality to show/hide the time picker and to set the state
+  _showTimePicker = () => this.setState({ isTimePickerVisible: true });
+  _hideTimePicker = () => this.setState({ isTimePickerVisible: false });
+
+  _handleTimePicked = (newTime) => {
+    this.setState({ time: newTime });
+    console.log(this.state.time)
+    this._hideTimePicker();
+  };
 
   // Not working atm
   componentDidMount() {
@@ -107,6 +124,7 @@ export default class JourneyScreen extends Component {
           <Container style={styles.contentContainer}>
             <Content>
 
+              {/* Favourite recent journeys button */}
               <View style={styles.secondaryButtonContainer}>
                 <Button bordered danger style={styles.secondaryButton}>
                   <Text style={styles.secondaryButtontext}>
@@ -130,6 +148,7 @@ export default class JourneyScreen extends Component {
 
               {locationPredictions}
 
+              {/* Starting location field */}
               <Item>
                 <Input
                   placeholder="From"
@@ -138,6 +157,7 @@ export default class JourneyScreen extends Component {
                 />
               </Item>
 
+              {/* Destination field */}
               <Item>
                 <Input
                   placeholder="To"
@@ -146,11 +166,29 @@ export default class JourneyScreen extends Component {
                 />
               </Item>
 
-              <View>
-                <DatePicker
-                  placeHolderText="Date"
-                  placeHolderTextStyle={{ color: "#d3d3d3" }}
-                  onDateChange={this.setDate}
+              {/* Date picker */}
+              <View style={styles.dateTimeContainer}>
+                <TouchableOpacity onPress={this._showDatePicker}>
+                  <Text style={styles.dateTime}>Date</Text>
+                </TouchableOpacity>
+                <DateTimePicker
+                  isVisible={this.state.isDatePickerVisible}
+                  onConfirm={this._handleDatePicked}
+                  onCancel={this._hideDatePicker}
+                  mode='date'
+                />
+              </View>
+
+              {/* Time picker */}
+              <View style={styles.dateTimeContainer}>
+                <TouchableOpacity onPress={this._showTimePicker}>
+                  <Text style={styles.dateTime}>Time</Text>
+                </TouchableOpacity>
+                <DateTimePicker
+                  isVisible={this.state.isTimePickerVisible}
+                  onConfirm={this._handleTimePicked}
+                  onCancel={this._hideTimePicker}
+                  mode='time'
                 />
               </View>
 
@@ -185,6 +223,8 @@ export default class JourneyScreen extends Component {
                   </Text>
                 </Button>
               </View>
+
+              {/* Submit search */}
               <View style={styles.buttonContainer}>
                 <Button danger style={styles.button}>
                   <Text>SEARCH</Text>
@@ -202,10 +242,22 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 10,
   },
-  dateInput: {
-    height: 60,
-    borderBottomWidth: 1,
+  dateTimeContainer: {
+    marginTop: 10,
+    marginLeft: 5,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    borderBottomWidth: 0.5,
     borderBottomColor: '#d3d3d3',
+    height: 50,
+  },
+  dateTime: {
+    color: '#d3d3d3',
+    fontSize: 16,
+    fontFamily: platform === "ios" ? "System" : "Roboto",
+
+    height: 25,
   },
   locationSuggestion: {
     backgroundColor: "white",
