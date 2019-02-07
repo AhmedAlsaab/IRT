@@ -29,11 +29,17 @@ export default class JourneyScreen extends Component {
       latitude: 0,
       longitude: 0,
       locationPredictions: [],
+      
       isCollapsed: true,
       isDatePickerVisible: false,
       isTimePickerVisible: false,
+
+      from: null,
+      to: null,
       date: null,
       time: null,
+      numPassenger: null,
+      numWheelchair: null,
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
@@ -41,11 +47,20 @@ export default class JourneyScreen extends Component {
     );
   }
 
-  // Toggles advanced search inputs
-  toggleAdvanced = () => {
-    this.setState({
-      isCollapsed: !this.state.isCollapsed
-    })
+  handleFromChange = (event) => {
+    this.setState({from: event.target.value})
+  }
+
+  handleToChange = (event) => {
+    this.setState({to: event.target.value})
+  }
+
+  handleNumPassengersChange = (event) => {
+    this.setState({numPassenger: event.target.value})
+  }
+
+  handleNumWheelchairChange = (event) => {
+    this.setState({numWheelchair: event.target.value})
   }
 
   // Functionality to show/hide the date picker and to set the state
@@ -67,6 +82,13 @@ export default class JourneyScreen extends Component {
     console.log(this.state.time)
     this._hideTimePicker();
   };
+
+  // Toggles advanced search inputs
+  toggleAdvanced = () => {
+    this.setState({
+      isCollapsed: !this.state.isCollapsed
+    })
+  }
 
   // Not working atm
   componentDidMount() {
@@ -155,6 +177,7 @@ export default class JourneyScreen extends Component {
                 <Input
                   placeholder="From"
                   placeholderTextColor="#bcbcbc"
+                  onChange={this.handleFromChange}
                 />
               </Item>
 
@@ -164,6 +187,7 @@ export default class JourneyScreen extends Component {
                 <Input
                   placeholder="To"
                   placeholderTextColor="#bcbcbc"
+                  onChange={this.handleToChange}
                 />
               </Item>
 
@@ -172,8 +196,8 @@ export default class JourneyScreen extends Component {
                 <View style={styles.dateTimeContainer}>
                   <Icon name="date-range" size={20} color="#bcbcbc" />
                   {this.state.date
-                  ? <Text style={[styles.dateTime, {color: '#000'}]}>{this.state.date.toString().slice(4, 15)}</Text>
-                  : <Text style={styles.dateTime} >Date</Text>
+                    ? <Text style={[styles.dateTime, { color: '#000' }]}>{this.state.date.toString().slice(4, 15)}</Text>
+                    : <Text style={styles.dateTime} >Date</Text>
                   }
                 </View>
               </TouchableOpacity>
@@ -184,14 +208,13 @@ export default class JourneyScreen extends Component {
                 mode='date'
               />
 
-
               {/* Time picker */}
               <TouchableOpacity onPress={this._showTimePicker}>
                 <View style={styles.dateTimeContainer}>
                   <Icon name="access-time" size={20} color="#bcbcbc" />
                   {this.state.time
-                  ? <Text style={[styles.dateTime, {color: '#000'}]}>{this.state.time.toString().slice(16, 21)}</Text>
-                  : <Text style={styles.dateTime} >Time</Text>
+                    ? <Text style={[styles.dateTime, { color: '#000' }]}>{this.state.time.toString().slice(16, 21)}</Text>
+                    : <Text style={styles.dateTime} >Time</Text>
                   }
                 </View>
               </TouchableOpacity>
@@ -202,8 +225,7 @@ export default class JourneyScreen extends Component {
                 mode='time'
               />
 
-
-              {/* Advanced search fields, expands on button click. */}
+              {/* Advanced search fields, expands and collapses on button click. */}
               <Collapsible collapsed={this.state.isCollapsed}>
                 <View>
                   <Item style={styles.iconWithInput}>
@@ -211,6 +233,7 @@ export default class JourneyScreen extends Component {
                     <Input
                       placeholder="Group size"
                       placeholderTextColor="#bcbcbc"
+                      onChange={this.handleNumPassengersChange}
                     />
                   </Item>
 
@@ -219,6 +242,7 @@ export default class JourneyScreen extends Component {
                     <Input
                       placeholder="No. of wheelchairs"
                       placeholderTextColor="#bcbcbc"
+                      onChange={this.handleNumWheelchairChange}
                     />
                   </Item>
                 </View>
