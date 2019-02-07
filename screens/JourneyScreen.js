@@ -32,7 +32,8 @@ export default class JourneyScreen extends Component {
       isCollapsed: true,
       isDatePickerVisible: false,
       isTimePickerVisible: false,
-      date: new Date(),
+      date: null,
+      time: null,
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
@@ -170,7 +171,10 @@ export default class JourneyScreen extends Component {
               <TouchableOpacity onPress={this._showDatePicker}>
                 <View style={styles.dateTimeContainer}>
                   <Icon name="date-range" size={20} color="#bcbcbc" />
-                  <Text style={styles.dateTime}>Date</Text>
+                  {this.state.date
+                  ? <Text style={[styles.dateTime, {color: '#000'}]}>{this.state.date.toString().slice(4, 15)}</Text>
+                  : <Text style={styles.dateTime} >Date</Text>
+                  }
                 </View>
               </TouchableOpacity>
               <DateTimePicker
@@ -185,7 +189,10 @@ export default class JourneyScreen extends Component {
               <TouchableOpacity onPress={this._showTimePicker}>
                 <View style={styles.dateTimeContainer}>
                   <Icon name="access-time" size={20} color="#bcbcbc" />
-                  <Text style={styles.dateTime}>Time</Text>
+                  {this.state.time
+                  ? <Text style={[styles.dateTime, {color: '#000'}]}>{this.state.time.toString().slice(16, 21)}</Text>
+                  : <Text style={styles.dateTime} >Time</Text>
+                  }
                 </View>
               </TouchableOpacity>
               <DateTimePicker
@@ -199,7 +206,7 @@ export default class JourneyScreen extends Component {
               {/* Advanced search fields, expands on button click. */}
               <Collapsible collapsed={this.state.isCollapsed}>
                 <View>
-                  <Item>
+                  <Item style={styles.iconWithInput}>
                     <Icon name="people" size={20} color="#bcbcbc" />
                     <Input
                       placeholder="Group size"
@@ -207,7 +214,7 @@ export default class JourneyScreen extends Component {
                     />
                   </Item>
 
-                  <Item>
+                  <Item style={styles.iconWithInput}>
                     <Icon name="accessible" size={20} color="#bcbcbc" />
                     <Input
                       placeholder="No. of wheelchairs"
