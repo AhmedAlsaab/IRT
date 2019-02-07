@@ -7,11 +7,12 @@ import {
   ScrollView,
   TouchableOpacity
 } from "react-native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import apiKey from "../google_api_key";
 import _ from "lodash";
-import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
+import { Content, Container, Button, Text, Item, Input, StyleProvider, Row } from 'native-base';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 
@@ -128,85 +129,89 @@ export default class JourneyScreen extends Component {
               <View style={styles.secondaryButtonContainer}>
                 <Button bordered danger style={styles.secondaryButton}>
                   <Text style={styles.secondaryButtontext}>
-                    FAVOUITE/RECENT JOURNEYS
+                    Favourite/Recent Journeys
               </Text>
                 </Button>
               </View>
 
-              <Item>
+              <Item style={styles.iconWithInput}>
                 <Input
                   placeholder="Enter location.."
-                  placeholderTextColor="#d3d3d3"
+                  placeholderTextColor="#bcbcbc"
                   onChangeText={destination => {
                     this.setState({ destination });
                     this.startPositionDebounced(destination);
                   }}
                   value={this.state.destination}
-                  style={styles.input}
                 />
               </Item>
 
               {locationPredictions}
 
               {/* Starting location field */}
-              <Item>
+              <Item style={styles.iconWithInput}>
+                <Icon name="my-location" size={20} color="#bcbcbc" />
                 <Input
                   placeholder="From"
-                  placeholderTextColor="#d3d3d3"
-                  style={styles.input}
+                  placeholderTextColor="#bcbcbc"
                 />
               </Item>
 
               {/* Destination field */}
-              <Item>
+              <Item style={styles.iconWithInput}>
+                <Icon name="location-on" size={20} color="#bcbcbc" />
                 <Input
                   placeholder="To"
-                  placeholderTextColor="#d3d3d3"
-                  style={styles.input}
+                  placeholderTextColor="#bcbcbc"
                 />
               </Item>
 
               {/* Date picker */}
-              <View style={styles.dateTimeContainer}>
-                <TouchableOpacity onPress={this._showDatePicker}>
+              <TouchableOpacity onPress={this._showDatePicker}>
+                <View style={styles.dateTimeContainer}>
+                  <Icon name="date-range" size={20} color="#bcbcbc" />
                   <Text style={styles.dateTime}>Date</Text>
-                </TouchableOpacity>
-                <DateTimePicker
-                  isVisible={this.state.isDatePickerVisible}
-                  onConfirm={this._handleDatePicked}
-                  onCancel={this._hideDatePicker}
-                  mode='date'
-                />
-              </View>
+                </View>
+              </TouchableOpacity>
+              <DateTimePicker
+                isVisible={this.state.isDatePickerVisible}
+                onConfirm={this._handleDatePicked}
+                onCancel={this._hideDatePicker}
+                mode='date'
+              />
+
 
               {/* Time picker */}
-              <View style={styles.dateTimeContainer}>
-                <TouchableOpacity onPress={this._showTimePicker}>
+              <TouchableOpacity onPress={this._showTimePicker}>
+                <View style={styles.dateTimeContainer}>
+                  <Icon name="access-time" size={20} color="#bcbcbc" />
                   <Text style={styles.dateTime}>Time</Text>
-                </TouchableOpacity>
-                <DateTimePicker
-                  isVisible={this.state.isTimePickerVisible}
-                  onConfirm={this._handleTimePicked}
-                  onCancel={this._hideTimePicker}
-                  mode='time'
-                />
-              </View>
+                </View>
+              </TouchableOpacity>
+              <DateTimePicker
+                isVisible={this.state.isTimePickerVisible}
+                onConfirm={this._handleTimePicked}
+                onCancel={this._hideTimePicker}
+                mode='time'
+              />
+
 
               {/* Advanced search fields, expands on button click. */}
               <Collapsible collapsed={this.state.isCollapsed}>
                 <View>
                   <Item>
+                    <Icon name="people" size={20} color="#bcbcbc" />
                     <Input
-                      placeholder="Number of passengers"
-                      placeholderTextColor="#d3d3d3"
-                      style={styles.input}
+                      placeholder="Group size"
+                      placeholderTextColor="#bcbcbc"
                     />
                   </Item>
+
                   <Item>
+                    <Icon name="accessible" size={20} color="#bcbcbc" />
                     <Input
-                      placeholder="Number of wheelchairs"
-                      placeholderTextColor="#d3d3d3"
-                      style={styles.input}
+                      placeholder="No. of wheelchairs"
+                      placeholderTextColor="#bcbcbc"
                     />
                   </Item>
                 </View>
@@ -219,7 +224,7 @@ export default class JourneyScreen extends Component {
                   onPress={this.toggleAdvanced}
                 >
                   <Text style={styles.secondaryButtontext}>
-                    {this.state.isCollapsed ? 'ADVANCED SEARCH' : 'BASIC SEARCH'}
+                    {this.state.isCollapsed ? 'Advanced Search' : 'Basic Search'}
                   </Text>
                 </Button>
               </View>
@@ -227,35 +232,33 @@ export default class JourneyScreen extends Component {
               {/* Submit search */}
               <View style={styles.buttonContainer}>
                 <Button danger style={styles.button}>
-                  <Text>SEARCH</Text>
+                  <Text>Search</Text>
                 </Button>
               </View>
             </Content>
           </Container>
         </ScrollView>
-      </StyleProvider>
+      </StyleProvider >
     );
   }
 }
 
 const styles = StyleSheet.create({
-  input: {
-    marginTop: 10,
-  },
   dateTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 10,
-    marginLeft: 5,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
     borderBottomWidth: 0.5,
     borderBottomColor: '#d3d3d3',
     height: 50,
   },
   dateTime: {
-    paddingLeft: 3,
-    color: '#d3d3d3',
+    marginLeft: 6,
+    color: '#bcbcbc',
     fontSize: 17,
+  },
+  iconWithInput: {
+    marginTop: 10,
   },
   locationSuggestion: {
     backgroundColor: "white",
