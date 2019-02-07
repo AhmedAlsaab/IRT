@@ -21,19 +21,28 @@ export default class JourneyScreen extends Component {
     super(props);
     this.state = {
       error: "",
-      inputValue: "",
-   //   latitude: 0,
-   //   longitude: 0,
+      //StartLocation
       locationPredictions: [],
       placeID: "",
       street:"",
       city:"",
-      country:""
+      country:"",
+
+      //EndLocation
+      endLocationPredictions: [],
+      endPlaceID: "",
+      endStreet: "",
+      endCity: "",
+      endCountry: ""
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
       1000
     );
+    this.endLocationDebounced = _.debounce(
+      this.endLocation,
+      1000
+    )
   }
 
   // Not working atm
@@ -63,6 +72,7 @@ export default class JourneyScreen extends Component {
 // Strictbounds ensures that no suggestions appear that are not within these paramaters
 
 
+// Get Start Location
   async startPosition(destination) {
     this.setState({ destination });
     const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${destination}
@@ -74,7 +84,21 @@ export default class JourneyScreen extends Component {
     });
     console.log(jsonResult);
   }
+
+  // Get End Location
+  async endLocation(endDestination) {
+    this.setState({ endDestination });
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${endDestination}
+    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
+    const result = await fetch(apiUrl);
+    const jsonResult = await result.json();
+    this.setState({
+      endLocationPredictions: jsonResult.predictions
+    });
+    console.log(jsonResult);
+  }
 // Populate the input field with selected prediction
+// Start Location Prediction
   pressedPrediction(
     prediction, 
     selectedPredictionID, 
@@ -82,11 +106,8 @@ export default class JourneyScreen extends Component {
     selectedPredictionCity,
     selectedPredictionCountry
     ) {
-    console.log(prediction);
-    console.log(selectedPredictionID);
-    console.log(selectedPredictionStreet);
-    console.log(selectedPredictionCity);
-    console.log(selectedPredictionCountry);
+      console.log(prediction.description)
+      console.log(prediction.place_id)
     Keyboard.dismiss();
     this.setState({
       locationPredictions: [],
@@ -98,6 +119,28 @@ export default class JourneyScreen extends Component {
     });
     Keyboard;
   }
+// Populate the input field with selected prediction
+// End Location Prediction
+  pressedEndPrediction(
+    prediction, 
+    selectedEndPredictionID, 
+    selectedEndPredictionStreet,
+    selectedEndPredictionCity,
+    selectedEndPredictionCountry
+    ) {
+      console.log(prediction.description)
+      console.log(prediction.place_id)
+    Keyboard.dismiss();
+    this.setState({
+      endLocationPredictions: [],
+      endDestination: prediction.description,
+      endPlaceID: selectedEndPredictionID,
+      endStreet: selectedEndPredictionStreet,
+      endCity: selectedEndPredictionCity,
+      endCountry: selectedEndPredictionCountry
+    });
+    Keyboard;
+  }
 
   onSubmit = () => {
 
@@ -105,10 +148,14 @@ export default class JourneyScreen extends Component {
       "place_id": this.state.placeID,
       "street": this.state.street,
       "city": this.state.city,
-      "country": this.state.country
+      "country": this.state.country,
+      "endPlaceID": this.state.endPlaceID,
+      "endStreet": this.state.endStreet,
+      "endCity": this.state.endCity,
+      "endCountry": this.state.endCountry,
     }
 
-    fetch('http://192.168.0.33:3000/booking/startlocation',
+    fetch('http://192.168.0.33:3000/booking/temp',
     {
       method: "POST",
       headers: {
@@ -121,6 +168,7 @@ export default class JourneyScreen extends Component {
   } 
 
   render() {
+    // Start Location Predictions - Suggestion List
     const locationPredictions = this.state.locationPredictions.map(
       prediction => (
         <TouchableHighlight         
@@ -140,21 +188,54 @@ export default class JourneyScreen extends Component {
         </TouchableHighlight>
       )
     );
-// Search box
+    // End Location Predictions - Suggestion List
+    const endLocationPredictions = this.state.endLocationPredictions.map(
+      prediction => (
+        <TouchableHighlight
+          onPress={() => this.pressedEndPrediction(
+            prediction,
+            prediction.place_id,
+            prediction.terms[0].value,
+            prediction.terms[1].value,
+            prediction.terms[2].value
+            )
+          }
+          key={prediction.id}
+          > 
+          <Text style={styles.locationSuggestion}>
+          {prediction.description}
+          </Text>
+          </TouchableHighlight>
+      )
+    );
+// Search box 
+// Start Location Input Box
+// End Location Input Box
+
     return (
     <ScrollView> 
         <Container>        
             <TextInput
-            placeholder="Enter location.."
+            placeholder="Enter start location.."
             style={styles.destinationInput}
             onChangeText={destination => {
             this.setState({ destination });
             this.startPositionDebounced(destination);
-            this.setState({inputValue: destination})
             }}
             value={this.state.destination}
         />
         {locationPredictions}
+       
+        <TextInput
+        placeholder="Enter end location.."
+        style={styles.destinationInput}
+        onChangeText={endDestination => {
+        this.setState({ endDestination });
+        this.endLocationDebounced(endDestination);
+        }}
+        value={this.state.endDestination}
+        />
+        {endLocationPredictions}
         <Content contentContainerStyle={styles.contentContainer}>
           <View style={styles.buttonContainer}>
             <Button danger style={styles.button} onPress={this.onSubmit}>
