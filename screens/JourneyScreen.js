@@ -253,11 +253,9 @@ const styles = StyleSheet.create({
     height: 50,
   },
   dateTime: {
+    paddingLeft: 3,
     color: '#d3d3d3',
-    fontSize: 16,
-    fontFamily: platform === "ios" ? "System" : "Roboto",
-
-    height: 25,
+    fontSize: 17,
   },
   locationSuggestion: {
     backgroundColor: "white",
