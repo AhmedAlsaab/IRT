@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import apiKey from "../google_api_key";
+import API_KEY from "../google_api_key";
 import _ from "lodash";
 import { Content, Container, Button, Text, Item, Input, StyleProvider, Row } from 'native-base';
 import getTheme from '../native-base-theme/components';
@@ -40,11 +41,28 @@ export default class JourneyScreen extends Component {
       time: null,
       numPassenger: null,
       numWheelchair: null,
+      //StartLocation
+      locationPredictions: [],
+      placeID: "",
+      street:"",
+      city:"",
+      country:"",
+
+      //EndLocation
+      endLocationPredictions: [],
+      endPlaceID: "",
+      endStreet: "",
+      endCity: "",
+      endCountry: ""
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
       1000
     );
+    this.endLocationDebounced = _.debounce(
+      this.endLocation,
+      1000
+    )
   }
 
   // Sets the state when each input is changed
@@ -92,25 +110,37 @@ export default class JourneyScreen extends Component {
   }
 
   // Not working atm
-  componentDidMount() {
-    //Get current location and set initial region to this
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        });
-      },
-      error => this.setState({ error: error.message }),
-      { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 }
-    );
-  }
+  // componentDidMount() {
+  //   //Get current location and set initial region to this
+  //   navigator.geolocation.getCurrentPosition(
+  //     position => {
+  //       this.setState({
+  //         latitude: position.coords.latitude,
+  //         longitude: position.coords.longitude
+  //       });
+  //     },
+  //     error => this.setState({ error: error.message }),
+  //     { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 }
+  //   );
+  // }
 
+// `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${API_KEY}&input=${destination}&location=${this.state.latitude},${this.state.longitude}&radius=2000`
+
+//  https://maps.googleapis.com/maps/api/place/autocomplete/xml?input=Amoeba&types=establishment&location=37.76999,-122.44696&radius=500&strictbounds&key=YOUR_API_KEY
+
+// https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Stop&types=geocode&location=51.481583,-3.179090&radius=3000&key={API_KEY}
+
+
+// Restricited search to cardiff - Check Coords
+// Radius of search is 3000 meters from location coords
+// Strictbounds ensures that no suggestions appear that are not within these paramaters
+
+
+// Get Start Location
   async startPosition(destination) {
     this.setState({ destination });
-    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${apiKey}&input={${destination}}&location=${
-      this.state.latitude
-      },${this.state.longitude}&radius=2000`;
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${destination}
+    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
     const result = await fetch(apiUrl);
     const jsonResult = await result.json();
     this.setState({
@@ -118,23 +148,103 @@ export default class JourneyScreen extends Component {
     });
     console.log(jsonResult);
   }
-  // Populate the input field with selected prediction
-  pressedPrediction(prediction) {
-    console.log(prediction);
+
+  // Get End Location
+  async endLocation(endDestination) {
+    this.setState({ endDestination });
+    const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${endDestination}
+    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
+    const result = await fetch(apiUrl);
+    const jsonResult = await result.json();
+    this.setState({
+      endLocationPredictions: jsonResult.predictions
+    });
+    console.log(jsonResult);
+  }
+// Populate the input field with selected prediction
+// Start Location Prediction
+  pressedPrediction(
+    prediction, 
+    selectedPredictionID, 
+    selectedPredictionStreet,
+    selectedPredictionCity,
+    selectedPredictionCountry
+    ) {
+      console.log(prediction.description)
+      console.log(prediction.place_id)
     Keyboard.dismiss();
     this.setState({
       locationPredictions: [],
-      destination: prediction.description
+      destination: prediction.description,
+      placeID: selectedPredictionID,
+      street: selectedPredictionStreet,
+      city: selectedPredictionCity,
+      country: selectedPredictionCountry
+    });
+    Keyboard;
+  }
+// Populate the input field with selected prediction
+// End Location Prediction
+  pressedEndPrediction(
+    prediction, 
+    selectedEndPredictionID, 
+    selectedEndPredictionStreet,
+    selectedEndPredictionCity,
+    selectedEndPredictionCountry
+    ) {
+      console.log(prediction.description)
+      console.log(prediction.place_id)
+    Keyboard.dismiss();
+    this.setState({
+      endLocationPredictions: [],
+      endDestination: prediction.description,
+      endPlaceID: selectedEndPredictionID,
+      endStreet: selectedEndPredictionStreet,
+      endCity: selectedEndPredictionCity,
+      endCountry: selectedEndPredictionCountry
     });
     Keyboard;
   }
 
+  onSubmit = () => {
+
+    const data = {
+      "place_id": this.state.placeID,
+      "street": this.state.street,
+      "city": this.state.city,
+      "country": this.state.country,
+      "endPlaceID": this.state.endPlaceID,
+      "endStreet": this.state.endStreet,
+      "endCity": this.state.endCity,
+      "endCountry": this.state.endCountry,
+    }
+
+    fetch('http://192.168.0.33:3000/booking/temp',
+    {
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    })
+    console.log(data)
+  } 
+
   render() {
+    // Start Location Predictions - Suggestion List
     const locationPredictions = this.state.locationPredictions.map(
       prediction => (
-        <TouchableHighlight
+        <TouchableHighlight         
+          onPress={() => this.pressedPrediction(
+            prediction,
+            prediction.place_id,
+            prediction.terms[0].value,
+            prediction.terms[1].value,
+            prediction.terms[2].value
+            )
+          }
           key={prediction.id}
-          onPress={() => this.pressedPrediction(prediction)}
         >
           <Text style={styles.locationSuggestion}>
             {prediction.description}
@@ -142,6 +252,29 @@ export default class JourneyScreen extends Component {
         </TouchableHighlight>
       )
     );
+    // End Location Predictions - Suggestion List
+    const endLocationPredictions = this.state.endLocationPredictions.map(
+      prediction => (
+        <TouchableHighlight
+          onPress={() => this.pressedEndPrediction(
+            prediction,
+            prediction.place_id,
+            prediction.terms[0].value,
+            prediction.terms[1].value,
+            prediction.terms[2].value
+            )
+          }
+          key={prediction.id}
+          > 
+          <Text style={styles.locationSuggestion}>
+          {prediction.description}
+          </Text>
+          </TouchableHighlight>
+      )
+    );
+// Search box 
+// Start Location Input Box
+// End Location Input Box
 
     return (
       <StyleProvider style={getTheme(platform)}>
@@ -158,20 +291,9 @@ export default class JourneyScreen extends Component {
                 </Button>
               </View>
 
-              <Item style={styles.iconWithInput}>
-                <Input
-                  placeholder="Enter location.."
-                  placeholderTextColor="#bcbcbc"
-                  onChangeText={destination => {
-                    this.setState({ destination });
-                    this.startPositionDebounced(destination);
-                  }}
-                  value={this.state.destination}
-                />
-              </Item>
+           
 
-              {locationPredictions}
-
+            
               {/* Starting location field */}
               <Item style={styles.iconWithInput}>
                 <Icon name="my-location" size={20} color="#bcbcbc" />
@@ -179,8 +301,14 @@ export default class JourneyScreen extends Component {
                   placeholder="From"
                   placeholderTextColor="#bcbcbc"
                   onChange={this.handleFromChange}
+                  onChangeText={destination => {
+                  this.setState({ destination });
+                  this.startPositionDebounced(destination);
+                  }}
+                  value={this.state.destination}
                 />
               </Item>
+              {locationPredictions}
 
               {/* Destination field */}
               <Item style={styles.iconWithInput}>
@@ -189,8 +317,14 @@ export default class JourneyScreen extends Component {
                   placeholder="To"
                   placeholderTextColor="#bcbcbc"
                   onChange={this.handleToChange}
-                />
+                  onChangeText={endDestination => {
+                  this.setState({ endDestination });
+                  this.endLocationDebounced(endDestination);
+                  }}
+                    value={this.state.endDestination}
+                  />
               </Item>
+              {endLocationPredictions}
 
               {/* Date picker */}
               <TouchableOpacity onPress={this._showDatePicker}>
@@ -263,7 +397,7 @@ export default class JourneyScreen extends Component {
 
               {/* Submit search */}
               <View style={styles.buttonContainer}>
-                <Button danger style={styles.button}>
+                <Button danger style={styles.button} onPress={this.onSubmit}>
                   <Text>Search</Text>
                 </Button>
               </View>
