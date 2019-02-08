@@ -8,12 +8,18 @@ import TicktetsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/AccountsScreen';
 import WalletScreen from '../screens/WalletScreen';
 
+
+
+
+
+
+
 const JourneyStack = createStackNavigator({
-  Home: JourneyScreen,
+  Home: JourneyScreen
 });
 
 JourneyStack.navigationOptions = {
-  tabBarLabel: 'Journey',
+  tabBarLabel: 'Plan & Buy',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -27,7 +33,7 @@ const TicketsStack = createStackNavigator({
 });
 
 TicketsStack.navigationOptions = {
-  tabBarLabel: 'Tickets',
+  tabBarLabel: 'My Tickets',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -41,7 +47,7 @@ const WalletStack = createStackNavigator({
 });
 
 WalletStack.navigationOptions = {
-  tabBarLabel: 'Wallet',
+  tabBarLabel: 'My Wallet',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
@@ -55,19 +61,20 @@ const AccountStack = createStackNavigator({
 });
 
 AccountStack.navigationOptions = {
-  tabBarLabel: 'Account',
+  tabBarLabel: 'Settings',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
     />
   ),
 };
+
 
 export default createBottomTabNavigator({
   JourneyStack,
   TicketsStack,
   WalletStack,
-  AccountStack,
-  
+  AccountStack
+
 });
