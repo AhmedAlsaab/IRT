@@ -16,6 +16,8 @@ import _ from "lodash";
 import { Content, Container, Button, Text, Item, Input, StyleProvider, Row } from 'native-base';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
+import GlobalHeader from '../components/GlobalHeader';
+
 
 export default class JourneyScreen extends Component {
   static navigationOptions = {
@@ -47,13 +49,15 @@ export default class JourneyScreen extends Component {
       street:"",
       city:"",
       country:"",
+      startType: 1,
 
       //EndLocation
       endLocationPredictions: [],
       endPlaceID: "",
       endStreet: "",
       endCity: "",
-      endCountry: ""
+      endCountry: "",
+      endType: 2
     };
     this.startPositionDebounced = _.debounce(
       this.startPosition,
@@ -213,10 +217,12 @@ export default class JourneyScreen extends Component {
       "street": this.state.street,
       "city": this.state.city,
       "country": this.state.country,
+      "startType": this.state.startType,
       "endPlaceID": this.state.endPlaceID,
       "endStreet": this.state.endStreet,
       "endCity": this.state.endCity,
       "endCountry": this.state.endCountry,
+      "endType": this.state.endType
     }
 
     fetch('http://192.168.0.33:3000/booking/temp',
@@ -279,7 +285,9 @@ export default class JourneyScreen extends Component {
     return (
       <StyleProvider style={getTheme(platform)}>
         <ScrollView>
+        <GlobalHeader type={1}  />
           <Container style={styles.contentContainer}>
+         
             <Content>
 
               {/* Favourite recent journeys button */}

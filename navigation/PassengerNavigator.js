@@ -15,7 +15,7 @@ import WalletScreen from '../screens/WalletScreen';
 
 
 const JourneyStack = createStackNavigator({
-  Home: JourneyScreen,
+  Home: JourneyScreen
 });
 
 JourneyStack.navigationOptions = {
