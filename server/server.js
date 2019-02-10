@@ -123,12 +123,17 @@ app.post('/booking/temp', (req, res) => {
     const startStreet = req.body.street;
     const startCity = req.body.city;
     const startCountry = req.body.country;
+    const startLat = req.body.lat;
+    const startLng = req.body.lng;
     const startType = req.body.startType;
+    
 
     const endPlaceId = req.body.endPlaceID;
     const endStreet = req.body.endStreet;
     const endCity = req.body.endCity;
     const endCountry = req.body.endCountry;
+    const endLat = req.body.endLat;
+    const endLng = req.body.endLng;
     const endType = req.body.endType;
 
     connection.query("INSERT INTO journey (start_time, end_time) VALUES (?, ?)",
@@ -137,14 +142,14 @@ app.post('/booking/temp', (req, res) => {
             console.log(row.insertId)
             if (error) throw error;
 
-            connection.query("INSERT INTO coordinate (place_id, street, city, country, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?)",
-                [startPlaceId, startStreet, startCity, startCountry, startType, row.insertId],
+            connection.query("INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [startPlaceId, startStreet, startCity, startCountry, startLat, startLng, startType, row.insertId],
                 (error, row, fields) => {
                     if (error) throw error;
                 })
 
-            connection.query("INSERT INTO coordinate (place_id, street, city, country, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?)",
-                [endPlaceId, endStreet, endCity, endCountry, endType, row.insertId],
+            connection.query("INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [endPlaceId, endStreet, endCity, endCountry, endLat, endLng, endType, row.insertId],
                 (error, row, fields) => {
                     if (error) throw error;
                 })
