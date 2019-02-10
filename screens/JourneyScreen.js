@@ -13,7 +13,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import apiKey from "../google_api_key";
 import API_KEY from "../google_api_key";
 import _ from "lodash";
-import { Content, Container, Button, Text, Item, Input, StyleProvider, Row } from 'native-base';
+import { Content, Container, Button, Text, Item, Input, StyleProvider, Row, List, ListItem, Body, Switch, Right} from 'native-base';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
@@ -30,6 +30,7 @@ export default class JourneyScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      switchValue: false,
       error: "",
       latitude: 0,
       longitude: 0,
@@ -119,6 +120,10 @@ export default class JourneyScreen extends Component {
     console.log(this.state.time)
     this._hideTimePicker();
   };
+
+  _handleSwitchToggle = () => this.setState( state => ({
+    switchValue: !state.switchValue
+  }))
 
   // Toggles advanced search inputs
   toggleAdvanced = () => {
@@ -371,7 +376,21 @@ async getRouteDirections() {
           <Container style={styles.contentContainer}>
          
             <Content>
-
+            <View>
+                <Body>
+                  <Text> Dev Mode </Text>
+                </Body>
+                <Right>
+                  <Switch 
+                  value={this.state.switchValue}
+                  
+                    onValueChange={() =>{
+                    this._handleSwitchToggle();
+                    this.getRouteDirections();
+                    
+                  }}/>
+                </Right>
+              </View>
               {/* Favourite recent journeys button */}
               <View style={styles.secondaryButtonContainer}>
                 <Button bordered danger style={styles.secondaryButton}>
@@ -484,25 +503,20 @@ async getRouteDirections() {
                   </Text>
                 </Button>
               </View>
+             
 
               {/* Submit search */}
               <View style={styles.buttonContainer}>
                 <Button danger style={styles.button} 
                 onPress={() => {
-                this.getRouteDirections();
+                
                 this.check();
                   }}>
                   <Text>Search</Text>
                 </Button>
                
               </View>
-              <Button danger style={styles.button} 
-                onPress={() => {
-                //this.getRouteDirections();
-                this.check();
-                  }}>
-                  <Text>Search</Text>
-                </Button>
+              
                 
             </Content>
           </Container>
