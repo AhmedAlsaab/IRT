@@ -72,6 +72,7 @@ AccountStack.navigationOptions = {
 
 
 export default createBottomTabNavigator({
+  
   JourneyStack,
   TicketsStack,
   WalletStack,
