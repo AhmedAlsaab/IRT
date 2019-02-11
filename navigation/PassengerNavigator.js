@@ -3,79 +3,54 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import JourneyScreen from '../screens/JourneyScreen';
-import TicktetsScreen from '../screens/TicktetsScreen';
-import AccountsScreen from '../screens/AccountsScreen';
-import WalletScreen from '../screens/WalletScreen';
-
-
-
-
-
-
+import JourneyScreen from '../screens/passenger/JourneyScreen';
+import TicktetsScreen from '../screens/passenger/TicktetsScreen';
+import AccountsScreen from '../screens/passenger/AccountsScreen';
+import WalletScreen from '../screens/passenger/WalletScreen';
 
 const JourneyStack = createStackNavigator({
-  Home: JourneyScreen
+	Home: JourneyScreen
 });
 
 JourneyStack.navigationOptions = {
-  tabBarLabel: 'Plan & Buy',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-bus' : 'md-bus'}
-    />
-  ),
+	tabBarLabel: 'Plan & Buy',
+	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-bus' : 'md-bus'} />
 };
 
 const TicketsStack = createStackNavigator({
-  Ticket: TicktetsScreen,
+	Ticket: TicktetsScreen
 });
 
 TicketsStack.navigationOptions = {
-  tabBarLabel: 'My Tickets',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'}
-    />
-  ),
+	tabBarLabel: 'My Tickets',
+	tabBarIcon: ({ focused }) => (
+		<TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-pricetags' : 'md-pricetags'} />
+	)
 };
 
 const WalletStack = createStackNavigator({
-  Links: WalletScreen,
+	Links: WalletScreen
 });
 
 WalletStack.navigationOptions = {
-  tabBarLabel: 'My Wallet',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'}
-    />
-  ),
+	tabBarLabel: 'My Wallet',
+	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'} />
 };
 
 const AccountStack = createStackNavigator({
-  Account: AccountsScreen,
+	Account: AccountsScreen
 });
 
 AccountStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'}
-    />
-  ),
+	tabBarLabel: 'Settings',
+	tabBarIcon: ({ focused }) => (
+		<TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-settings' : 'md-settings'} />
+	)
 };
 
-
 export default createBottomTabNavigator({
-  
-  JourneyStack,
-  TicketsStack,
-  WalletStack,
-  AccountStack
-
+	JourneyStack,
+	TicketsStack,
+	WalletStack,
+	AccountStack
 });
