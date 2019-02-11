@@ -14,7 +14,8 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../../components/StyledText';
 import { Button } from 'native-base';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
+import PolyLine from '@mapbox/polyline';
 
 const window = Dimensions.get('window');
 
@@ -73,6 +74,10 @@ export default class MySchedule extends React.Component {
 							title="Street Name"
 							description="# Passengers"
 						/>
+					))}
+
+					{this.state.data.map((coordinates) => (
+						<MapView.Polyline coordinates={this.state.data} strokeWidth={6} strokeColor="red" />
 					))}
 				</MapView>
 				{/* <FlatList
