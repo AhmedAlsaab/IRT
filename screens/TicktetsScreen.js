@@ -12,7 +12,7 @@ export default class LinksScreen extends React.Component {
   };
 
   fetchData= async() =>{
-    const response = await fetch('http://192.168.0.33:3000/users');
+    const response = await fetch('http://10.22.201.102:3000/users');
     const users = await response.json();
     this.setState({data: users});
   }

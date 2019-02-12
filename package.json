@@ -4,6 +4,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
+    "client": "expo start --android",
+    "server": "nodemon server/server.js",
     "eject": "expo eject",
     "test": "node ./node_modules/jest/bin/jest.js --watchAll",
     "react-devtools": "react-devtools"

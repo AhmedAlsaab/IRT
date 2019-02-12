@@ -7,7 +7,7 @@ var app = express();
 var bcrypt = require('bcryptjs');
 var saltRounds = 10;
 
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
 
@@ -17,7 +17,7 @@ app.use(expressValidator());
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: 'root',
+    password: '',
     database: 'transport'
 })
 

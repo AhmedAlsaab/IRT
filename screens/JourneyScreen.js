@@ -251,7 +251,7 @@ export default class JourneyScreen extends Component {
 			endType: this.state.endType
 		};
 
-		fetch('http://192.168.0.33:3000/booking/temp', {
+		fetch('http://10.22.201.102:3000/booking/temp', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
