@@ -8,12 +8,6 @@ import TicktetsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/AccountsScreen';
 import WalletScreen from '../screens/WalletScreen';
 
-
-
-
-
-
-
 const JourneyStack = createStackNavigator({
   Home: JourneyScreen
 });

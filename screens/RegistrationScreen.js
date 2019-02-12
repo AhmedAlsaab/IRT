@@ -96,7 +96,7 @@ class RegistrationScreen extends Component {
             </View>
             <View style={styles.inputContainer}>
               <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>
-              <TextInput placeholder='First Name' style={styles.input} onChangeText={(text) => this.setState({ firstName: text })} value={this.state.firstName} value={this.state.firstName}></TextInput>
+              <TextInput placeholder='First Name' style={styles.input} onChangeText={(text) => this.setState({ firstName: text })} value={this.state.firstName}></TextInput>
             </View>
             <View style={styles.inputContainer}>
               <Ionicons name="md-person" size={32} style={styles.inputIcons}></Ionicons>

@@ -37,7 +37,7 @@ app.post('/register', (req, res) => {
 
     //Send errors back to client
     const errors = req.validationErrors();
-    if (errors) {
+    if (errors) { 
         console.log(errors)
         return res.send({ status: 0, errors: errors })
     }
