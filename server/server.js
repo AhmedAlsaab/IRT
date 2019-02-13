@@ -7,6 +7,14 @@ var app = express();
 var bcrypt = require('bcryptjs');
 var saltRounds = 10;
 
+var engines = require('consolidate');
+var paypal = require('paypal-rest-sdk')
+var paypalApiKey = require('./paypal_api_key')
+
+app.engine("ejs", engines.ejs)
+app.set("views", "./views")
+app.set("view engine", "ejs")
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
@@ -25,6 +33,12 @@ connection.connect((error) => {
     if (error) throw error
     else console.log('Connected to MySQL Database')
 })
+
+paypal.configure({
+    'mode': 'sandbox', //sandbox or live
+    'client_id': paypalApiKey.client_id,
+    'client_secret': paypalApiKey.client_secret
+  });
 
 app.post('/register', (req, res) => {
     //Check for errors in user input
@@ -94,6 +108,87 @@ app.post('/login', (req, res) => {
         })
 })
 
+app.get('/paypal-button', (req, res) => {
+    res.render("index")
+})
+
+app.get("/paypal", (req, res) => {
+    var create_payment_json = {
+        intent: "sale",
+        payer: {
+            payment_method: "paypal"
+        },
+        redirect_urls: {
+            return_url: "http://10.22.201.102:3000/success",
+            cancel_url: "http://10.22.201.102:3000/cancel"
+        },
+        transactions: [
+            {
+                item_list: {
+                    items: [
+                        {
+                            name: "item",
+                            sku: "item",
+                            price: "1.00",
+                            currency: "USD",
+                            quantity: 1
+                        }
+                    ]
+                },
+                amount: {
+                    currency: "USD",
+                    total: "1.00"
+                },
+                description: "This is the payment description."
+            }
+        ]
+    };
+
+    paypal.payment.create(create_payment_json, function(error, payment) {
+        if (error) {
+            throw error;
+        } else {
+            console.log("Create Payment Response");
+            console.log(payment)
+            res.redirect(payment.links[1].href);
+        }
+    });
+});
+
+app.get("/success", (req, res) => {
+    // res.send("Success");
+    var PayerID = req.query.PayerID;
+    var paymentId = req.query.paymentId;
+    var execute_payment_json = {
+        payer_id: PayerID,
+        transactions: [
+            {
+                amount: {
+                    currency: "USD",
+                    total: "1.00"
+                }
+            }
+        ]
+    };
+
+    paypal.payment.execute(paymentId, execute_payment_json, function(
+        error,
+        payment
+    ) {
+        if (error) {
+            console.log(error.response);
+            throw error;
+        } else {
+            console.log("Get Payment Response");
+            console.log(JSON.stringify(payment));
+            res.render("success");
+        }
+    });
+});
+
+app.get("cancel", (req, res) => {
+    res.render("cancel");
+});
 
 app.get('/users', function (req, res) {
     connection.query('select * from students', function (error, rows, fields) {
@@ -154,10 +249,6 @@ app.post('/booking/temp', (req, res) => {
                     if (error) throw error;
                 })
         })
-
-
-
-
 });
 
 app.listen(3000);

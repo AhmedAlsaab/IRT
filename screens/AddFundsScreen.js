@@ -1,8 +1,10 @@
 import React from 'react';
-import { StyleSheet, View, Dimensions, TextInput, Image } from 'react-native';
+import { StyleSheet, View, Dimensions, TextInput, Image, Modal, WebView, TouchableOpacity} from 'react-native';
 import { Content, Container, Button, Text } from 'native-base';
 import GlobalHeader from '../components/GlobalHeader';
-import Icon from 'react-native-vector-icons/AntDesign'
+import PayPal from 'react-native-paypal-wrapper';
+import Icon from 'react-native-vector-icons/AntDesign';
+import { client_id } from '../server/paypal_api_key'
 
 export default class WalletScreen extends React.Component {
   static navigationOptions = {
@@ -10,15 +12,37 @@ export default class WalletScreen extends React.Component {
   };
 
   state = {
+    showModal: false,
+    status: '',
     amount: 0.00
   }
 
   onPaypalSubmit = () => {
-    console.log('paypal api')
+    this.setState({
+      showModal: true,
+      status: 'Pending'
+    })
+  }
+
+  handleResponse = (data) => {
+    if (data.title === 'success'){
+      this.setState({
+        showModal: false,
+        status: 'Complete'
+      })
+      console.log("yay")
+    }
+    if (data.title === 'cancel'){
+      this.setState({
+        showModal: false,
+        status: 'Cancelled'
+      })
+      console.log("nay")
+    }
   }
 
   onDebitCreditSubmit = () => {
-    console.log('debit/credit api')
+    console.log('debit/credit api') 
   }
 
   onAmountFocus = () => {
@@ -60,6 +84,14 @@ export default class WalletScreen extends React.Component {
                 <Text style={styles.paymentOptionText} uppercase={false}>PayPal</Text>
               </Button>
             </View>
+          </View>
+          <View>
+            <Modal visible={this.state.showModal} onRequestClose={() =>  this.setState({ showModal: false }) }>
+              <WebView source={{ uri: 'http://10.22.201.102:3000/paypal-button' }} onNavigationStateChange={data => this.handleResponse(data)} injectedJavaScript={`document.f1.submit()`}>
+
+              </WebView>
+            </Modal>
+            <Text>Payment Status: {this.state.status}</Text>
           </View>
         </Content>
       </Container>

@@ -34,7 +34,7 @@ class RegistrationScreen extends Component {
 
     fetch("http://10.22.201.102:3000/register", {
       method: "POST",
-      headers: {
+      headers: { 
         "Accept": "application/json",
         "Content-Type": "application/json"
       },
