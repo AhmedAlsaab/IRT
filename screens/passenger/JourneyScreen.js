@@ -120,7 +120,7 @@ export default class JourneyScreen extends Component {
 
 		console.log(placeID, endPlaceID);
 		if (placeID.length === 0 || endPlaceID.length === 0) {
-			return console.log('no');
+			return console.log('Waiting for second input');
 		}
 
 		try {
@@ -131,6 +131,7 @@ export default class JourneyScreen extends Component {
 			const json = await response.json();
 			console.log(json);
 			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
+			console.log(points);
 			iStartLat = json.routes[0].legs[0].start_location.lat;
 			const iStartLng = json.routes[0].legs[0].start_location.lng;
 			const iEndLat = json.routes[0].legs[0].end_location.lat;
