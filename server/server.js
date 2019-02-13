@@ -108,7 +108,10 @@ app.get('/users', function (req, res) {
 
 app.get('/journey', function (req, res) {
     connection.query(
-        'select coordinate_type.type, coordinate.street, coordinate.city from coordinate inner join coordinate_type on coordinate.fk_coordinate_type_id=coordinate_type.coordinate_type_id where coordinate.fk_journey_id=1',
+        `select coordinate_type.type, coordinate.street, coordinate.city
+        from coordinate
+        inner join coordinate_type on coordinate.fk_coordinate_type_id=coordinate_type.coordinate_type_id
+        where coordinate.fk_journey_id=1`,
         function (error, rows, fields) {
         if (error) console.log(error)
 

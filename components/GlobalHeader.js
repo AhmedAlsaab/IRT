@@ -36,11 +36,11 @@ export default class GlobalHeader extends Component {
         <Body style={styles.flex_1}>
         {this.props.type == 1 && <Image
             source={require('../branding/logos/two_line_version/TFW_two_line_mono_negative_rgb.png')}
-            style={{height: 70, width: 290}}
+            style={{height: 50, width: 230}}
         />}
         {this.props.type == 2 && <Image
             source={require('../branding/logos/four_line_version/TFW_four_line_mono_negative_rgb.png')}
-            style={{height: 160, width: 400}}
+            style={{height: 140, width: 300}}
         />}
         </Body>
         <Right style={styles.flex_1} />
