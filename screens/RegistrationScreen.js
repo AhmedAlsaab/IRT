@@ -32,7 +32,7 @@ class RegistrationScreen extends Component {
       "type": this.state.type
     }
 
-    fetch("http://192.168.0.33:3000/register", {
+    fetch("http://192.168.0.10:3000/register", {
       method: "POST",
       headers: {
         "Accept": "application/json",

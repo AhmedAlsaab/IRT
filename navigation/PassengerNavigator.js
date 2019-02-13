@@ -4,6 +4,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/JourneyScreen';
+import SummaryScreen from '../screens/SummaryScreen';
 import TicktetsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/AccountsScreen';
 import WalletScreen from '../screens/WalletScreen';
@@ -15,7 +16,11 @@ import WalletScreen from '../screens/WalletScreen';
 
 
 const JourneyStack = createStackNavigator({
-  Home: JourneyScreen
+  Home: JourneyScreen,
+  Summary: SummaryScreen,
+},
+{
+  initialRouteName: "Home"
 });
 
 JourneyStack.navigationOptions = {

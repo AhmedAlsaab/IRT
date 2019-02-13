@@ -251,7 +251,7 @@ export default class JourneyScreen extends Component {
 			endType: this.state.endType
 		};
 
-		fetch('http://192.168.0.33:3000/booking/temp', {
+		fetch('http://192.168.0.10:3000/booking/temp', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -425,6 +425,7 @@ export default class JourneyScreen extends Component {
 									style={styles.button}
 									onPress={() => {
 										this.onSubmit();
+										this.props.navigation.navigate('Summary')
 									}}
 								>
 									<Text>Search</Text>
