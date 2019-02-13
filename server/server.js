@@ -95,11 +95,7 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/driver/schedule', function(req, res) {
-	connection.query('SELECT longitude, latitude FROM coordinate WHERE fk_coordinate_type_id = 1;', function(
-		error,
-		rows,
-		fields
-	) {
+	connection.query('SELECT * FROM coordinate WHERE fk_coordinate_type_id = 1;', function(error, rows, fields) {
 		if (error) console.log(error);
 		else {
 			console.log(rows);
