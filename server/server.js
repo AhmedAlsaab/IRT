@@ -104,6 +104,20 @@ app.get('/driver/schedule', function(req, res) {
 	});
 });
 
+app.get('/driver/place', function(req, res) {
+	connection.query('SELECT latitude, longitude FROM coordinate WHERE fk_coordinate_type_id = 1;', function(
+		error,
+		rows,
+		fields
+	) {
+		if (error) console.log(error);
+		else {
+			console.log(rows);
+			res.send(rows);
+		}
+	});
+});
+
 app.post('/booking/temp', (req, res) => {
 	// "place_id": this.state.placeID,
 	//   "street": this.state.street,
