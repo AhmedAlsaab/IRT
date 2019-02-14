@@ -48,7 +48,7 @@ TicketsStack.navigationOptions = {
 };
 
 const WalletStack = createStackNavigator({
-  Links: WalletScreen,
+  Wallet: WalletScreen,
 });
 
 WalletStack.navigationOptions = {
