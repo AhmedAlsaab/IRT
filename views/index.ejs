@@ -5,10 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-</head>
+    <style>
+        .loader {
+            position: absolute;
+            top: calc(50vh - (/* height */120px / 2));
+            left: calc(50vw - (/* width */120px / 2)); 
+            border: 16px solid #f3f3f3;
+            /* Light grey */
+            border-top: 16px solid #3498db;
+            /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 1s linear infinite;
+        }
+    
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+    
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    </head>
 <body>
-    Please wait
+    <div class="loader"></div>
     <form name="f1" action="/paypal">
+        <input type="hidden" name="amount" value="5.0" id="paypal-amount">
         <!-- <button type="submit">PayPal</button> -->
     </form>
 </body>

@@ -24,18 +24,20 @@ export default class WalletScreen extends React.Component {
     })
   }
 
-  handleResponse = (data) => {
+  handleResponse = (data) => {    
     if (data.title === 'success'){
       this.setState({
         showModal: false,
-        status: 'Complete'
+        status: 'Complete',
+        amount: 0.00
       })
       console.log("yay")
     }
     if (data.title === 'cancel'){
       this.setState({
         showModal: false,
-        status: 'Cancelled'
+        status: 'Cancelled',
+        amount: 0.00
       })
       console.log("nay")
     }
@@ -87,7 +89,7 @@ export default class WalletScreen extends React.Component {
           </View>
           <View>
             <Modal visible={this.state.showModal} onRequestClose={() =>  this.setState({ showModal: false }) }>
-              <WebView source={{ uri: 'http://10.22.201.102:3000/paypal-button' }} onNavigationStateChange={data => this.handleResponse(data)} injectedJavaScript={`document.f1.submit()`}>
+              <WebView style={styles.webview} source={{ uri: 'http://10.22.201.102:3000/paypal-button' }} onNavigationStateChange={data => this.handleResponse(data)} injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state.amount}; document.f1.submit()`}>
 
               </WebView>
             </Modal>
@@ -102,6 +104,11 @@ export default class WalletScreen extends React.Component {
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  webview:{
+    width: window.width,
+    height: window.height,
+    flex: 1
+  },
   contentContainer:{
     flexDirection: 'column',
     justifyContent: 'center',

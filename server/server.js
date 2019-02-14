@@ -1,4 +1,5 @@
 var express = require('express');
+var session = require('express-session');
 var expressValidator = require('express-validator')
 var bodyParser = require('body-parser')
 var mysql = require('mysql');
@@ -18,6 +19,7 @@ app.set("view engine", "ejs")
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use(session({'secret': 'treg34645645lkj2m4l32erfdsh03'}))
 
 
 // Change to your credentials
@@ -108,87 +110,6 @@ app.post('/login', (req, res) => {
         })
 })
 
-app.get('/paypal-button', (req, res) => {
-    res.render("index")
-})
-
-app.get("/paypal", (req, res) => {
-    var create_payment_json = {
-        intent: "sale",
-        payer: {
-            payment_method: "paypal"
-        },
-        redirect_urls: {
-            return_url: "http://10.22.201.102:3000/success",
-            cancel_url: "http://10.22.201.102:3000/cancel"
-        },
-        transactions: [
-            {
-                item_list: {
-                    items: [
-                        {
-                            name: "item",
-                            sku: "item",
-                            price: "1.00",
-                            currency: "USD",
-                            quantity: 1
-                        }
-                    ]
-                },
-                amount: {
-                    currency: "USD",
-                    total: "1.00"
-                },
-                description: "This is the payment description."
-            }
-        ]
-    };
-
-    paypal.payment.create(create_payment_json, function(error, payment) {
-        if (error) {
-            throw error;
-        } else {
-            console.log("Create Payment Response");
-            console.log(payment)
-            res.redirect(payment.links[1].href);
-        }
-    });
-});
-
-app.get("/success", (req, res) => {
-    // res.send("Success");
-    var PayerID = req.query.PayerID;
-    var paymentId = req.query.paymentId;
-    var execute_payment_json = {
-        payer_id: PayerID,
-        transactions: [
-            {
-                amount: {
-                    currency: "USD",
-                    total: "1.00"
-                }
-            }
-        ]
-    };
-
-    paypal.payment.execute(paymentId, execute_payment_json, function(
-        error,
-        payment
-    ) {
-        if (error) {
-            console.log(error.response);
-            throw error;
-        } else {
-            console.log("Get Payment Response");
-            console.log(JSON.stringify(payment));
-            res.render("success");
-        }
-    });
-});
-
-app.get("cancel", (req, res) => {
-    res.render("cancel");
-});
 
 app.get('/users', function (req, res) {
     connection.query('select * from students', function (error, rows, fields) {
@@ -203,17 +124,6 @@ app.get('/users', function (req, res) {
 
 
 app.post('/booking/temp', (req, res) => {
-    // "place_id": this.state.placeID,
-    //   "street": this.state.street,
-    //   "city": this.state.city,
-    //   "country": this.state.country,
-    //   "startType": this.state.startType,
-    //   "endPlaceID": this.state.endPlaceID,
-    //   "endStreet": this.state.endStreet,
-    //   "endCity": this.state.endCity,
-    //   "endCountry": this.state.endCountry,
-    //   "endType": this.state.endType
-
     const startPlaceId = req.body.place_id;
     const startStreet = req.body.street;
     const startCity = req.body.city;
@@ -249,6 +159,93 @@ app.post('/booking/temp', (req, res) => {
                     if (error) throw error;
                 })
         })
+});
+
+
+app.get('/paypal-button', (req, res) => {
+    res.render("index")
+})
+
+app.get("/paypal", (req, res) => {
+    req.session.amount = parseFloat(req.query.amount).toFixed(2)
+    var create_payment_json = {
+        intent: "sale",
+        payer: {
+            payment_method: "paypal"
+        },
+        redirect_urls: {
+            return_url: "http://10.22.201.102:3000/success",
+            cancel_url: "http://10.22.201.102:3000/cancel"
+        },
+        transactions: [
+            {
+                item_list: {
+                    items: [
+                        {
+                            name: "item",
+                            sku: "item",
+                            price: req.query.amount,
+                            currency: "GBP",
+                            quantity: 1
+                        }
+                    ]
+                },
+                amount: {
+                    currency: "GBP",
+                    total: req.query.amount
+                },
+                description: "Add funds to Transport for Wales wallet"
+            }
+        ]
+    };
+
+    paypal.payment.create(create_payment_json, function(error, payment) {
+        if (error) {
+            throw error;
+        } else {
+            console.log("Create Payment Response");
+            console.log(req.session.amount)
+
+            console.log(payment)
+            res.redirect(payment.links[1].href);
+        }
+    });
+});
+
+app.get("/success", (req, res) => {
+    console.log(req.session.amount)
+    var PayerID = req.query.PayerID;
+    var paymentId = req.query.paymentId;
+    var execute_payment_json = {
+        payer_id: PayerID,
+        transactions: [
+            {
+                amount: {
+                    currency: "GBP",
+                    total: parseFloat(req.session.amount).toFixed(2)
+                }
+            }
+        ]
+    };
+
+    paypal.payment.execute(paymentId, execute_payment_json, function(
+        error,
+        payment
+    ) {
+        if (error) {
+            console.log(error.response);
+            throw error;
+        } else {
+            //Add money to users account
+
+
+            res.render("success");
+        }
+    });
+});
+
+app.get("/cancel", (req, res) => {
+    res.render("cancel");
 });
 
 app.listen(3000);
