@@ -10,10 +10,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 export default class SummaryScreen extends React.Component {
     static navigationOptions = {
         header: null,
-        headerLeft: <Button
-            title="Back"
-            onPress={() => navigation.goBack()}
-        />
     };
     state = {
         isLoadingComplete: false,
@@ -92,11 +88,7 @@ export default class SummaryScreen extends React.Component {
                                     <View style={styles.buttonContainer}>
                                         <Button
                                             danger
-                                            style={styles.button}
-                                        // onPress={() => {
-                                        //     this.onSubmit();
-                                        //     this.props.navigation.navigate('')
-                                        // }}
+                                            style={[ styles.button, { backgroundColor: '#ff0000' } ]}
                                         >
                                             <Text style={styles.buttonText}>Pay</Text>
                                         </Button>
@@ -104,10 +96,9 @@ export default class SummaryScreen extends React.Component {
                                             bordered
                                             danger
                                             style={styles.button}
-                                        // onPress={() => {
-                                        //     this.onSubmit();
-                                        //     this.props.navigation.navigate('')
-                                        // }}
+                                            onPress={() => {
+                                                this.props.navigation.navigate('Wallet')
+                                            }}
                                         >
                                             <Text style={styles.buttonText}>Add Funds</Text>
                                         </Button>
@@ -222,6 +213,7 @@ const styles = StyleSheet.create({
         width: '100%',
         marginTop: 15,
         justifyContent: 'space-evenly',
+        marginBottom: 15,
     },
     button: {
         width: '45%',

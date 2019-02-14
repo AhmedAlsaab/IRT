@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
 	button: {
 		width: '100%',
 		justifyContent: 'center',
-		color: '#ff6666'
+		backgroundColor: '#ff0000'
 	},
 	buttontext: {
 		color: '#000000'
