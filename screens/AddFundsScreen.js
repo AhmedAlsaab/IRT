@@ -18,6 +18,7 @@ export default class WalletScreen extends React.Component {
   }
 
   onPaypalSubmit = () => {
+    if(this.state.amount <= 5) return; //throw error
     this.setState({
       showModal: true,
       status: 'Pending'

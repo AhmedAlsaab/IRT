@@ -238,7 +238,6 @@ app.get("/success", (req, res) => {
         } else {
             //Add money to users account
 
-
             res.render("success");
         }
     });
