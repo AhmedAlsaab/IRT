@@ -3,7 +3,7 @@ import { Image, Platform, ScrollView, StyleSheet, FlatList, TouchableOpacity, Vi
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../../components/StyledText';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import MapView, { Marker, Polyline, Circle } from 'react-native-maps';
 import PolyLine from '@mapbox/polyline';
 import GlobalHeader from '../../components/GlobalHeader';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -24,6 +24,9 @@ import {
 } from 'native-base';
 //const window = Dimensions.get('window');
 
+RADIUS = 2000;
+zoomAmount = 15;
+
 export default class MySchedule extends React.Component {
 	static navigationOptions = {
 		header: null
@@ -31,9 +34,15 @@ export default class MySchedule extends React.Component {
 
 	state = {
 		data: [],
-		mapRegion: { latitude: 51481583, longitude: -3.17909, latitudeDelta: 0.0922, longitudeDelta: 0.0421 },
+		mapRegion: { latitude: 51.481583, longitude: -3.17909, latitudeDelta: 0.0122, longitudeDelta: 0.0121 },
 		locationResult: null,
-		location: { coords: { latitude: 51.481583, longitude: -3.17909 } }
+		currentLatitude: null,
+		currentLongitude: null,
+		location: { coords: { latitude: 51.481583, longitude: -3.17909 } },
+		LATLNG: {
+			latitude: 51.481583,
+			longitude: -3.17909
+		}
 	};
 
 	fetchData = async () => {
@@ -79,50 +88,70 @@ export default class MySchedule extends React.Component {
 								<Icon name="accessible" size={20} color="#bcbcbc" />
 								<Text style={styles.cardText}># Wheelchair Passenger</Text>
 							</CardItem>
-
-							<View style={styles.innerCard}>
-								<CardItem>
-									<Icon name="my-location" size={20} color="#bcbcbc" />
-									<Text style={styles.cardHeaders}>Cardiff Central</Text>
-									<Right />
-								</CardItem>
-								<Content padder>
-									<FlatList
-										data={this.state.data}
-										keyExtractor={(item, index) => index.toString()}
-										renderItem={({ item }) => (
-											<View style={styles.stopsList}>
-												<Text>
-													{item.street} {item.city}
-												</Text>
-
-												<Text style={styles.innerText}>
-													<Icon name="person" size={20} color="#bcbcbc" />
-													5
-												</Text>
-											</View>
-										)}
-									/>
+							<View>
+								<Content>
+									<CardItem>
+										<Icon name="my-location" size={20} color="#bcbcbc" />
+										<Text style={styles.cardHeaders}>Cardiff Central</Text>
+									</CardItem>
+									<View style={styles.middleCard}>
+										<FlatList
+											data={this.state.data}
+											keyExtractor={(item, index) => index.toString()}
+											renderItem={({ item }) => (
+												<View style={styles.stopsList}>
+													<CardItem>
+														<Text>
+															{item.street} {item.city}
+														</Text>
+													</CardItem>
+													<CardItem>
+														<Text style={styles.innerText}>
+															<Icon name="person" size={20} color="#bcbcbc" />
+															5
+														</Text>
+													</CardItem>
+												</View>
+											)}
+										/>
+									</View>
 								</Content>
 								<CardItem header bordered>
 									<Icon name="location-on" size={20} color="#bcbcbc" />
 									<Text style={styles.cardHeaders}>End Destination</Text>
-									<Right>
-										<Icon name="schedule" />
-									</Right>
 								</CardItem>
 							</View>
 						</Card>
-						<H2>
-							<Text>View Route & Directions </Text>
-						</H2>
+						<View>
+							<H2>
+								<Text>View Route & Directions </Text>
+							</H2>
+							<Button
+								onPress={() => {
+									this.props.navigation.navigate('Route');
+								}}
+							>
+								<Text>Expand</Text>
+							</Button>
+						</View>
 						<MapView
 							style={styles.map}
+							//minZoomLevel={zoomAmount}
 							region={{
 								latitude: this.state.location.coords.latitude,
 								longitude: this.state.location.coords.longitude,
 								latitudeDelta: 0.0922,
 								longitudeDelta: 0.0421
+							}}
+							camera={{
+								center: {
+									latitude: this.state.location.coords.latitude,
+									longitude: this.state.location.coords.longitude
+								},
+								pitch: 5,
+								heading: 5,
+								zoom: 18,
+								altitude: 15
 							}}
 						>
 							{this.state.data.map((marker) => (
@@ -133,28 +162,25 @@ export default class MySchedule extends React.Component {
 								/>
 							))}
 
+							<MapView.Circle
+								key={(this.state.currentLongitude + this.state.currentLatitude).toString()}
+								center={this.state.LATLNG}
+								radius={RADIUS}
+								strokeWidth={1}
+								strokeColor={'#1a66ff'}
+								fillColor={'rgba(230,238,255,0.5)'}
+							/>
 							{this.state.data.map((coordinates) => (
 								<MapView.Polyline coordinates={this.state.data} strokeWidth={6} strokeColor="red" />
 							))}
 						</MapView>
-
-						{/* <FlatList
-							data={this.state.data}
-							keyExtractor={(item, index) => index.toString()}
-							renderItem={({ item }) => (
-								<View style={{ backgroundColor: '#abc123', padding: 10, margin: 10 }}>
-									<Text>{item.latitude}</Text>
-									<Text>{item.longitude}</Text>
-								</View>
-							)}
-						/> */}
 					</View>
 				</Content>
 			</Container>
 		);
 	}
 }
-const width = '70%';
+const width = '80%';
 const buttonWidth = '40%';
 const window = Dimensions.get('window');
 
@@ -170,27 +196,35 @@ const styles = StyleSheet.create({
 		height: 200
 	},
 	innerCard: {
-		borderLeftWidth: 0.5
+		//	borderLeftWidth: 3.5,
+		width,
+		alignSelf: 'center'
+	},
+	middleCard: {
+		borderLeftWidth: 3.5,
+		borderLeftColor: '#ff3333',
+		width,
+		alignSelf: 'center'
 	},
 	stopsList: {
-		padding: 10,
+		// padding: 10,
 		marginLeft: 30,
-		marginTop: 10,
+		// marginTop: 10,
 		borderBottomColor: '#bcbcbc',
-		borderBottomWidth: 0.5,
+		borderBottomWidth: 0.5
 
-		width
+		// width
 	},
 	cardText: {
 		margin: 5
 	},
 	cardHeaders: {
 		fontWeight: 'bold',
-		color: 'black',
-		margin: 5
+		color: 'black'
+		// margin: 5
 	},
 	innerText: {
-		margin: 5,
-		padding: 5
+		// margin: 5,
+		// padding: 5
 	}
 });

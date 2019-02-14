@@ -4,10 +4,17 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 
 import TabBarIcon from '../components/TabBarIcon';
 import MySchedule from '../screens/driver/MySchedule';
+import RouteScreen from '../screens/driver/RouteScreen';
 
-const MyScheduleStack = createStackNavigator({
-	Home: MySchedule
-});
+const MyScheduleStack = createStackNavigator(
+	{
+		Home: MySchedule,
+		Route: RouteScreen
+	},
+	{
+		initialRouteName: 'Route'
+	}
+);
 
 MyScheduleStack.navigationOptions = {
 	tabBarLabel: 'Schedule',
