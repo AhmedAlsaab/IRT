@@ -40,7 +40,6 @@ export default class WalletScreen extends React.Component {
         status: 'Cancelled',
         amount: 0.00
       })
-      console.log("nay")
     }
   }
 

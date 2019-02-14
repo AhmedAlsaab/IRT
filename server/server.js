@@ -54,7 +54,6 @@ app.post('/register', (req, res) => {
     //Send errors back to client
     const errors = req.validationErrors();
     if (errors) { 
-        console.log(errors)
         return res.send({ status: 0, errors: errors })
     }
 
@@ -113,10 +112,8 @@ app.post('/login', (req, res) => {
 
 app.get('/users', function (req, res) {
     connection.query('select * from students', function (error, rows, fields) {
-        if (error) console.log(error)
-
+        if (error) throw error
         else {
-            console.log(rows);
             res.send(rows);
         }
     })
@@ -144,7 +141,6 @@ app.post('/booking/temp', (req, res) => {
     connection.query("INSERT INTO journey (start_time, end_time) VALUES (?, ?)",
         [new Date(), new Date()],
         (error, row, fields) => {
-            console.log(row.insertId)
             if (error) throw error;
 
             connection.query("INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
@@ -200,20 +196,14 @@ app.get("/paypal", (req, res) => {
     };
 
     paypal.payment.create(create_payment_json, function(error, payment) {
-        if (error) {
-            throw error;
-        } else {
-            console.log("Create Payment Response");
-            console.log(req.session.amount)
-
-            console.log(payment)
+        if (error)  throw error;
+        else {
             res.redirect(payment.links[1].href);
         }
     });
 });
 
 app.get("/success", (req, res) => {
-    console.log(req.session.amount)
     var PayerID = req.query.PayerID;
     var paymentId = req.query.paymentId;
     var execute_payment_json = {
@@ -233,7 +223,6 @@ app.get("/success", (req, res) => {
         payment
     ) {
         if (error) {
-            console.log(error.response);
             throw error;
         } else {
             //Add money to users account
