@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, TextInput, Image, Modal, WebView, TouchableOpacity } from 'react-native';
 import { Content, Container, Button, Text } from 'native-base';
-import GlobalHeader from '../components/GlobalHeader';
+import GlobalHeader from '../../components/GlobalHeader';
 import PayPal from 'react-native-paypal-wrapper';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { client_id } from '../server/paypal_api_key';
+import { client_id } from '../../server/paypal_api_key';
 
 export default class WalletScreen extends React.Component {
 	static navigationOptions = {
@@ -84,7 +84,7 @@ export default class WalletScreen extends React.Component {
 						<View style={styles.paymentOptionsContainer}>
 							<Button style={styles.paymentOption} onPress={this.onDebitCreditSubmit}>
 								<Image
-									source={require('../assets/images/debit-card-icon.png')}
+									source={require('../../assets/images/debit-card-icon.png')}
 									style={[ styles.paymentOptionImage, { width: 80, height: 60 } ]}
 								/>
 								<Text style={styles.paymentOptionText} uppercase={false}>
@@ -95,7 +95,7 @@ export default class WalletScreen extends React.Component {
 						<View style={styles.paymentOptionsContainer}>
 							<Button style={styles.paymentOption} onPress={this.onPaypalSubmit}>
 								<Image
-									source={require('../assets/images/paypal-icon.png')}
+									source={require('../../assets/images/paypal-icon.png')}
 									style={styles.paymentOptionImage}
 								/>
 								<Text style={styles.paymentOptionText} uppercase={false}>

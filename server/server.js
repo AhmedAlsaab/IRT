@@ -1,5 +1,4 @@
 var express = require('express');
-var session = require('express-session');
 var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
@@ -19,14 +18,12 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
-app.use(session({ secret: 'treg34645645lkj2m4l32erfdsh03' }));
 
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
 var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	password: '',
 	database: 'transport'
 });
 
@@ -109,20 +106,11 @@ app.post('/login', (req, res) => {
 	});
 });
 
-app.get('/users', function(req, res) {
-	connection.query('select * from students', function(error, rows, fields) {
-		if (error) throw error;
-		else {
-			res.send(rows);
-		}
-	});
-});
-
-app.get('/users', function(req, res) {
-	connection.query('select * from students', function(error, rows, fields) {
+app.get('/driver/schedule', function(req, res) {
+	connection.query('SELECT * FROM coordinate WHERE fk_coordinate_type_id = 1', function(error, rows, fields) {
 		if (error) console.log(error);
 		else {
-			console.log(rows);
+			// console.log(rows);
 			res.send(rows);
 		}
 	});
@@ -242,6 +230,20 @@ app.get('/paypal', (req, res) => {
 		if (error) throw error;
 		else {
 			res.redirect(payment.links[1].href);
+		}
+	});
+});
+
+app.get('/driver/place', function(req, res) {
+	connection.query('SELECT latitude, longitude FROM coordinate WHERE fk_coordinate_type_id = 1', function(
+		error,
+		rows,
+		fields
+	) {
+		if (error) throw error;
+		else {
+			// console.log(rows);
+			res.send(rows);
 		}
 	});
 });

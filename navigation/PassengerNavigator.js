@@ -3,12 +3,12 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import JourneyScreen from '../screens/JourneyScreen';
-import SummaryScreen from '../screens/SummaryScreen';
-import TicktetsScreen from '../screens/TicktetsScreen';
-import AccountsScreen from '../screens/AccountsScreen';
-import AddFundsScreen from '../screens/AddFundsScreen';
-import WalletScreen from '../screens/WalletScreen';
+import JourneyScreen from '../screens/passenger/JourneyScreen';
+import SummaryScreen from '../screens/passenger/SummaryScreen';
+import TicktetsScreen from '../screens/passenger/TicktetsScreen';
+import AccountsScreen from '../screens/passenger/AccountsScreen';
+import AddFundsScreen from '../screens/passenger/AddFundsScreen';
+import WalletScreen from '../screens/passenger/WalletScreen';
 
 const JourneyStack = createStackNavigator(
 	{

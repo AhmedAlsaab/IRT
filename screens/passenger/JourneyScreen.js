@@ -3,14 +3,14 @@ import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOp
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import API_KEY from '../google_api_key';
+import API_KEY from '../../google_api_key';
 import _ from 'lodash';
 import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
-import getTheme from '../native-base-theme/components';
-import platform from '../native-base-theme/variables/platform';
-import GlobalHeader from '../components/GlobalHeader';
+import getTheme from '../../native-base-theme/components';
+import platform from '../../native-base-theme/variables/platform';
+import GlobalHeader from '../../components/GlobalHeader';
 import PolyLine from '@mapbox/polyline';
-import { getDateFromDateTime, getTimeFromDateTime } from '../utilityFunctions';
+import { getDateFromDateTime, getTimeFromDateTime } from '../../utilityFunctions';
 
 export default class JourneyScreen extends Component {
 	static navigationOptions = {
@@ -115,7 +115,7 @@ export default class JourneyScreen extends Component {
 
 		console.log(placeID, endPlaceID);
 		if (placeID.length === 0 || endPlaceID.length === 0) {
-			return console.log('no');
+			return console.log('Waiting for second input');
 		}
 
 		try {
@@ -126,6 +126,7 @@ export default class JourneyScreen extends Component {
 			const json = await response.json();
 			console.log(json);
 			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
+			console.log(points);
 			iStartLat = json.routes[0].legs[0].start_location.lat;
 			const iStartLng = json.routes[0].legs[0].start_location.lng;
 			const iEndLat = json.routes[0].legs[0].end_location.lat;
