@@ -1,4 +1,5 @@
 var express = require('express');
+var session = require('express-session');
 var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
@@ -7,21 +8,37 @@ var app = express();
 var bcrypt = require('bcryptjs');
 var saltRounds = 10;
 
-app.use(bodyParser.urlencoded());
+var engines = require('consolidate');
+var paypal = require('paypal-rest-sdk');
+var paypalApiKey = require('./paypal_api_key');
+
+app.engine('ejs', engines.ejs);
+app.set('views', './views');
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
+app.use(session({ secret: 'treg34645645lkj2m4l32erfdsh03' }));
 
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
 var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
+	password: '',
 	database: 'transport'
 });
 
 connection.connect((error) => {
 	if (error) throw error;
 	else console.log('Connected to MySQL Database');
+});
+
+paypal.configure({
+	mode: 'sandbox', //sandbox or live
+	client_id: paypalApiKey.client_id,
+	client_secret: paypalApiKey.client_secret
 });
 
 app.post('/register', (req, res) => {
@@ -39,7 +56,6 @@ app.post('/register', (req, res) => {
 	//Send errors back to client
 	const errors = req.validationErrors();
 	if (errors) {
-		console.log(errors);
 		return res.send({ status: 0, errors: errors });
 	}
 
@@ -95,6 +111,15 @@ app.post('/login', (req, res) => {
 
 app.get('/users', function(req, res) {
 	connection.query('select * from students', function(error, rows, fields) {
+		if (error) throw error;
+		else {
+			res.send(rows);
+		}
+	});
+});
+
+app.get('/users', function(req, res) {
+	connection.query('select * from students', function(error, rows, fields) {
 		if (error) console.log(error);
 		else {
 			console.log(rows);
@@ -120,16 +145,7 @@ app.get('/journey', function(req, res) {
 });
 
 app.post('/booking/temp', (req, res) => {
-	// "place_id": this.state.placeID,
-	//   "street": this.state.street,
-	//   "city": this.state.city,
-	//   "country": this.state.country,
-	//   "startType": this.state.startType,
-	//   "endPlaceID": this.state.endPlaceID,
-	//   "endStreet": this.state.endStreet,
-	//   "endCity": this.state.endCity,
-	//   "endCountry": this.state.endCountry,
-	//   "endType": this.state.endType
+	console.log(req.body);
 
 	const startPlaceId = req.body.place_id;
 	const startStreet = req.body.street;
@@ -147,11 +163,23 @@ app.post('/booking/temp', (req, res) => {
 	const endLng = req.body.endLng;
 	const endType = req.body.endType;
 
+	const date = req.body.date;
+	const time = req.body.time;
+	const numPassenger = req.body.numPassenger;
+	const numWheelchair = req.body.numWheelchair;
+
+	connection.query(
+		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
+		[ numPassenger, numWheelchair, 0, 0, date, time, new Date() ],
+		(error, row, fields) => {
+			if (error) throw error;
+		}
+	);
+
 	connection.query(
 		'INSERT INTO journey (start_time, end_time) VALUES (?, ?)',
 		[ new Date(), new Date() ],
 		(error, row, fields) => {
-			console.log(row.insertId);
 			if (error) throw error;
 
 			connection.query(
@@ -171,6 +199,81 @@ app.post('/booking/temp', (req, res) => {
 			);
 		}
 	);
+});
+
+app.get('/paypal-button', (req, res) => {
+	res.render('index');
+});
+
+app.get('/paypal', (req, res) => {
+	req.session.amount = parseFloat(req.query.amount).toFixed(2);
+	var create_payment_json = {
+		intent: 'sale',
+		payer: {
+			payment_method: 'paypal'
+		},
+		redirect_urls: {
+			return_url: 'http://192.168.0.33:3000/success',
+			cancel_url: 'http://192.168.0.33:3000/cancel'
+		},
+		transactions: [
+			{
+				item_list: {
+					items: [
+						{
+							name: 'item',
+							sku: 'item',
+							price: req.query.amount,
+							currency: 'GBP',
+							quantity: 1
+						}
+					]
+				},
+				amount: {
+					currency: 'GBP',
+					total: req.query.amount
+				},
+				description: 'Add funds to Transport for Wales wallet'
+			}
+		]
+	};
+
+	paypal.payment.create(create_payment_json, function(error, payment) {
+		if (error) throw error;
+		else {
+			res.redirect(payment.links[1].href);
+		}
+	});
+});
+
+app.get('/success', (req, res) => {
+	var PayerID = req.query.PayerID;
+	var paymentId = req.query.paymentId;
+	var execute_payment_json = {
+		payer_id: PayerID,
+		transactions: [
+			{
+				amount: {
+					currency: 'GBP',
+					total: parseFloat(req.session.amount).toFixed(2)
+				}
+			}
+		]
+	};
+
+	paypal.payment.execute(paymentId, execute_payment_json, function(error, payment) {
+		if (error) {
+			throw error;
+		} else {
+			//Add money to users account
+
+			res.render('success');
+		}
+	});
+});
+
+app.get('/cancel', (req, res) => {
+	res.render('cancel');
 });
 
 app.listen(3000);
