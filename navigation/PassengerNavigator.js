@@ -6,7 +6,9 @@ import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/JourneyScreen';
 import TicktetsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/AccountsScreen';
+import AddFundsScreen from '../screens/AddFundsScreen';
 import WalletScreen from '../screens/WalletScreen';
+import { addNewVersionListenerExperimental } from 'expo/build/Util';
 
 const JourneyStack = createStackNavigator({
   Home: JourneyScreen
@@ -37,8 +39,10 @@ TicketsStack.navigationOptions = {
 };
 
 const WalletStack = createStackNavigator({
-  Links: WalletScreen,
-});
+  Wallet: WalletScreen,
+  AddFunds: AddFundsScreen
+},
+{ initialRouteName: 'Wallet' });
 
 WalletStack.navigationOptions = {
   tabBarLabel: 'My Wallet',
@@ -64,12 +68,9 @@ AccountStack.navigationOptions = {
   ),
 };
 
-
 export default createBottomTabNavigator({
-  
-  WalletStack,
   JourneyStack,
   TicketsStack,
+  WalletStack,
   AccountStack
-
 });
