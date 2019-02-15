@@ -16,7 +16,6 @@ app.use(expressValidator());
 var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	password: 'root',
 	database: 'transport'
 });
 
@@ -95,24 +94,24 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/driver/schedule', function(req, res) {
-	connection.query('SELECT * FROM coordinate WHERE fk_coordinate_type_id = 1;', function(error, rows, fields) {
+	connection.query('SELECT * FROM coordinate WHERE fk_coordinate_type_id = 1', function(error, rows, fields) {
 		if (error) console.log(error);
 		else {
-			console.log(rows);
+			// console.log(rows);
 			res.send(rows);
 		}
 	});
 });
 
 app.get('/driver/place', function(req, res) {
-	connection.query('SELECT latitude, longitude FROM coordinate WHERE fk_coordinate_type_id = 1;', function(
+	connection.query('SELECT latitude, longitude FROM coordinate WHERE fk_coordinate_type_id = 1', function(
 		error,
 		rows,
 		fields
 	) {
-		if (error) console.log(error);
+		if (error) throw error;
 		else {
-			console.log(rows);
+			// console.log(rows);
 			res.send(rows);
 		}
 	});

@@ -22,10 +22,6 @@ import {
 	H3,
 	H2
 } from 'native-base';
-//const window = Dimensions.get('window');
-
-RADIUS = 2000;
-zoomAmount = 15;
 
 export default class MySchedule extends React.Component {
 	static navigationOptions = {
@@ -63,6 +59,8 @@ export default class MySchedule extends React.Component {
 	};
 
 	render() {
+		const RADIUS = 200;
+		const zoomAmount = 15;
 		return (
 			<Container>
 				<GlobalHeader type={1} />
@@ -123,45 +121,21 @@ export default class MySchedule extends React.Component {
 							</View>
 						</Card>
 						<View>
-							<H2>
-								<Text>View Route & Directions </Text>
-							</H2>
-							<Button
-								onPress={() => {
-									this.props.navigation.navigate('Route');
-								}}
-							>
-								<Text>Expand</Text>
-							</Button>
+							<H2 style={styles.ViewRoute}>View Route & Directions</H2>
 						</View>
 						<MapView
+							onPress={() => {
+								this.props.navigation.navigate('Route');
+							}}
 							style={styles.map}
-							//minZoomLevel={zoomAmount}
+							minZoomLevel={zoomAmount}
 							region={{
 								latitude: this.state.location.coords.latitude,
 								longitude: this.state.location.coords.longitude,
 								latitudeDelta: 0.0922,
 								longitudeDelta: 0.0421
 							}}
-							camera={{
-								center: {
-									latitude: this.state.location.coords.latitude,
-									longitude: this.state.location.coords.longitude
-								},
-								pitch: 5,
-								heading: 5,
-								zoom: 18,
-								altitude: 15
-							}}
 						>
-							{this.state.data.map((marker) => (
-								<Marker
-									coordinate={{ longitude: marker.longitude, latitude: marker.latitude }}
-									title="Street Name"
-									description="# Passengers"
-								/>
-							))}
-
 							<MapView.Circle
 								key={(this.state.currentLongitude + this.state.currentLatitude).toString()}
 								center={this.state.LATLNG}
@@ -170,9 +144,6 @@ export default class MySchedule extends React.Component {
 								strokeColor={'#1a66ff'}
 								fillColor={'rgba(230,238,255,0.5)'}
 							/>
-							{this.state.data.map((coordinates) => (
-								<MapView.Polyline coordinates={this.state.data} strokeWidth={6} strokeColor="red" />
-							))}
 						</MapView>
 					</View>
 				</Content>
@@ -207,13 +178,10 @@ const styles = StyleSheet.create({
 		alignSelf: 'center'
 	},
 	stopsList: {
-		// padding: 10,
 		marginLeft: 30,
-		// marginTop: 10,
+
 		borderBottomColor: '#bcbcbc',
 		borderBottomWidth: 0.5
-
-		// width
 	},
 	cardText: {
 		margin: 5
@@ -226,5 +194,8 @@ const styles = StyleSheet.create({
 	innerText: {
 		// margin: 5,
 		// padding: 5
+	},
+	ViewRoute: {
+		marginTop: 10
 	}
 });

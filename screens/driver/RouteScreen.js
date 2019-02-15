@@ -17,7 +17,6 @@ export default class RouteScreen extends React.Component {
 		this.state = {
 			data: [],
 			coords: [],
-			pickupCoordinates: [],
 			mapRegion: { latitude: 51.481583, longitude: -3.17909, latitudeDelta: 0.0122, longitudeDelta: 0.0121 },
 			locationResult: null,
 			currentLatitude: null,
@@ -27,7 +26,6 @@ export default class RouteScreen extends React.Component {
 			latitude: 51.481583,
 			longitude: -3.17909
 		};
-		this.getRouteDirections = this.getRouteDirections.bind(this);
 	}
 	fetchData = async () => {
 		const response = await fetch('http://192.168.0.33:3000/driver/schedule');
@@ -35,31 +33,33 @@ export default class RouteScreen extends React.Component {
 		this.setState({ data: coordinate });
 	};
 
-	fetchPlaceId = async () => {
-		const response = await fetch('http://192.168.0.33:3000/driver/place');
-		const place = await response.json();
-		this.setState({ pickupCoordinates: place });
+	fetchPlaceId = () => {
+		return new Promise((resolve, reject) => {
+			fetch('http://192.168.0.33:3000/driver/place')
+				.then((response) => response.json())
+				.then((responseJSON) => {
+					resolve(responseJSON);
+				})
+				.catch((error) => {
+					reject();
+				});
+		});
 	};
 
 	componentDidMount() {
 		this.fetchData();
-		this.fetchPlaceId();
-		this.getRouteDirections('51.5082,	-3.18817');
-		this.getRouteDirections('51.5076, -3.17341');
-		this.getRouteDirections('51.4812,	-3.18132');
-		this.getRouteDirections('51.4829,	-3.17582');
+		this.fetchPlaceId()
+			.then((response) => {
+				response.forEach((element) => {
+					this.getRouteDirections(`${element.latitude}, ${element.longitude}`);
+				});
+			})
+			.catch((error) => {
+				console.log('error');
+			});
 	}
 
-	TestStates = () => {
-		const mapData = {
-			data: this.state.data,
-			//  pickupCoordinates: this.state.pickupCoordinates.latitude
-			coordsArray: this.state.coordsArray
-		};
-		console.log(mapData);
-	};
-
-	async getRouteDirections(destination) {
+	getRouteDirections = async (destination) => {
 		try {
 			const response = await fetch(
 				`https://maps.googleapis.com/maps/api/directions/json?origin=${this.state.latitude}, ${this.state
@@ -68,7 +68,6 @@ export default class RouteScreen extends React.Component {
 			const json = await response.json();
 			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
 
-			console.log(points);
 			let coords = points.map((point, index) => {
 				return {
 					latitude: point[0],
@@ -85,23 +84,15 @@ export default class RouteScreen extends React.Component {
 		} catch (error) {
 			console.error(error);
 		}
-	}
+	};
 
 	render() {
+		const zoomAmount = 15;
 		return (
 			<Container>
-				<Button
-					style={styles.button}
-					onPress={() => {
-						this.TestStates();
-						//		this.getRouteDirections();
-					}}
-				>
-					<Text>Check State</Text>
-				</Button>
 				<MapView
 					style={styles.map}
-					//minZoomLevel={zoomAmount}
+					minZoomLevel={zoomAmount}
 					region={{
 						latitude: this.state.location.coords.latitude,
 						longitude: this.state.location.coords.longitude,
@@ -109,8 +100,9 @@ export default class RouteScreen extends React.Component {
 						longitudeDelta: 0.0421
 					}}
 				>
-					{this.state.data.map((marker) => (
+					{this.state.data.map((marker, index) => (
 						<Marker
+							key={index}
 							coordinate={{ longitude: marker.longitude, latitude: marker.latitude }}
 							title="Street Name"
 							description="# Passengers"
@@ -118,14 +110,8 @@ export default class RouteScreen extends React.Component {
 					))}
 
 					{this.state.coordsArray.map((coords, index) => (
-						<MapView.Polyline index={index} coordinates={coords} strokeWidth={4} strokeColor="#007acc" />
+						<MapView.Polyline key={index} coordinates={coords} strokeWidth={4} strokeColor="#007acc" />
 					))}
-
-					{/* <MapView.Polyline coordinates={this.state.coords} strokeWidth={2} strokeColor="red" /> */}
-
-					{/* {this.state.data.map((coordinates) => (
-						<MapView.Polyline coordinates={this.state.data} strokeWidth={6} strokeColor="red" />
-					))} */}
 				</MapView>
 			</Container>
 		);
@@ -139,7 +125,6 @@ const styles = StyleSheet.create({
 		...StyleSheet.absoluteFillObject
 	},
 	map: {
-		marginTop: 50,
 		...StyleSheet.absoluteFillObject
 	},
 	button: {

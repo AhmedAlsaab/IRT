@@ -12,7 +12,7 @@ const MyScheduleStack = createStackNavigator(
 		Route: RouteScreen
 	},
 	{
-		initialRouteName: 'Route'
+		initialRouteName: 'Home'
 	}
 );
 
