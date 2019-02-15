@@ -3,7 +3,6 @@ import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOp
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import apiKey from '../google_api_key';
 import API_KEY from '../google_api_key';
 import _ from 'lodash';
 import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
@@ -11,6 +10,7 @@ import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import PolyLine from '@mapbox/polyline';
+import { getDateFromDateTime, getTimeFromDateTime } from '../utilityFunctions'
 
 export default class JourneyScreen extends Component {
 	static navigationOptions = {
@@ -35,48 +35,42 @@ export default class JourneyScreen extends Component {
 			to: null,
 			date: null,
 			time: null,
-			numPassenger: null,
-			numWheelchair: null,
+			numPassenger: 1,
+			numWheelchair: 0,
 
 			//StartLocation
 			locationPredictions: [],
-			placeID: '',
-			street: '',
-			city: '',
-			country: '',
-			lat: '',
-			lng: '',
+			placeID: 'EhxTb3V0aCBQYXJrIFJvYWQsIENhcmRpZmYsIFVLIi4qLAoUChIJpatKxdccbkgRQ2yDFI_iUzESFAoSCamRx0IRO1oCEXoliDJDoPjE',
+			street: 'South Park Road',
+			city: 'Cardiff',
+			country: 'UK',
+			lat: '51.4816575,',
+			lng: '-3.1458798,',
 			startType: 1,
 
 			//EndLocation
 			endLocationPredictions: [],
-			endPlaceID: '',
-			endStreet: '',
-			endCity: '',
-			endCountry: '',
-			endLat: '',
-			endLng: '',
+			endPlaceID: 'Eh9Tb3V0aCBDbGl2ZSBTdHJlZXQsIENhcmRpZmYsIFVLIi4qLAoUChIJpSXnPloDbkgRaZvKffcCrskSFAoSCfVT7DTUAm5IEQ5nhmXbBjQU',
+			endStreet: 'South Clive Street',
+			endCity: 'Cardiff',
+			endCountry: 'UK',
+			endLat: '51.4599197,',
+			endLng: '-3.1844829,',
 			endType: 2
 		};
-		this.startPositionDebounced = _.debounce(this.startPosition, 1000);
-		this.endLocationDebounced = _.debounce(this.endLocation, 1000);
+		this.startPositionDebounced = _.debounce(this.startPosition, 500);
+		this.endLocationDebounced = _.debounce(this.endLocation, 500);
 	}
 
 	// Sets the state when each input is changed
-	handleFromChange = (event) => {
-		this.setState({ from: event.target.value });
+
+
+	handleNumPassengersChange = (value) => {
+		this.setState({ numPassenger: value });
 	};
 
-	handleToChange = (event) => {
-		this.setState({ to: event.target.value });
-	};
-
-	handleNumPassengersChange = (event) => {
-		this.setState({ numPassenger: event.target.value });
-	};
-
-	handleNumWheelchairChange = (event) => {
-		this.setState({ numWheelchair: event.target.value });
+	handleNumWheelchairChange = (value) => {
+		this.setState({ numWheelchair: value });
 	};
 
 	// Functionality to show/hide the date picker and to set the state
@@ -116,7 +110,7 @@ export default class JourneyScreen extends Component {
 	// Strictbounds ensures that no suggestions appear that are not within these paramaters
 
 	getRouteDirections = async () => {
-		const { placeID, endPlaceID } = this.state;
+		const { placeID, endPlaceID, date, time} = this.state;
 
 		console.log(placeID, endPlaceID);
 		if (placeID.length === 0 || endPlaceID.length === 0) {
@@ -234,6 +228,12 @@ export default class JourneyScreen extends Component {
 	}
 
 	onSubmit = () => {
+		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair} = this.state;
+
+		if (placeID.length === 0 || endPlaceID.length === 0 || date == null || time == null || numWheelchair > numPassenger) {
+			return console.log('no');
+		}
+
 		const data = {
 			place_id: this.state.placeID,
 			street: this.state.street,
@@ -248,7 +248,11 @@ export default class JourneyScreen extends Component {
 			endCountry: this.state.endCountry,
 			endLat: this.state.endLat,
 			endLng: this.state.endLng,
-			endType: this.state.endType
+			endType: this.state.endType,
+			date: this.state.date,
+			time: this.state.time,
+			numPassenger: this.state.numPassenger,
+			numWheelchair: this.state.numWheelchair
 		};
 
 		fetch('http://10.22.201.102:3000/booking/temp', {
@@ -259,7 +263,6 @@ export default class JourneyScreen extends Component {
 			},
 			body: JSON.stringify(data)
 		});
-		console.log(data);
 	};
 
 	render() {
@@ -320,7 +323,6 @@ export default class JourneyScreen extends Component {
 								<Input
 									placeholder="From"
 									placeholderTextColor="#bcbcbc"
-									onChange={this.handleFromChange}
 									onChangeText={(destination) => {
 										this.setState({ destination });
 										this.startPositionDebounced(destination);
@@ -336,7 +338,6 @@ export default class JourneyScreen extends Component {
 								<Input
 									placeholder="To"
 									placeholderTextColor="#bcbcbc"
-									onChange={this.handleToChange}
 									onChangeText={(endDestination) => {
 										this.setState({ endDestination });
 										this.endLocationDebounced(endDestination);
@@ -361,7 +362,7 @@ export default class JourneyScreen extends Component {
 							</TouchableOpacity>
 							<DateTimePicker
 								isVisible={this.state.isDatePickerVisible}
-								onConfirm={this._handleDatePicked}
+								onConfirm={(value) => this._handleDatePicked(value)}
 								onCancel={this._hideDatePicker}
 								mode="date"
 							/>
@@ -381,7 +382,7 @@ export default class JourneyScreen extends Component {
 							</TouchableOpacity>
 							<DateTimePicker
 								isVisible={this.state.isTimePickerVisible}
-								onConfirm={this._handleTimePicked}
+								onConfirm={(value) => this._handleTimePicked(value)}
 								onCancel={this._hideTimePicker}
 								mode="time"
 							/>
@@ -392,18 +393,22 @@ export default class JourneyScreen extends Component {
 									<Item style={styles.iconWithInput}>
 										<Icon name="people" size={20} color="#bcbcbc" />
 										<Input
+											keyboardType='numeric'
+											maxLength={1}
 											placeholder="Group size"
 											placeholderTextColor="#bcbcbc"
-											onChange={this.handleNumPassengersChange}
+											onChangeText={(value) => this.handleNumPassengersChange(value)}
 										/>
 									</Item>
 
 									<Item style={styles.iconWithInput}>
 										<Icon name="accessible" size={20} color="#bcbcbc" />
 										<Input
+											maxLength={1}
+											keyboardType = 'numeric'
 											placeholder="No. of wheelchairs"
 											placeholderTextColor="#bcbcbc"
-											onChange={this.handleNumWheelchairChange}
+											onChangeText={(value) => this.handleNumWheelchairChange(value)}
 										/>
 									</Item>
 								</View>

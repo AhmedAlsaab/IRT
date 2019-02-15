@@ -121,6 +121,8 @@ app.get('/users', function (req, res) {
 
 
 app.post('/booking/temp', (req, res) => {
+    console.log(req.body)
+
     const startPlaceId = req.body.place_id;
     const startStreet = req.body.street;
     const startCity = req.body.city;
@@ -128,7 +130,6 @@ app.post('/booking/temp', (req, res) => {
     const startLat = req.body.lat;
     const startLng = req.body.lng;
     const startType = req.body.startType;
-    
 
     const endPlaceId = req.body.endPlaceID;
     const endStreet = req.body.endStreet;
@@ -137,6 +138,17 @@ app.post('/booking/temp', (req, res) => {
     const endLat = req.body.endLat;
     const endLng = req.body.endLng;
     const endType = req.body.endType;
+
+    const date = req.body.date;
+    const time = req.body.time;
+    const numPassenger = req.body.numPassenger;
+    const numWheelchair = req.body.numWheelchair;
+
+    connection.query("INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [numPassenger, numWheelchair, 0, 0, date, time, new Date()],
+    (error, row, fields) => { 
+        if (error) throw error
+    })
 
     connection.query("INSERT INTO journey (start_time, end_time) VALUES (?, ?)",
         [new Date(), new Date()],

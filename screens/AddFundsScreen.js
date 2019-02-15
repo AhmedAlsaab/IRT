@@ -32,7 +32,6 @@ export default class WalletScreen extends React.Component {
         status: 'Complete',
         amount: 0.00
       })
-      console.log("yay")
     }
     if (data.title === 'cancel'){
       this.setState({
