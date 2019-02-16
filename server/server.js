@@ -119,10 +119,12 @@ app.get('/driver/schedule', function(req, res) {
 
 app.get('/journey', function(req, res) {
 	connection.query(
-		`select coordinate_type.type, coordinate.street, coordinate.city
-        from coordinate
-        inner join coordinate_type on coordinate.fk_coordinate_type_id=coordinate_type.coordinate_type_id
-        where coordinate.fk_journey_id=1`,
+		`SELECT coordinate.street, coordinate.city, coordinate.fk_coordinate_type_id,
+			journey.no_of_passengers, journey.no_of_wheelchairs, journey.date_of_journey,
+			journey.time_of_journey
+        FROM journey
+        INNER JOIN coordinate on journey.journey_id=coordinate.fk_journey_id
+		WHERE coordinate.fk_journey_id=1`,
 		function(error, rows, fields) {
 			if (error) console.log(error);
 			else {
