@@ -166,8 +166,8 @@ app.post('/booking/temp', (req, res) => {
 	);
 
 	connection.query(
-		'INSERT INTO journey (start_time, end_time) VALUES (?, ?)',
-		[ new Date(), new Date() ],
+		'INSERT INTO journey (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
+		[ numPassenger, numWheelchair, 0, 0, date, time, new Date() ],
 		(error, row, fields) => {
 			if (error) throw error;
 
