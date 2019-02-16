@@ -28,14 +28,14 @@ export default class RouteScreen extends React.Component {
 		};
 	}
 	fetchData = async () => {
-		const response = await fetch('http://192.168.0.33:3000/driver/schedule');
+		const response = await fetch('http://192.168.0.10:3000/driver/schedule');
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};
 
 	fetchPlaceId = () => {
 		return new Promise((resolve, reject) => {
-			fetch('http://192.168.0.33:3000/driver/place')
+			fetch('http://192.168.0.10:3000/driver/place')
 				.then((response) => response.json())
 				.then((responseJSON) => {
 					resolve(responseJSON);

@@ -42,7 +42,7 @@ export default class MySchedule extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch('http://192.168.0.33:3000/driver/schedule');
+		const response = await fetch('http://192.168.0.10:3000/driver/schedule');
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};

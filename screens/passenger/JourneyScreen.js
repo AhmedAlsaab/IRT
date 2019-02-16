@@ -11,6 +11,7 @@ import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
 import PolyLine from '@mapbox/polyline';
 import { getDateFromDateTime, getTimeFromDateTime } from '../../utilityFunctions';
+import moment from 'moment';
 
 export default class JourneyScreen extends Component {
 	static navigationOptions = {
@@ -79,8 +80,7 @@ export default class JourneyScreen extends Component {
 	_hideDatePicker = () => this.setState({ isDatePickerVisible: false });
 
 	_handleDatePicked = (newDate) => {
-		this.setState({ date: newDate });
-		console.log(this.state.date);
+		this.setState({ date: moment(newDate).format('YYYY-MM-DD HH:mm:ss') });
 		this._hideDatePicker();
 	};
 
@@ -89,8 +89,8 @@ export default class JourneyScreen extends Component {
 	_hideTimePicker = () => this.setState({ isTimePickerVisible: false });
 
 	_handleTimePicked = (newTime) => {
-		this.setState({ time: newTime });
-		console.log(this.state.time);
+
+		this.setState({ time: moment(newTime).format('YYYY-MM-DD HH:mm:ss') });
 		this._hideTimePicker();
 	};
 
@@ -263,7 +263,7 @@ export default class JourneyScreen extends Component {
 			numWheelchair: this.state.numWheelchair
 		};
 
-		fetch('http://192.168.0.33:3000/booking/temp', {
+		fetch('http://192.168.0.10:3000/booking/temp', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -361,7 +361,7 @@ export default class JourneyScreen extends Component {
 									<Icon name="date-range" size={20} color="#bcbcbc" />
 									{this.state.date ? (
 										<Text style={[ styles.dateTime, { color: '#000' } ]}>
-											{this.state.date.toString().slice(4, 15)}
+											{moment(this.state.date).format('Do MMM YY')}
 										</Text>
 									) : (
 										<Text style={styles.dateTime}>Date</Text>
@@ -381,7 +381,7 @@ export default class JourneyScreen extends Component {
 									<Icon name="access-time" size={20} color="#bcbcbc" />
 									{this.state.time ? (
 										<Text style={[ styles.dateTime, { color: '#000' } ]}>
-											{this.state.time.toString().slice(16, 21)}
+											{moment(this.state.time).format('LT')}
 										</Text>
 									) : (
 										<Text style={styles.dateTime}>Time</Text>

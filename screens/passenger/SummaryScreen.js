@@ -19,7 +19,7 @@ export default class SummaryScreen extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch('http://192.168.0.33:3000/journey');
+		const response = await fetch('http://192.168.0.10:3000/journey');
 		const journeyData = await response.json();
 		this.setState({ data: journeyData });
 	};

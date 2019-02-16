@@ -111,7 +111,7 @@ export default class WalletScreen extends React.Component {
 						>
 							<WebView
 								style={styles.webview}
-								source={{ uri: 'http://192.168.0.33:3000/paypal-button' }}
+								source={{ uri: 'http://192.168.0.10:3000/paypal-button' }}
 								onNavigationStateChange={(data) => this.handleResponse(data)}
 								injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state
 									.amount}; document.f1.submit()`}

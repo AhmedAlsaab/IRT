@@ -24,7 +24,8 @@ app.use(expressValidator());
 var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
-	database: 'transport'
+	database: 'transport',
+	password: 'root',
 });
 
 connection.connect((error) => {
@@ -201,8 +202,8 @@ app.get('/paypal', (req, res) => {
 			payment_method: 'paypal'
 		},
 		redirect_urls: {
-			return_url: 'http://192.168.0.33:3000/success',
-			cancel_url: 'http://192.168.0.33:3000/cancel'
+			return_url: 'http://192.168.0.10:3000/success',
+			cancel_url: 'http://192.168.0.10:3000/cancel'
 		},
 		transactions: [
 			{
