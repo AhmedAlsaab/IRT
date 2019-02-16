@@ -120,8 +120,7 @@ app.get('/driver/schedule', function(req, res) {
 app.get('/journey/start', function(req, res) {
 	connection.query(
 		`SELECT coordinate.street, coordinate.city, coordinate.fk_coordinate_type_id,
-			journey.no_of_passengers, journey.no_of_wheelchairs, journey.date_of_journey,
-			journey.time_of_journey
+			journey.date_of_journey, journey.time_of_journey
         FROM journey
         INNER JOIN coordinate on journey.journey_id=coordinate.fk_journey_id
 		WHERE coordinate.fk_journey_id=1 AND coordinate.fk_coordinate_type_id=1`,
@@ -138,8 +137,7 @@ app.get('/journey/start', function(req, res) {
 app.get('/journey/end', function(req, res) {
 	connection.query(
 		`SELECT coordinate.street, coordinate.city, coordinate.fk_coordinate_type_id,
-			journey.no_of_passengers, journey.no_of_wheelchairs, journey.date_of_journey,
-			journey.time_of_journey
+			journey.no_of_passengers, journey.no_of_wheelchairs
         FROM journey
         INNER JOIN coordinate on journey.journey_id=coordinate.fk_journey_id
 		WHERE coordinate.fk_journey_id=1 AND coordinate.fk_coordinate_type_id=2`,

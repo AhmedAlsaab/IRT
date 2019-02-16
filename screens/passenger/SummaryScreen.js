@@ -58,7 +58,7 @@ export default class SummaryScreen extends React.Component {
 										{this.state.startData.map((startCoordinate) => {
 											return (
 												startCoordinate.fk_coordinate_type_id === 1 ?
-													<View key={startCoordinate.type}>
+													<View key={startCoordinate.fk_coordinate_type_id}>
 														<View style={styles.icon}>
 															<Icon name="date-range" size={20} color="#bcbcbc" />
 															<Text style={styles.cardBody}>{moment(startCoordinate.date_of_journey).format('MMMM Do YYYY')}</Text>
@@ -76,7 +76,7 @@ export default class SummaryScreen extends React.Component {
 										{this.state.endData.map((endCoordinate) => {
 											return (
 												endCoordinate.fk_coordinate_type_id === 2 ?
-													<View key={endCoordinate.type}>
+													<View key={endCoordinate.fk_coordinate_type_id}>
 														<View style={styles.icon}>
 															<Icon name='location-on' size={20} color="#bcbcbc" />
 															<Text style={styles.cardBody}>
