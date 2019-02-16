@@ -134,7 +134,7 @@ export default class SummaryScreen extends React.Component {
 											danger
 											style={styles.button}
 											onPress={() => {
-												this.props.navigation.navigate('Wallet');
+												this.props.navigation.navigate('AddFunds');
 											}}
 										>
 											<Text style={styles.buttonText}>Add Funds</Text>
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
 		borderTopWidth: 0.5,
 		borderTopColor: '#d3d3d3',
 		borderBottomWidth: 0.5,
-		borderBottomColor: '#d3d3d3'
+		borderBottomColor: '#d3d3d3',
 	},
 	cardContent: {
 		flex: 1,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between'
 	},
 	details: {
-		width: '70%'
+		width: '70%',
 	},
 	journeyInfo: {
 		flex: 1,
