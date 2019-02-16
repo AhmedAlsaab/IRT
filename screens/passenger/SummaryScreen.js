@@ -13,19 +13,27 @@ export default class SummaryScreen extends React.Component {
 	};
 	state = {
 		isLoadingComplete: false,
-		data: [],
+		startData: [],
+		endData: [],
 		date: new Date(),
 		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' }
 	};
 
-	fetchData = async () => {
-		const response = await fetch('http://192.168.0.10:3000/journey');
-		const journeyData = await response.json();
-		this.setState({ data: journeyData });
+	fetchStartData = async () => {
+		const response = await fetch('http://192.168.0.10:3000/journey/start');
+		const JSONresponse = await response.json();
+		this.setState({ startData: JSONresponse });
+	};
+
+	fetchEndData = async () => {
+		const response = await fetch('http://192.168.0.10:3000/journey/end');
+		const JSONresponse = await response.json();
+		this.setState({ endData: JSONresponse });
 	};
 
 	componentDidMount() {
-		this.fetchData();
+		this.fetchStartData();
+		this.fetchEndData();
 	}
 	render() {
 		return (
@@ -47,34 +55,52 @@ export default class SummaryScreen extends React.Component {
 							<View style={styles.summaryCard}>
 								<View style={styles.cardContent}>
 									<View style={styles.details}>
-										<View style={styles.icon}>
-											<Icon name="date-range" size={20} color="#bcbcbc" />
-											<Text style={styles.cardBody}>{moment().format('MMMM Do YYYY')}</Text>
-										</View>
-										{this.state.data.map((coordinate) => {
+										{this.state.startData.map((startCoordinate) => {
 											return (
-												<View key={coordinate.type} style={styles.icon}>
-													<Icon
-														name={
-															coordinate.type === 'Start' ? 'my-location' : 'location-on'
-														}
-														size={20}
-														color="#bcbcbc"
-													/>
-													<Text style={styles.cardBody}>
-														{coordinate.street}, {coordinate.city}
-													</Text>
-												</View>
+												startCoordinate.fk_coordinate_type_id === 1 ?
+													<View key={startCoordinate.type}>
+														<View style={styles.icon}>
+															<Icon name="date-range" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>{moment(startCoordinate.date_of_journey).format('MMMM Do YYYY')}</Text>
+														</View>
+														<View style={styles.icon}>
+															<Icon name='my-location' size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{startCoordinate.street}, {startCoordinate.city}
+															</Text>
+														</View>
+													</View>
+													: null
 											);
 										})}
-										<View style={styles.icon}>
-											<Icon name="people" size={20} color="#bcbcbc" />
-											<Text style={styles.cardBody}>2 Passengers</Text>
-										</View>
-										<View style={styles.icon}>
-											<Icon name="accessible" size={20} color="#bcbcbc" />
-											<Text style={styles.cardBody}>1 Wheelchair</Text>
-										</View>
+										{this.state.endData.map((endCoordinate) => {
+											return (
+												endCoordinate.fk_coordinate_type_id === 2 ?
+													<View key={endCoordinate.type}>
+														<View style={styles.icon}>
+															<Icon name='location-on' size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{endCoordinate.street}, {endCoordinate.city}
+															</Text>
+														</View>
+														<View style={styles.icon}>
+															<Icon name="people" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{endCoordinate.no_of_passengers}
+																{endCoordinate.no_of_passengers > 1 ? " Passengers" : " Passenger"}
+															</Text>
+														</View>
+														<View style={styles.icon}>
+															<Icon name="people" size={20} color="#bcbcbc" />
+															<Text style={styles.cardBody}>
+																{endCoordinate.no_of_wheelchairs}
+																{endCoordinate.no_of_wheelchairs > 1 ? " Wheelchairs" : " Wheelchair"}
+															</Text>
+														</View>
+													</View>
+													: null
+											);
+										})}
 									</View>
 									<View style={styles.journeyInfo}>
 										<Text style={styles.cardBody}>£6.00</Text>
@@ -100,7 +126,7 @@ export default class SummaryScreen extends React.Component {
 									<Text style={styles.balance}>£12.00</Text>
 									<Text style={styles.body}>Wallet Balance</Text>
 									<View style={styles.buttonContainer}>
-										<Button danger style={[ styles.button, { backgroundColor: '#ff0000' } ]}>
+										<Button danger style={[styles.button, { backgroundColor: '#ff0000' }]}>
 											<Text style={styles.buttonText}>Pay</Text>
 										</Button>
 										<Button
