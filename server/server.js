@@ -121,9 +121,12 @@ app.get('/journey/start', function(req, res) {
 	connection.query(
 		`SELECT coordinate.street, coordinate.city, coordinate.fk_coordinate_type_id,
 			journey.date_of_journey, journey.time_of_journey
-        FROM journey
-        INNER JOIN coordinate on journey.journey_id=coordinate.fk_journey_id
-		WHERE coordinate.fk_journey_id=1 AND coordinate.fk_coordinate_type_id=1`,
+		FROM journey
+		INNER JOIN coordinate
+		ON journey.journey_id=coordinate.fk_journey_id
+		WHERE coordinate.fk_coordinate_type_id=1
+		ORDER BY journey.journey_id DESC
+		LIMIT 1`,
 		function(error, rows, fields) {
 			if (error) console.log(error);
 			else {
@@ -138,9 +141,12 @@ app.get('/journey/end', function(req, res) {
 	connection.query(
 		`SELECT coordinate.street, coordinate.city, coordinate.fk_coordinate_type_id,
 			journey.no_of_passengers, journey.no_of_wheelchairs
-        FROM journey
-        INNER JOIN coordinate on journey.journey_id=coordinate.fk_journey_id
-		WHERE coordinate.fk_journey_id=1 AND coordinate.fk_coordinate_type_id=2`,
+		FROM journey
+		INNER JOIN coordinate
+		ON journey.journey_id=coordinate.fk_journey_id
+		WHERE coordinate.fk_coordinate_type_id=2
+		ORDER BY journey.journey_id DESC
+		LIMIT 1`,
 		function(error, rows, fields) {
 			if (error) console.log(error);
 			else {
