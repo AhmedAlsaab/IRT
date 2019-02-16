@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { Container, Content, Button, Text, Accordion, H2, Right } from 'native-base';
 import MapView, { Marker, Polyline, Circle } from 'react-native-maps';
+
 import API_KEY from '../../google_api_key';
 import MapViewDirections from 'react-native-maps-directions';
 
@@ -31,7 +32,9 @@ class RouteScreen extends Component {
 					longitude: -3.178014415
 				}
 			],
-			data: []
+			data: [],
+			distance: '',
+			duration: ''
 		};
 
 		this.mapView = null;
@@ -50,6 +53,12 @@ class RouteScreen extends Component {
 	render() {
 		return (
 			<View style={StyleSheet.absoluteFill}>
+				<View style={styles.bottom}>
+					<Button>
+						<Text>Duration: {this.state.duration} Min</Text>
+					</Button>
+				</View>
+
 				<MapView
 					initialRegion={{
 						latitude: LATITUDE,
@@ -87,8 +96,10 @@ class RouteScreen extends Component {
 								console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
 							}}
 							onReady={(result) => {
-								console.log(`Distance: ${result.distance} km`);
-								console.log(`Duration: ${result.duration} min.`);
+								this.setState({
+									distance: result.distance,
+									duration: result.duration
+								});
 
 								this.mapView.fitToCoordinates(result.coordinates, {
 									edgePadding: {
@@ -113,6 +124,12 @@ const styles = StyleSheet.create({
 	buttonStyle: {
 		fontWeight: 'bold',
 		backgroundColor: '#f4f4f4'
+	},
+	bottom: {
+		flex: 1,
+		justifyContent: 'flex-end',
+		marginBottom: 5,
+		marginLeft: 2
 	}
 });
 
