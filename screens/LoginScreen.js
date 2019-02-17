@@ -19,7 +19,7 @@ export default class loginScreen extends Component {
 			password: this.state.password
 		};
 
-		fetch('http://192.168.0.10:3000/login', {
+		fetch('http://192.168.0.33:3000/login', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

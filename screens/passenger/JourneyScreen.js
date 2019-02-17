@@ -89,7 +89,6 @@ export default class JourneyScreen extends Component {
 	_hideTimePicker = () => this.setState({ isTimePickerVisible: false });
 
 	_handleTimePicked = (newTime) => {
-
 		this.setState({ time: moment(newTime).format('YYYY-MM-DD HH:mm:ss') });
 		this._hideTimePicker();
 	};
@@ -263,7 +262,7 @@ export default class JourneyScreen extends Component {
 			numWheelchair: this.state.numWheelchair
 		};
 
-		fetch('http://192.168.0.10:3000/booking/temp', {
+		fetch('http://192.168.0.33:3000/booking/temp', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

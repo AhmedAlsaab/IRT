@@ -25,7 +25,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: 'root',
+	password: ''
 });
 
 connection.connect((error) => {

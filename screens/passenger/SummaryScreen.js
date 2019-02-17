@@ -20,13 +20,13 @@ export default class SummaryScreen extends React.Component {
 	};
 
 	fetchStartData = async () => {
-		const response = await fetch('http://192.168.0.10:3000/journey/start');
+		const response = await fetch('http://192.168.0.33:3000/journey/start');
 		const JSONresponse = await response.json();
 		this.setState({ startData: JSONresponse });
 	};
 
 	fetchEndData = async () => {
-		const response = await fetch('http://192.168.0.10:3000/journey/end');
+		const response = await fetch('http://192.168.0.33:3000/journey/end');
 		const JSONresponse = await response.json();
 		this.setState({ endData: JSONresponse });
 	};
@@ -56,50 +56,58 @@ export default class SummaryScreen extends React.Component {
 								<View style={styles.cardContent}>
 									<View style={styles.details}>
 										{this.state.startData.map((startCoordinate) => {
-											return (
-												startCoordinate.fk_coordinate_type_id === 1 ?
-													<View key={startCoordinate.fk_coordinate_type_id}>
-														<View style={styles.icon}>
-															<Icon name="date-range" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>{moment(startCoordinate.date_of_journey).format('MMMM Do YYYY')}</Text>
-														</View>
-														<View style={styles.icon}>
-															<Icon name='my-location' size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{startCoordinate.street}, {startCoordinate.city}
-															</Text>
-														</View>
+											return startCoordinate.fk_coordinate_type_id === 1 ? (
+												<View key={startCoordinate.fk_coordinate_type_id}>
+													<View style={styles.icon}>
+														<Icon name="date-range" size={20} color="#bcbcbc" />
+														<Text style={styles.cardBody}>
+															{moment(startCoordinate.date_of_journey).format(
+																'MMMM Do YYYY'
+															)}
+														</Text>
 													</View>
-													: null
-											);
+													<View style={styles.icon}>
+														<Icon name="my-location" size={20} color="#bcbcbc" />
+														<Text style={styles.cardBody}>
+															{startCoordinate.street}, {startCoordinate.city}
+														</Text>
+													</View>
+												</View>
+											) : null;
 										})}
 										{this.state.endData.map((endCoordinate) => {
-											return (
-												endCoordinate.fk_coordinate_type_id === 2 ?
-													<View key={endCoordinate.fk_coordinate_type_id}>
-														<View style={styles.icon}>
-															<Icon name='location-on' size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{endCoordinate.street}, {endCoordinate.city}
-															</Text>
-														</View>
-														<View style={styles.icon}>
-															<Icon name="people" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{endCoordinate.no_of_passengers}
-																{endCoordinate.no_of_passengers > 1 ? " Passengers" : " Passenger"}
-															</Text>
-														</View>
-														<View style={styles.icon}>
-															<Icon name="people" size={20} color="#bcbcbc" />
-															<Text style={styles.cardBody}>
-																{endCoordinate.no_of_wheelchairs}
-																{endCoordinate.no_of_wheelchairs > 1 ? " Wheelchairs" : " Wheelchair"}
-															</Text>
-														</View>
+											return endCoordinate.fk_coordinate_type_id === 2 ? (
+												<View key={endCoordinate.fk_coordinate_type_id}>
+													<View style={styles.icon}>
+														<Icon name="location-on" size={20} color="#bcbcbc" />
+														<Text style={styles.cardBody}>
+															{endCoordinate.street}, {endCoordinate.city}
+														</Text>
 													</View>
-													: null
-											);
+													<View style={styles.icon}>
+														<Icon name="people" size={20} color="#bcbcbc" />
+														<Text style={styles.cardBody}>
+															{endCoordinate.no_of_passengers}
+															{endCoordinate.no_of_passengers > 1 ? (
+																' Passengers'
+															) : (
+																' Passenger'
+															)}
+														</Text>
+													</View>
+													<View style={styles.icon}>
+														<Icon name="people" size={20} color="#bcbcbc" />
+														<Text style={styles.cardBody}>
+															{endCoordinate.no_of_wheelchairs}
+															{endCoordinate.no_of_wheelchairs > 1 ? (
+																' Wheelchairs'
+															) : (
+																' Wheelchair'
+															)}
+														</Text>
+													</View>
+												</View>
+											) : null;
 										})}
 									</View>
 									<View style={styles.journeyInfo}>
@@ -126,7 +134,7 @@ export default class SummaryScreen extends React.Component {
 									<Text style={styles.balance}>£12.00</Text>
 									<Text style={styles.body}>Wallet Balance</Text>
 									<View style={styles.buttonContainer}>
-										<Button danger style={[styles.button, { backgroundColor: '#ff0000' }]}>
+										<Button danger style={[ styles.button, { backgroundColor: '#ff0000' } ]}>
 											<Text style={styles.buttonText}>Pay</Text>
 										</Button>
 										<Button
@@ -182,7 +190,7 @@ const styles = StyleSheet.create({
 		borderTopWidth: 0.5,
 		borderTopColor: '#d3d3d3',
 		borderBottomWidth: 0.5,
-		borderBottomColor: '#d3d3d3',
+		borderBottomColor: '#d3d3d3'
 	},
 	cardContent: {
 		flex: 1,
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between'
 	},
 	details: {
-		width: '70%',
+		width: '70%'
 	},
 	journeyInfo: {
 		flex: 1,
