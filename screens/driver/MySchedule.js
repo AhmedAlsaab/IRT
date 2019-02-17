@@ -106,7 +106,7 @@ export default class MySchedule extends React.Component {
 													<CardItem>
 														<Text style={styles.innerText}>
 															<Icon name="person" size={20} color="#bcbcbc" />
-															5
+															{item.date}
 														</Text>
 													</CardItem>
 												</View>

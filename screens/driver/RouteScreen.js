@@ -1,38 +1,52 @@
-import React from 'react';
-import { Image, Platform, ScrollView, StyleSheet, FlatList, TouchableOpacity, View, Dimensions } from 'react-native';
-import API_KEY from '../../google_api_key';
+import React, { Component } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import { Container, Content, Button, Text, Accordion, H2, Right } from 'native-base';
 import MapView, { Marker, Polyline, Circle } from 'react-native-maps';
-import PolyLine from '@mapbox/polyline';
-import { Container, Button, Text } from 'native-base';
 
-RADIUS = 2000;
-zoomAmount = 15;
+import API_KEY from '../../google_api_key';
+import MapViewDirections from 'react-native-maps-directions';
 
-export default class RouteScreen extends React.Component {
+const { width, height } = Dimensions.get('window');
+const ASPECT_RATIO = width / height;
+const LATITUDE = 51.481583;
+const LONGITUDE = -3.17909;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+class RouteScreen extends Component {
 	static navigationOptions = {
 		header: null
 	};
 	constructor(props) {
 		super(props);
+
+		// Start / End location
 		this.state = {
+			coordinates: [
+				{
+					latitude: 51.47667946,
+					longitude: -3.180427374
+				},
+				{
+					latitude: 51.48530001,
+					longitude: -3.178014415
+				}
+			],
 			data: [],
-			coords: [],
-			mapRegion: { latitude: 51.481583, longitude: -3.17909, latitudeDelta: 0.0122, longitudeDelta: 0.0121 },
-			locationResult: null,
-			currentLatitude: null,
-			currentLongitude: null,
-			coordsArray: [],
-			location: { coords: { latitude: 51.481583, longitude: -3.17909 } },
-			latitude: 51.481583,
-			longitude: -3.17909
+			distance: '',
+			duration: ''
 		};
+
+		this.mapView = null;
 	}
+
 	fetchData = async () => {
 		const response = await fetch('http://192.168.0.10:3000/driver/schedule');
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};
 
+<<<<<<< HEAD
 	fetchPlaceId = () => {
 		return new Promise((resolve, reject) => {
 			fetch('http://192.168.0.10:3000/driver/place')
@@ -46,88 +60,93 @@ export default class RouteScreen extends React.Component {
 		});
 	};
 
+=======
+>>>>>>> driver-schedule
 	componentDidMount() {
 		this.fetchData();
-		this.fetchPlaceId()
-			.then((response) => {
-				response.forEach((element) => {
-					this.getRouteDirections(`${element.latitude}, ${element.longitude}`);
-				});
-			})
-			.catch((error) => {
-				console.log('error');
-			});
 	}
 
-	getRouteDirections = async (destination) => {
-		try {
-			const response = await fetch(
-				`https://maps.googleapis.com/maps/api/directions/json?origin=${this.state.latitude}, ${this.state
-					.longitude}&destination=${destination}&key=${API_KEY}`
-			);
-			const json = await response.json();
-			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
-
-			let coords = points.map((point, index) => {
-				return {
-					latitude: point[0],
-					longitude: point[1]
-				};
-			});
-			const newCoordsArray = [ ...this.state.coordsArray, coords ];
-			this.setState({
-				coords: coords,
-				coordsArray: newCoordsArray,
-				routeResponse: json
-			});
-			console.log('yay');
-		} catch (error) {
-			console.error(error);
-		}
-	};
-
 	render() {
-		const zoomAmount = 15;
 		return (
-			<Container>
+			<View style={StyleSheet.absoluteFill}>
+				<View style={styles.bottom}>
+					<Button>
+						<Text>Duration: {this.state.duration} Min</Text>
+					</Button>
+				</View>
+
 				<MapView
-					style={styles.map}
-					minZoomLevel={zoomAmount}
-					region={{
-						latitude: this.state.location.coords.latitude,
-						longitude: this.state.location.coords.longitude,
-						latitudeDelta: 0.0922,
-						longitudeDelta: 0.0421
+					initialRegion={{
+						latitude: LATITUDE,
+						longitude: LONGITUDE,
+						latitudeDelta: LATITUDE_DELTA,
+						longitudeDelta: LONGITUDE_DELTA
 					}}
+					style={StyleSheet.absoluteFill}
+					ref={(c) => (this.mapView = c)}
+					onPress={this.onMapPress}
 				>
+					{this.state.coordinates.map((coordinate, index) => (
+						<MapView.Marker pinColor="white" key={`coordinate_${index}`} coordinate={coordinate} />
+					))}
 					{this.state.data.map((marker, index) => (
 						<Marker
+							pinColor={'green'}
 							key={index}
 							coordinate={{ longitude: marker.longitude, latitude: marker.latitude }}
 							title="Street Name"
 							description="# Passengers"
 						/>
 					))}
+					{this.state.data.length >= 1 && (
+						<MapViewDirections
+							origin={this.state.coordinates[0]}
+							//	waypoints={this.state.coordinates.length > 2 ? this.state.coordinates.slice(1, -1) : null}
+							waypoints={this.state.data}
+							destination={this.state.coordinates[this.state.coordinates.length - 1]}
+							apikey={API_KEY}
+							strokeWidth={3}
+							strokeColor="hotpink"
+							optimizeWaypoints={true}
+							onStart={(params) => {
+								console.log(`Started routing between "${params.origin}" and "${params.destination}"`);
+							}}
+							onReady={(result) => {
+								this.setState({
+									distance: result.distance,
+									duration: result.duration
+								});
 
-					{this.state.coordsArray.map((coords, index) => (
-						<MapView.Polyline key={index} coordinates={coords} strokeWidth={4} strokeColor="#007acc" />
-					))}
+								this.mapView.fitToCoordinates(result.coordinates, {
+									edgePadding: {
+										right: width / 20,
+										bottom: height / 20,
+										left: width / 20,
+										top: height / 20
+									}
+								});
+							}}
+							onError={(errorMessage) => {
+								// console.log('GOT AN ERROR');
+							}}
+						/>
+					)}
 				</MapView>
-			</Container>
+			</View>
 		);
 	}
 }
-
-const window = Dimensions.get('window');
-
 const styles = StyleSheet.create({
-	container: {
-		...StyleSheet.absoluteFillObject
+	buttonStyle: {
+		fontWeight: 'bold',
+		backgroundColor: '#f4f4f4'
 	},
-	map: {
-		...StyleSheet.absoluteFillObject
-	},
-	button: {
-		marginTop: 30
+	bottom: {
+		flex: 1,
+		justifyContent: 'flex-end',
+		marginBottom: 5,
+		marginLeft: 2
 	}
 });
+
+export default RouteScreen;
