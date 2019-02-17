@@ -1,10 +1,8 @@
 import React from 'react';
 import { Image, Platform, ScrollView, StyleSheet, FlatList, TouchableOpacity, View, Dimensions } from 'react-native';
-import { WebBrowser } from 'expo';
-
-import { MonoText } from '../../components/StyledText';
+import { List, ListItem } from 'native-base';
 import MapView, { Marker, Polyline, Circle } from 'react-native-maps';
-import PolyLine from '@mapbox/polyline';
+import moment from 'moment';
 import GlobalHeader from '../../components/GlobalHeader';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -42,7 +40,7 @@ export default class MySchedule extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch('http://192.168.0.10:3000/driver/schedule');
+		const response = await fetch('http://192.168.0.33:3000/driver/stops');
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};
@@ -74,18 +72,7 @@ export default class MySchedule extends React.Component {
 									<Icon name="directions-bus" size={40} />
 								</Right>
 							</CardItem>
-							<CardItem>
-								<Icon name="schedule" size={20} color="#bcbcbc" />
-								<Text style={styles.cardText}># Time</Text>
-							</CardItem>
-							<CardItem>
-								<Icon name="flag" size={20} color="#bcbcbc" />
-								<Text style={styles.cardText}># Stops</Text>
-							</CardItem>
-							<CardItem bordered>
-								<Icon name="accessible" size={20} color="#bcbcbc" />
-								<Text style={styles.cardText}># Wheelchair Passenger</Text>
-							</CardItem>
+
 							<View>
 								<Content>
 									<CardItem>
@@ -98,16 +85,41 @@ export default class MySchedule extends React.Component {
 											keyExtractor={(item, index) => index.toString()}
 											renderItem={({ item }) => (
 												<View style={styles.stopsList}>
-													<CardItem>
-														<Text>
-															{item.street} {item.city}
-														</Text>
-													</CardItem>
-													<CardItem>
-														<Text style={styles.innerText}>
-															<Icon name="person" size={20} color="#bcbcbc" />
-															{item.date}
-														</Text>
+													<CardItem bordered>
+														<List>
+															<ListItem>
+																<Icon name="flag" size={20} color="#bcbcbc" />
+																<Text style={styles.listText}>
+																	{item.street}, {item.city}
+																</Text>
+															</ListItem>
+															<ListItem>
+																<Icon name="date-range" size={20} color="#bcbcbc" />
+																<Text style={styles.listText}>
+																	{moment(item.date_of_journey).format(
+																		'MMMM Do YYYY'
+																	)}
+																</Text>
+															</ListItem>
+															<ListItem>
+																<Icon name="schedule" size={20} color="#bcbcbc" />
+																<Text style={styles.listText}>
+																	{moment(item.time_of_journey).format('HH:mm')}
+																</Text>
+															</ListItem>
+															<ListItem>
+																<Icon name="group" size={20} color="#bcbcbc" />
+																<Text style={styles.listText}>
+																	{item.no_of_passengers}
+																</Text>
+															</ListItem>
+															<ListItem>
+																<Icon name="accessible" size={20} color="#bcbcbc" />
+																<Text style={styles.listText}>
+																	{item.no_of_wheelchairs}
+																</Text>
+															</ListItem>
+														</List>
 													</CardItem>
 												</View>
 											)}
@@ -167,7 +179,6 @@ const styles = StyleSheet.create({
 		height: 200
 	},
 	innerCard: {
-		//	borderLeftWidth: 3.5,
 		width,
 		alignSelf: 'center'
 	},
@@ -189,13 +200,12 @@ const styles = StyleSheet.create({
 	cardHeaders: {
 		fontWeight: 'bold',
 		color: 'black'
-		// margin: 5
 	},
-	innerText: {
-		// margin: 5,
-		// padding: 5
-	},
+	innerText: {},
 	ViewRoute: {
 		marginTop: 10
+	},
+	listText: {
+		padding: 5
 	}
 });

@@ -259,18 +259,22 @@ app.get('/paypal', (req, res) => {
 	});
 });
 
-app.get('/driver/place', function(req, res) {
-	connection.query('SELECT latitude, longitude FROM coordinate WHERE fk_coordinate_type_id = 1', function(
-		error,
-		rows,
-		fields
-	) {
-		if (error) throw error;
-		else {
-			// console.log(rows);
-			res.send(rows);
+app.get('/driver/stops', function(req, res) {
+	connection.query(
+		`SELECT coordinate.street, coordinate.city, coordinate.fk_coordinate_type_id, journey.date_of_journey, journey.time_of_journey,
+	journey.no_of_passengers, journey.no_of_wheelchairs
+	FROM journey
+	INNER JOIN coordinate
+	ON journey.journey_id=coordinate.fk_journey_id
+	WHERE coordinate.fk_coordinate_type_id=1;`,
+		function(error, rows, fields) {
+			if (error) throw error;
+			else {
+				// console.log(rows);
+				res.send(rows);
+			}
 		}
-	});
+	);
 });
 
 app.get('/success', (req, res) => {

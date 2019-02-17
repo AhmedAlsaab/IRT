@@ -6,7 +6,7 @@ import GlobalHeader from '../components/GlobalHeader';
 
 export default class loginScreen extends Component {
 	state = {
-		email: 'Qwertyy@hotmail.com',
+		email: 'Qwertyyy@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};
