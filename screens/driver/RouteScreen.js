@@ -46,22 +46,6 @@ class RouteScreen extends Component {
 		this.setState({ data: coordinate });
 	};
 
-<<<<<<< HEAD
-	fetchPlaceId = () => {
-		return new Promise((resolve, reject) => {
-			fetch('http://192.168.0.10:3000/driver/place')
-				.then((response) => response.json())
-				.then((responseJSON) => {
-					resolve(responseJSON);
-				})
-				.catch((error) => {
-					reject();
-				});
-		});
-	};
-
-=======
->>>>>>> driver-schedule
 	componentDidMount() {
 		this.fetchData();
 	}
