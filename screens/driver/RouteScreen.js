@@ -1,10 +1,12 @@
+import { Button, Text } from 'native-base';
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import { Container, Content, Button, Text, Accordion, H2, Right } from 'native-base';
-import MapView, { Marker, Polyline, Circle } from 'react-native-maps';
-
-import API_KEY from '../../google_api_key';
+import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
+import API_KEY from '../../google_api_key';
+import ip from '../../ip';
+
+
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -41,7 +43,7 @@ class RouteScreen extends Component {
 	}
 
 	fetchData = async () => {
-		const response = await fetch('http://192.168.0.33:3000/driver/schedule');
+		const response = await fetch(`http://${ip}/driver/schedule`);
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};

@@ -1,17 +1,17 @@
+import PolyLine from '@mapbox/polyline';
+import _ from 'lodash';
+import moment from 'moment';
+import { Button, Container, Content, Input, Item, StyleProvider, Text } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import GlobalHeader from '../../components/GlobalHeader';
 import API_KEY from '../../google_api_key';
-import _ from 'lodash';
-import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
+import ip from '../../ip';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
-import GlobalHeader from '../../components/GlobalHeader';
-import PolyLine from '@mapbox/polyline';
-import { getDateFromDateTime, getTimeFromDateTime } from '../../utilityFunctions';
-import moment from 'moment';
 
 export default class JourneyScreen extends Component {
 	static navigationOptions = {
@@ -262,7 +262,7 @@ export default class JourneyScreen extends Component {
 			numWheelchair: this.state.numWheelchair
 		};
 
-		fetch('http://192.168.0.33:3000/booking/temp', {
+		fetch(`http://${ip}:3000/booking/temp`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

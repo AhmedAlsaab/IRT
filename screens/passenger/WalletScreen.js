@@ -1,9 +1,7 @@
+import { Button, Container, Content, Text } from 'native-base';
 import React from 'react';
-import { Image, Platform, ScrollView, StyleSheet, TouchableOpacity, View, Dimensions } from 'react-native';
-import { Content, Container, Button, Text, Accordion } from 'native-base';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
-
-const window = Dimensions.get('window');
 
 export default class WalletScreen extends React.Component {
 	static navigationOptions = {

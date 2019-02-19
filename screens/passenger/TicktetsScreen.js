@@ -1,6 +1,6 @@
 import React from 'react';
-import { ScrollView, StyleSheet, FlatList, View, Text } from 'react-native';
-import { ExpoLinksView } from '@expo/samples';
+import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import ip from '../../ip';
 
 export default class LinksScreen extends React.Component {
 	static navigationOptions = {
@@ -12,7 +12,7 @@ export default class LinksScreen extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch('http://192.168.0.10:3000/users');
+		const response = await fetch(`http://${ip}:3000/users`);
 		const users = await response.json();
 		this.setState({ data: users });
 	};

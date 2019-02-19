@@ -1,5 +1,6 @@
 var express = require('express');
 var expressValidator = require('express-validator');
+var session = require('express-session')
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var app = express();
@@ -10,11 +11,13 @@ var saltRounds = 10;
 var engines = require('consolidate');
 var paypal = require('paypal-rest-sdk');
 var paypalApiKey = require('./paypal_api_key');
+var ip = require('../ip');
 
 app.engine('ejs', engines.ejs);
 app.set('views', './views');
 app.set('view engine', 'ejs');
 
+app.use(session({ secret: "1234" }))
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(expressValidator());
@@ -226,8 +229,8 @@ app.get('/paypal', (req, res) => {
 			payment_method: 'paypal'
 		},
 		redirect_urls: {
-			return_url: 'http://192.168.0.10:3000/success',
-			cancel_url: 'http://192.168.0.10:3000/cancel'
+			return_url: `http://${ip}:3000/success`,
+			cancel_url: `http://${ip}:3000/cancel`
 		},
 		transactions: [
 			{

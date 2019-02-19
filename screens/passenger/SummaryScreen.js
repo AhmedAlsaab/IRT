@@ -6,6 +6,7 @@ import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import ip from '../../ip';
 
 export default class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -20,13 +21,13 @@ export default class SummaryScreen extends React.Component {
 	};
 
 	fetchStartData = async () => {
-		const response = await fetch('http://192.168.0.33:3000/journey/start');
+		const response = await fetch(`http://${ip}:3000/journey/start`);
 		const JSONresponse = await response.json();
 		this.setState({ startData: JSONresponse });
 	};
 
 	fetchEndData = async () => {
-		const response = await fetch('http://192.168.0.33:3000/journey/end');
+		const response = await fetch(`http://${ip}:3000/journey/end`);
 		const JSONresponse = await response.json();
 		this.setState({ endData: JSONresponse });
 	};

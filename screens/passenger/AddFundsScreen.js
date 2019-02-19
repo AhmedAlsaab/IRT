@@ -1,10 +1,9 @@
+import { Button, Container, Content, Text } from 'native-base';
 import React from 'react';
-import { StyleSheet, View, Dimensions, TextInput, Image, Modal, WebView, TouchableOpacity } from 'react-native';
-import { Content, Container, Button, Text } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import PayPal from 'react-native-paypal-wrapper';
+import { Dimensions, Image, Modal, StyleSheet, TextInput, View, WebView } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { client_id } from '../../server/paypal_api_key';
+import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../ip';
 
 export default class WalletScreen extends React.Component {
 	static navigationOptions = {
@@ -111,10 +110,9 @@ export default class WalletScreen extends React.Component {
 						>
 							<WebView
 								style={styles.webview}
-								source={{ uri: 'http://192.168.0.10:3000/paypal-button' }}
+								source={{ uri: `http://${ip}:3000/paypal-button` }}
 								onNavigationStateChange={(data) => this.handleResponse(data)}
-								injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state
-									.amount}; document.f1.submit()`}
+								injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state.amount}; document.paypal.submit()`}
 							/>
 						</Modal>
 						<Text>Payment Status: {this.state.status}</Text>

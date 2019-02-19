@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
-import { Platform, StyleSheet, StatusBar, View, TextInput, Image, Dimensions } from 'react-native';
-import { Container, Content, Button, Text, Accordion } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
+import { Accordion, Button, Container, Content, Text } from 'native-base';
+import React, { Component } from 'react';
+import { Dimensions, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
+import ip from '../ip';
 
 export default class loginScreen extends Component {
 	state = {
-		email: 'Qwertyyy@hotmail.com',
+		email: 'Qwerty@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};
@@ -19,7 +20,7 @@ export default class loginScreen extends Component {
 			password: this.state.password
 		};
 
-		fetch('http://192.168.0.33:3000/login', {
+		fetch(`http://${ip}:3000/login`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',

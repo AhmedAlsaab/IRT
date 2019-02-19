@@ -1,9 +1,41 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
-import { Constants, MapView, Location, Permissions } from 'expo';
+import { StyleSheet, View } from 'react-native';
+import { Button, Container, Content, Text } from 'native-base';
+import GlobalHeader from '../../components/GlobalHeader';
 
 export default class AccountsScreen extends Component {
+
+	static navigationOptions = {
+		header: null
+	};
+
+	logout = () => {
+		this.props.navigation.navigate('Login')
+	}
+
 	render() {
-		return <View />;
+		return (
+			<Container>
+				<GlobalHeader type={1} />
+				<Content contentContainerStyle={styles.contentContainer}>
+				<View>
+					<Button style={styles.logoutButton} onPress={this.logout}>
+						<Text>Log Out</Text>
+					</Button>
+				</View>
+				</Content>
+			</Container>
+		);
 	}
 }
+
+const styles = StyleSheet.create({
+	contentContainer: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	logoutButton: {
+		backgroundColor: '#ff0000'
+	}
+});

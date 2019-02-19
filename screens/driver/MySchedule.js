@@ -1,25 +1,11 @@
-import React from 'react';
-import { Image, Platform, ScrollView, StyleSheet, FlatList, TouchableOpacity, View, Dimensions } from 'react-native';
-import { List, ListItem } from 'native-base';
-import MapView, { Marker, Polyline, Circle } from 'react-native-maps';
 import moment from 'moment';
-import GlobalHeader from '../../components/GlobalHeader';
+import { Card, CardItem, Container, Content, H1, H2, List, ListItem, Right, Text } from 'native-base';
+import React from 'react';
+import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {
-	Content,
-	Container,
-	Button,
-	Text,
-	Accordion,
-	Card,
-	CardItem,
-	Body,
-	Header,
-	H1,
-	Right,
-	H3,
-	H2
-} from 'native-base';
+import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../ip';
 
 export default class MySchedule extends React.Component {
 	static navigationOptions = {
@@ -40,7 +26,7 @@ export default class MySchedule extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch('http://192.168.0.33:3000/driver/stops');
+		const response = await fetch(`http://${ip}/driver/stops`);
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};

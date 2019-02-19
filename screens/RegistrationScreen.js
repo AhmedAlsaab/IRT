@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
-import { TextInput, Platform, StatusBar, StyleSheet, View, Picker, Image, Dimensions } from 'react-native';
-import { Content, Container, Button, Text, Accordion } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
-
-//Custom Components
-import CustomInput from '../components/CustomInput';
+import { Accordion, Button, Container, Content, Text } from 'native-base';
+import React, { Component } from 'react';
+import { Dimensions, Picker, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
+import ip from '../ip';
+
 
 class RegistrationScreen extends Component {
 	state = {
@@ -31,7 +30,7 @@ class RegistrationScreen extends Component {
 			type: this.state.type
 		};
 
-		fetch('http://192.168.0.33:3000/register', {
+		fetch(`http://${ip}:3000/register`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
