@@ -26,7 +26,7 @@ export default class MySchedule extends React.Component {
 	};
 
 	fetchData = async () => {
-		const response = await fetch(`http://${ip}/driver/stops`);
+		const response = await fetch(`http://${ip}:3000/driver/stops`);
 		const coordinate = await response.json();
 		this.setState({ data: coordinate });
 	};
@@ -114,7 +114,7 @@ export default class MySchedule extends React.Component {
 								</Content>
 								<CardItem header bordered>
 									<Icon name="location-on" size={20} color="#bcbcbc" />
-									<Text style={styles.cardHeaders}>End Destination</Text>
+									<Text style={styles.cardHeaders}>Cardiff University </Text>
 								</CardItem>
 							</View>
 						</Card>

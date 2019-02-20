@@ -5,7 +5,6 @@ import { Dimensions, Picker, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ip';
 
-
 class RegistrationScreen extends Component {
 	state = {
 		firstName: 'fdfdf',

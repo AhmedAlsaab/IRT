@@ -5,7 +5,8 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/passenger/JourneyScreen';
 import SummaryScreen from '../screens/passenger/SummaryScreen';
-import TicktetsScreen from '../screens/passenger/TicktetsScreen';
+import TicketDetail from '../screens/TicketDetail';
+import TicketsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
@@ -25,9 +26,15 @@ JourneyStack.navigationOptions = {
 	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-bus' : 'md-bus'} />
 };
 
-const TicketsStack = createStackNavigator({
-	Ticket: TicktetsScreen
-});
+const TicketsStack = createStackNavigator(
+	{
+		Ticket: TicketsScreen,
+		Details: TicketDetail
+	},
+	{
+		initialRouteName: 'Ticket'
+	}
+);
 
 TicketsStack.navigationOptions = {
 	tabBarLabel: 'My Tickets',

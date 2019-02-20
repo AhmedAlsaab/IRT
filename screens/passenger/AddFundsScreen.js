@@ -46,8 +46,12 @@ export default class WalletScreen extends React.Component {
 	};
 
 	onAmountFocus = () => {
-		this.setState({ amount: 0.0 });
-		this.textInputRef.clear();
+		new Promise((resolve, reject) => {
+			this.setState({ amount: 0.0 });
+			resolve();
+		}).then(() => {
+			this.textInputRef.clear();
+		});
 	};
 
 	onAmountEnter = (amount) => {
@@ -112,7 +116,8 @@ export default class WalletScreen extends React.Component {
 								style={styles.webview}
 								source={{ uri: `http://${ip}:3000/paypal-button` }}
 								onNavigationStateChange={(data) => this.handleResponse(data)}
-								injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state.amount}; document.paypal.submit()`}
+								injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state
+									.amount}; document.paypal.submit()`}
 							/>
 						</Modal>
 						<Text>Payment Status: {this.state.status}</Text>
