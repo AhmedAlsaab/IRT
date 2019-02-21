@@ -5,7 +5,7 @@ import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ip';
+import ip from '../../ipstore';
 
 export default class MySchedule extends React.Component {
 	static navigationOptions = {

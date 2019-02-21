@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import API_KEY from '../../google_api_key';
-import ip from '../../ip';
+import ip from '../../ipstore';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;

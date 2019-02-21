@@ -6,5 +6,5 @@ npm-debug.*
 *.key
 *.mobileprovision
 google_api_key.js
-# ip.js
-# server/paypal_api_key.js
+ipstore.js
+paypal_api_key.js

@@ -10,8 +10,8 @@ var saltRounds = 10;
 
 var engines = require('consolidate');
 var paypal = require('paypal-rest-sdk');
-var paypalApiKey = require('./paypal_api_key');
-var ip = require('../ip');
+var paypalApiKey = require('../paypal_api_key');
+var ip = require('../ipstore');
 
 app.engine('ejs', engines.ejs);
 app.set('views', '../views');

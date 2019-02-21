@@ -6,7 +6,7 @@ import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import ip from '../../ip';
+import ip from '../../ipstore';
 
 export default class SummaryScreen extends React.Component {
 	static navigationOptions = {

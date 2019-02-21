@@ -6,7 +6,7 @@ import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'na
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ip';
+import ip from '../ipstore';
 
 export default class TicketDetail extends React.Component {
 	static navigationOptions = {

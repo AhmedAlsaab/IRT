@@ -3,7 +3,7 @@ import { Accordion, Button, Container, Content, Text } from 'native-base';
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ip';
+import ip from '../ipstore';
 
 export default class loginScreen extends Component {
 	state = {

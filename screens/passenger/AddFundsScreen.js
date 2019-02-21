@@ -3,7 +3,7 @@ import React from 'react';
 import { Dimensions, Image, Modal, StyleSheet, TextInput, View, WebView } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ip';
+import ip from '../../ipstore';
 
 export default class WalletScreen extends React.Component {
 	static navigationOptions = {
