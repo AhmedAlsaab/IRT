@@ -67,9 +67,20 @@ AccountStack.navigationOptions = {
 	)
 };
 
-export default createBottomTabNavigator({
-	JourneyStack,
-	TicketsStack,
-	WalletStack,
-	AccountStack
-});
+export default createBottomTabNavigator(
+	{
+		JourneyStack,
+		TicketsStack,
+		WalletStack,
+		AccountStack
+	},
+	{
+		tabBarOptions: {
+			activeTintColor: 'white',
+			inactiveTintColor: '#cccccc',
+			style: {
+				backgroundColor: '#ff0000'
+			}
+		}
+	}
+);

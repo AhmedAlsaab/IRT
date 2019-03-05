@@ -154,8 +154,7 @@ export default class JourneyScreen extends Component {
 	// Get Start Location
 	async startPosition(destination) {
 		this.setState({ destination });
-		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${destination}
-    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
+		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${destination}&types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
 		const result = await fetch(apiUrl);
 		const jsonResult = await result.json();
 		this.setState({
@@ -167,8 +166,7 @@ export default class JourneyScreen extends Component {
 	// Get End Location
 	async endLocation(endDestination) {
 		this.setState({ endDestination });
-		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${endDestination}
-    &types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
+		const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${endDestination}&types=geocode&location=51.481583,-3.179090&radius=3000&key=${API_KEY}&strictbounds`;
 		const result = await fetch(apiUrl);
 		const jsonResult = await result.json();
 		this.setState({
@@ -228,7 +226,9 @@ export default class JourneyScreen extends Component {
 			this.getRouteDirections();
 		});
 	}
-
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
 	onSubmit = () => {
 		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair } = this.state;
 
@@ -263,14 +263,7 @@ export default class JourneyScreen extends Component {
 			numWheelchair: this.state.numWheelchair
 		};
 
-		fetch(`http://${ip}:3000/booking/temp`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		});
+		this.props.navigation.navigate('Summary', data);
 	};
 
 	render() {
@@ -315,7 +308,7 @@ export default class JourneyScreen extends Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView>
-					<GlobalHeader type={1} />
+					<GlobalHeader type={3} header="Journey Planner" navigateTo={this.navigateTo} />
 					<Container style={styles.contentContainer}>
 						<Content>
 							{/* Favourite recent journeys button */}
@@ -424,7 +417,7 @@ export default class JourneyScreen extends Component {
 
 							{/* Advanced search button, toggles advanced fields */}
 							<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton} onPress={this.toggleAdvanced}>
+								<Button danger style={styles.secondaryButton} onPress={this.toggleAdvanced}>
 									<Text style={styles.secondaryButtontext}>
 										{this.state.isCollapsed ? 'Advanced Search' : 'Basic Search'}
 									</Text>
@@ -438,7 +431,6 @@ export default class JourneyScreen extends Component {
 									style={styles.button}
 									onPress={() => {
 										this.onSubmit();
-										this.props.navigation.navigate('Summary');
 									}}
 								>
 									<Text>Search</Text>
@@ -508,9 +500,10 @@ const styles = StyleSheet.create({
 	},
 	secondaryButton: {
 		width: '100%',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		backgroundColor: '#ff0000'
 	},
 	secondaryButtontext: {
-		color: '#ff0000'
+		color: '#ffffff'
 	}
 });

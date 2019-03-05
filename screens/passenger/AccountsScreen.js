@@ -4,25 +4,28 @@ import { Button, Container, Content, Text } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 
 export default class AccountsScreen extends Component {
-
 	static navigationOptions = {
 		header: null
 	};
 
 	logout = () => {
-		this.props.navigation.navigate('Login')
-	}
+		this.props.navigation.navigate('Login');
+	};
+
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
 
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} />
+				<GlobalHeader type={3} header="My Account" navigateTo={this.navigateTo} />
 				<Content contentContainerStyle={styles.contentContainer}>
-				<View>
-					<Button style={styles.logoutButton} onPress={this.logout}>
-						<Text>Log Out</Text>
-					</Button>
-				</View>
+					<View>
+						<Button style={styles.logoutButton} onPress={this.logout}>
+							<Text>Log Out</Text>
+						</Button>
+					</View>
 				</Content>
 			</Container>
 		);

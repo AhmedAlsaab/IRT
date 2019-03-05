@@ -4,8 +4,16 @@ import { Dimensions, Image, Modal, StyleSheet, TextInput, View, WebView } from '
 import Icon from 'react-native-vector-icons/AntDesign';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
+import uuid from 'uuid/v4';
 
-export default class WalletScreen extends React.Component {
+import WalletHeader from './WalletHeader';
+import WalletBalance from './WalletBalance';
+
+import { connect } from 'react-redux';
+import { addTransaction } from '../../actions/transactionAction';
+import { updateUserFunds } from '../../actions/userAction';
+
+class AddFundsScreen extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -13,7 +21,8 @@ export default class WalletScreen extends React.Component {
 	state = {
 		showModal: false,
 		status: '',
-		amount: 0.0
+		amount: 0.0,
+		funds: 0.0
 	};
 
 	onPaypalSubmit = () => {
@@ -26,10 +35,22 @@ export default class WalletScreen extends React.Component {
 
 	handleResponse = (data) => {
 		if (data.title === 'success') {
+			const { amount, funds } = this.state;
+			this.props.onAddTransaction({
+				current_funds: parseFloat(parseInt(this.props.user.funds) + parseInt(amount)).toFixed(2),
+				date: new Date(),
+				fk_transaction_type_id: 2,
+				fk_user_id: this.props.user.id,
+				spent_funds: amount,
+				transaction_id: uuid(),
+				type: 'Funds added'
+			});
+
+			this.props.onUpdateUserFunds(amount);
 			this.setState({
 				showModal: false,
 				status: 'Complete',
-				amount: 0.0
+				funds: parseFloat(parseInt(funds) + parseInt(amount)).toFixed(2)
 			});
 		}
 		if (data.title === 'cancel') {
@@ -42,7 +63,18 @@ export default class WalletScreen extends React.Component {
 	};
 
 	onDebitCreditSubmit = () => {
-		console.log('debit/credit api');
+		const { amount } = this.state;
+		this.props.onAddTransaction({
+			current_funds: parseFloat(parseInt(this.props.user.funds) + parseInt(amount)).toFixed(2),
+			date: new Date(),
+			fk_transaction_type_id: 2,
+			fk_user_id: null,
+			spent_funds: amount,
+			transaction_id: uuid(),
+			type: 'Funds added'
+		});
+
+		this.props.onUpdateUserFunds(amount);
 	};
 
 	onAmountFocus = () => {
@@ -58,18 +90,16 @@ export default class WalletScreen extends React.Component {
 		this.setState({ amount });
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('Wallet');
+	};
+
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} />
+				<GlobalHeader type={3} header="Add Funds" navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content contentContainerStyle={styles.contentContainer}>
-					<View style={styles.headerContainer}>
-						<Text style={styles.headerText}>ADD FUNDS</Text>
-					</View>
-					<View style={styles.balanceContainer}>
-						<Text style={styles.balanceText}>Your Balance</Text>
-						<Text style={[ styles.balanceSpacing, styles.balanceText ]}>£0.00</Text>
-					</View>
+					<WalletBalance />
 					<View style={styles.amountContainer}>
 						<Icon name="pluscircleo" size={25} style={styles.amountIcon} />
 						<TextInput
@@ -139,7 +169,8 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		flexDirection: 'column',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		marginTop: 15
 	},
 	headerContainer: {
 		padding: 25,
@@ -151,25 +182,6 @@ const styles = StyleSheet.create({
 		fontSize: 25,
 		fontWeight: '100',
 		color: '#919191'
-	},
-	balanceContainer: {
-		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		justifyContent: 'center',
-		padding: 25,
-		shadowOffset: { width: 0, height: -20 },
-		shadowColor: 'black',
-		shadowOpacity: 1,
-		elevation: 10,
-		backgroundColor: '#fff',
-		marginBottom: 15,
-		width: window.width
-	},
-	balanceSpacing: {
-		margin: 15,
-		fontSize: 40,
-		fontWeight: '100'
 	},
 	button: {
 		width: 175,
@@ -199,7 +211,7 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		paddingBottom: 10,
 		width: window.width,
-		color: '#919191'
+		color: '#000'
 	},
 	paymentOptionsContainer: {
 		flexDirection: 'column',
@@ -211,9 +223,9 @@ const styles = StyleSheet.create({
 	},
 	paymentOption: {
 		flex: 1,
-		borderColor: '#919191',
 		borderWidth: 1,
-		backgroundColor: '#fff',
+		borderColor: '#000',
+		backgroundColor: '#ffff',
 		borderRadius: 10,
 		height: 'auto',
 		width: window.width - 50,
@@ -225,7 +237,7 @@ const styles = StyleSheet.create({
 	},
 	paymentOptionText: {
 		flex: 5,
-		color: '#919191',
+		color: '#000',
 		fontSize: 17,
 		padding: 17,
 		textTransform: 'none'
@@ -234,8 +246,18 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: 40,
 		resizeMode: 'contain'
-	},
-	balanceText: {
-		color: '#919191'
 	}
 });
+
+const mapStateToProps = (state) => ({
+	user: state.userReducer.user
+});
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		onAddTransaction: (transaction) => dispatch(addTransaction(transaction)),
+		onUpdateUserFunds: (amount) => dispatch(updateUserFunds(amount))
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddFundsScreen);
