@@ -417,7 +417,7 @@ export default class JourneyScreen extends Component {
 
 							{/* Advanced search button, toggles advanced fields */}
 							<View style={styles.secondaryButtonContainer}>
-								<Button danger style={styles.secondaryButton} onPress={this.toggleAdvanced}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.toggleAdvanced}>
 									<Text style={styles.secondaryButtontext}>
 										{this.state.isCollapsed ? 'Advanced Search' : 'Basic Search'}
 									</Text>
@@ -501,9 +501,9 @@ const styles = StyleSheet.create({
 	secondaryButton: {
 		width: '100%',
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
+		backgroundColor: '#fff'
 	},
 	secondaryButtontext: {
-		color: '#ffffff'
+		color: '#ff0000'
 	}
 });

@@ -79,7 +79,7 @@ export default createBottomTabNavigator(
 	{
 		tabBarOptions: {
 			activeTintColor: 'white',
-			inactiveTintColor: '#cccccc',
+			inactiveTintColor: '#a30000',
 			style: {
 				backgroundColor: '#ff0000'
 			}
