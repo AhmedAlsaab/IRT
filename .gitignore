@@ -8,3 +8,4 @@ npm-debug.*
 google_api_key.js
 ipstore.js
 paypal_api_key.js
+scratch/

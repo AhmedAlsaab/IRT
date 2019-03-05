@@ -5,9 +5,13 @@ import { Dimensions, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 
-export default class loginScreen extends Component {
+import { connect } from 'react-redux';
+import { addUser } from '../actions/userAction'
+
+class loginScreen extends Component {
+
 	state = {
-		email: 'Qwertyy@hotmail.com',
+		email: 'Qwerty@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};
@@ -36,10 +40,12 @@ export default class loginScreen extends Component {
 
 				switch (responseJSON.content.fk_user_type_id) {
 					case 1:
+						this.props.onAddUser(responseJSON.content)
 						this.props.navigation.navigate('Passenger');
 						break;
 
 					case 2:
+						this.props.onAddUser(responseJSON.content)
 						this.props.navigation.navigate('Driver');
 						break;
 				}
@@ -50,11 +56,15 @@ export default class loginScreen extends Component {
 		return this.props.navigation.navigate('Register');
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
+
 	render() {
 		return (
 			<Container>
 				<Content>
-					<GlobalHeader type={2} />
+					<GlobalHeader type={2} navigateTo={this.navigateTo} />
 					{this.state.errors &&
 					!!this.state.errors.length && (
 						<Accordion
@@ -193,3 +203,11 @@ const styles = StyleSheet.create({
 		height: window.height
 	}
 });
+
+const mapDispatchToProps = dispatch => {
+	return {
+		onAddUser: user => dispatch(addUser(user))
+	}
+}
+
+export default connect(null, mapDispatchToProps)(loginScreen)

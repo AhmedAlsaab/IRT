@@ -42,12 +42,16 @@ export default class MySchedule extends React.Component {
 		console.log(data);
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('DailySchedule');
+	};
+
 	render() {
 		const RADIUS = 200;
 		const zoomAmount = 15;
 		return (
 			<Container>
-				<GlobalHeader type={1} />
+				<GlobalHeader type={3} header="Journey Details" navigateTo={this.navigateTo} isBackButtonActive={1} />
 
 				<Content padder>
 					<View>

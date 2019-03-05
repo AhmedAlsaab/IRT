@@ -78,11 +78,15 @@ class RegistrationScreen extends Component {
 		return this.props.navigation.navigate('Login');
 	};
 
+	navigateTo = () => {
+		this.props.navigation.navigate('');
+	};
+
 	render() {
 		return (
 			<Container>
 				<Content>
-					<GlobalHeader type={1} />
+					<GlobalHeader type={1} navigateTo={this.navigateTo} />
 					{this.state.errors &&
 					!!this.state.errors.length && (
 						<Accordion
