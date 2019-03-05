@@ -10,11 +10,13 @@ import TicketsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
+import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 
 const JourneyStack = createStackNavigator(
 	{
 		Home: JourneyScreen,
-		Summary: SummaryScreen
+		Summary: SummaryScreen,
+		Confirmation: ConfirmationScreen,
 	},
 	{
 		initialRouteName: 'Home'

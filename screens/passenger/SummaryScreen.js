@@ -47,10 +47,13 @@ class SummaryScreen extends React.Component {
 		//Send data to the server
 		const data = {
 			data: {
-				startLocation: `${street}, ${city}`,
-				endLocation: `${endStreet}, ${endCity}`,
-				passenger: numPassenger,
-				wheelchair: numWheelchair
+				date,
+				street,
+				endStreet,
+				numPassenger,
+				numWheelchair,
+				city,
+				endCity
 			},
 			date: moment(date).format('MMMM Do YYYY')
 		};
@@ -70,12 +73,12 @@ class SummaryScreen extends React.Component {
 					case 10:
 						this.bookJourney();
 						this.payForTicket();
-						this.props.navigation.navigate('JourneyScreen');
+						this.props.navigation.navigate('Confirmation', data);
 						break;
 					//User Exists
 					case 1:
 						this.setState({
-							errors: [ { title: 'Errors', content: 'There was an error whilst sending confirmation' } ]
+							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
 						});
 						break;
 				}
@@ -234,7 +237,7 @@ class SummaryScreen extends React.Component {
 									<View style={styles.buttonContainer}>
 										<Button
 											danger
-											style={[ styles.button, { backgroundColor: '#ff0000' } ]}
+											style={[styles.button, { backgroundColor: '#ff0000' }]}
 											onPress={this.onSubmit}
 										>
 											<Text style={styles.buttonText}>Pay</Text>
