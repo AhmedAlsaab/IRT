@@ -16,6 +16,7 @@ export function fetchTransactions() {
             dispatch({
                 type: FETCH_TRANSACTIONS,
 				payload: response
-        })});
+        })})
+        .catch((error) => console.log(error));
     }
 }

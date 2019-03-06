@@ -97,7 +97,7 @@ class AddFundsScreen extends React.Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={3} header="Add Funds" navigateTo={this.navigateTo} isBackButtonActive={1} />
+				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content contentContainerStyle={styles.contentContainer}>
 					<WalletBalance />
 					<View style={styles.amountContainer}>

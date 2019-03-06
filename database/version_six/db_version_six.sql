@@ -133,6 +133,7 @@ CREATE TABLE IF NOT EXISTS `transport`.`user` (
   `email` VARCHAR(100) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
   `funds` DECIMAL(15,2) NULL DEFAULT 0.00,
+  `concessionary` TINYINT NULL DEFAULT 1,
   `forename` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NULL DEFAULT NULL,
   `phone_number` VARCHAR(45) NOT NULL,

@@ -30,7 +30,7 @@ export default class DriverSchedule extends React.Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={3} header="Today's Schedule" navigateTo={this.navigateTo} />
+				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 
 				<Content padder>
 					<View style={styles.cardContainer}>

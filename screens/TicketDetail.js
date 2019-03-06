@@ -7,6 +7,7 @@ import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
+import moment from 'moment';
 
 export default class TicketDetail extends React.Component {
 	static navigationOptions = {
@@ -21,8 +22,8 @@ export default class TicketDetail extends React.Component {
 
 	componentDidMount() {
 		const { id } = this.props.navigation.state.params;
-
-		fetch(`http://${ip}:3000/ticketsQuery?id=${id}`).then((response) => response.json()).then((response) => {
+		fetch(`http://${ip}:3000/ticketsQuery1?id=${id}`).then((response) => response.json()).then((response) => {
+			console.log(response);
 			this.setState({
 				ticketData: response.ticket
 			});
@@ -50,14 +51,13 @@ export default class TicketDetail extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-					<GlobalHeader
-						type={3}
-						header="Ticket Details"
-						navigateTo={this.navigateTo}
-						isBackButtonActive={1}
-					/>
+					<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 					<Container style={styles.contentContainer}>
 						<Content>
+							<View style={styles.titleContainer}>
+								<Text style={styles.title}>Ticket Details</Text>
+							</View>
+
 							{this.state.ticketData.length >= 1 && (
 								<View style={styles.container}>
 									<React.Fragment>
@@ -72,8 +72,13 @@ export default class TicketDetail extends React.Component {
 										</Text>
 										<Text>
 											{' '}
-											Start Date and Time:
-											{this.state.ticketData[0].start_time}
+											Date of Departure:
+											{moment(this.state.ticketData[0].start_time).format('Do MMMM YY')}
+										</Text>
+										<Text>
+											{' '}
+											Departure Time:
+											{moment(this.state.ticketData[0].start_time).format('h:mm a')}
 										</Text>
 										<View style={styles.imageContainer}>
 											<Image
@@ -97,8 +102,13 @@ export default class TicketDetail extends React.Component {
 										</Text>
 										<Text>
 											{' '}
-											Start Date and Time:
-											{this.state.ticketData[1].end_time}
+											Date of Arrival:
+											{moment(this.state.ticketData[1].end_time).format('Do MMMM YY')}
+										</Text>
+										<Text>
+											{' '}
+											Arrival Time:
+											{moment(this.state.ticketData[1].end_time).format('h:mm a')}
 										</Text>
 									</React.Fragment>
 								</View>
@@ -115,7 +125,6 @@ const styles = StyleSheet.create({
 	container: {
 		marginLeft: 10,
 		marginBottom: 10,
-		marginTop: 10,
 		height: 300,
 		width: 300,
 		borderRadius: 0.5,

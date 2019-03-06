@@ -7,10 +7,10 @@ import ip from '../ipstore';
 
 class RegistrationScreen extends Component {
 	state = {
-		firstName: 'fdfdf',
-		lastName: 'dfdfdfdf',
-		phoneNumber: '11111111',
-		email: 'Qwerty@hotmail.com',
+		firstName: 'Martin',
+		lastName: 'Jones',
+		phoneNumber: '07914287655',
+		email: 'JonesA@hotmail.com',
 		password: 'Qwerty123',
 		passwordConfirm: 'Qwerty123',
 		type: 1,

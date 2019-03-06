@@ -6,12 +6,11 @@ import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 
 import { connect } from 'react-redux';
-import { addUser } from '../actions/userAction'
+import { addUser } from '../actions/userAction';
 
 class loginScreen extends Component {
-
 	state = {
-		email: 'Qwerty@hotmail.com',
+		email: 'JonesA@hotmail.com',
 		password: 'Qwerty123',
 		errors: []
 	};
@@ -40,16 +39,17 @@ class loginScreen extends Component {
 
 				switch (responseJSON.content.fk_user_type_id) {
 					case 1:
-						this.props.onAddUser(responseJSON.content)
+						this.props.onAddUser(responseJSON.content);
 						this.props.navigation.navigate('Passenger');
 						break;
 
 					case 2:
-						this.props.onAddUser(responseJSON.content)
+						this.props.onAddUser(responseJSON.content);
 						this.props.navigation.navigate('Driver');
 						break;
 				}
-			});
+			})
+			.catch((error) => console.log(error));
 	};
 
 	onRegisterClick = () => {
@@ -64,7 +64,7 @@ class loginScreen extends Component {
 		return (
 			<Container>
 				<Content>
-					<GlobalHeader type={2} navigateTo={this.navigateTo} />
+					<GlobalHeader type={1} navigateTo={this.navigateTo} />
 					{this.state.errors &&
 					!!this.state.errors.length && (
 						<Accordion
@@ -204,10 +204,10 @@ const styles = StyleSheet.create({
 	}
 });
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
 	return {
-		onAddUser: user => dispatch(addUser(user))
-	}
-}
+		onAddUser: (user) => dispatch(addUser(user))
+	};
+};
 
-export default connect(null, mapDispatchToProps)(loginScreen)
+export default connect(null, mapDispatchToProps)(loginScreen);
