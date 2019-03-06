@@ -19,7 +19,7 @@ export default class AccountsScreen extends Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={3} header="My Account" navigateTo={this.navigateTo} />
+				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<Content contentContainerStyle={styles.contentContainer}>
 					<View>
 						<Button style={styles.logoutButton} onPress={this.logout}>

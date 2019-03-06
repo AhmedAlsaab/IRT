@@ -6,10 +6,11 @@ import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'na
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ipstore';
+import tickets from './data';
+import ip from '../ip';
 
 import TicketLayout from './TicketLayout';
-import uuid from 'uuid/v4';
+import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
 
 export default class TicketsScreen extends React.Component {
 	static navigationOptions = {
@@ -20,68 +21,82 @@ export default class TicketsScreen extends React.Component {
 		expansionIsOpen: false,
 		isLoadingComplete: false,
 		data: [],
-		ticketData: [],
-		ticketExpired: [],
-		showActive: 0
+		ticketData: []
 	};
 
 	componentDidMount() {
-		fetch(`http://${ip}:3000/tickets`).then((response) => response.json()).then((response) => {
-			this.setState({
-				ticketData: response.ticket
-			});
-		});
 		fetch(`http://${ip}:3000/ticketsExpired`).then((response) => response.json()).then((response) => {
 			this.setState({
-				ticketExpired: response.ticket
+				ticketData: response.ticketExpired
 			});
 		});
 	}
 
-	openTicket = (ticketId) => {
-		this.props.navigation.navigate('Details', { id: ticketId });
+	openTicket = (data) => {
+		this.props.navigation.navigate('Details', { id: data });
 	};
 
-	showActive = () => {
-		this.setState({ showActive: 0 })
-	}
-
-	showExpired = () => {
-		this.setState({ showActive: 1 })
-	}
-
-	navigateTo = () => {
-		this.props.navigation.navigate('Ticket');
+	closeTicket = () => {
+		console.log('hello');
+		this.setState({
+			expansionIsOpen: false
+		});
 	};
 
-	render() {		
+	render() {
+		// const data = {
+		// 	to: null,
+		// 	from: null
+		// }
+
+		var ticket = [];
+		var count = 0;
+
+		for (let i = 0; i < this.state.ticketData.length; i++) {
+			count++;
+			var currentTicket = this.state.ticketData[i];
+
+			if (count === 1) {
+				// data.to = currentTicket;
+				continue;
+			}
+
+			if (count === 2) {
+				// data.from = currentTicket;
+				var ticketId = currentTicket.ticket_id;
+				// new Promise((resolve, reject) => {
+				ticket.push(<TicketLayout onOpen={() => this.openTicket(ticketId)} key={i} />);
+				count = 0;
+				// 	resolve();
+				// })
+				// .then(() => {
+				// 	data.to = null;
+				// 	data.from = null;
+				// 	count = 0;
+				// })
+			}
+			console.log(ticket.length);
+		}
+
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-					<GlobalHeader type={1} navigateTo={this.navigateTo}/>
+					<GlobalHeader type={1} />
 					<Container style={styles.contentContainer}>
 						<Content>
 							<View style={styles.titleContainer}>
 								<Text style={styles.title}>My Tickets</Text>
 							</View>
-							<View style={{ flex: 1, flexDirection: 'row', paddingTop: 25, paddingBottom: 25 }}>
-								<Button bordered danger style={styles.secondaryButton} onPress={this.showActive}>
+							<View style={{flex: 1, flexDirection: 'row', paddingTop: 25, paddingBottom: 25}}>
+								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
 								</Button>
-								<Button bordered danger style={styles.secondaryButton} onPress={this.showExpired}>
+								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Expired Tickets</Text>
 								</Button>
+								<View>{ticket}</View>
+
 							</View>
-							{this.state.showActive === 0 && <View>{this.state.ticketData.map((ticket) => {
-								return (
-									<TicketLayout onOpen={() => this.openTicket(ticket.ticket_id)} key={uuid()} ticketId={ticket.ticket_id} expired={0}/>
-								)
-							})}</View>}
-							{this.state.showActive === 1 && <View>{this.state.ticketExpired.map((ticket) => {
-								return (
-									<TicketLayout onOpen={() => this.openTicket(ticket.ticket_id)} key={uuid()} ticketId={ticket.ticket_id} expired={1}/>
-								)
-							})}</View>}
 						</Content>
 					</Container>
 				</ScrollView>
@@ -124,9 +139,6 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		backgroundColor: 'transparent',
 	},
-	map: {
-		...StyleSheet.absoluteFillObject
-	},
 	buttonContainer: {
 		flexDirection: 'row',
 		alignSelf: 'center',
@@ -134,17 +146,18 @@ const styles = StyleSheet.create({
 		alignItems: 'center'
 	},
 	button: {
-		width: '50%%',
+		width: '100%',
+		justifyContent: 'center',
 		color: '#ff6666'
 	},
 	buttontext: {
 		color: '#000000'
 	},
-	secondaryButton: {
+    secondaryButton: {
 		flex: 1,
 		flexDirection: 'row',
 		width: '50%',
-	},
+    },
 	secondaryButtontext: {
 		color: '#ff0000'
 	},

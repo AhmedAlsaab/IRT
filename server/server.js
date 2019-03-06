@@ -13,7 +13,7 @@ var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
 app.engine('ejs', engines.ejs);
-app.set('views', './views');
+app.set('views', '../views');
 app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
@@ -33,7 +33,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: 'root'
+	password: ''
 });
 
 connection.connect((error) => {
@@ -156,7 +156,7 @@ app.post('/book', (req, res) => {
 		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: 'papathanasiouk@cardiff.ac.uk', // list of receivers
+			to: 'alsaaba@cardiff.ac.uk', // list of receivers
 			subject: 'Your booking details', // Subject line
 			text: 'Hello world?', // plain text body
 			html: output // html body
@@ -442,8 +442,28 @@ app.get('/cancel', (req, res) => {
 });
 
 app.get('/tickets', function(req, res) {
+	connection.query('SELECT ticket_id FROM ticket WHERE expired = 0', function(error, rows, fields) {
+		if (error) throw error;
+
+		res.send({ ticket: rows });
+	});
+});
+
+app.get('/ticketsExpired', function(req, res) {
+	connection.query('SELECT ticket_id FROM ticket WHERE expired = 1', function(error, rows, fields) {
+		if (error) throw error;
+
+		res.send({ ticket: rows });
+	});
+});
+
+app.get('/ticketsQuery', function(req, res) {
+	const id = req.query.id;
+	const expired = req.query.expired;
+
 	connection.query(
-		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id',
+		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE t.ticket_id = ? AND t.expired = ?',
+		[ id, expired ],
 		function(error, rows, fields) {
 			if (error) throw error;
 
@@ -452,8 +472,9 @@ app.get('/tickets', function(req, res) {
 	);
 });
 
-app.get('/ticketsQuery', function(req, res) {
+app.get('/ticketsQuery1', function(req, res) {
 	const id = req.query.id;
+
 	connection.query(
 		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE t.ticket_id = ?',
 		[ id ],

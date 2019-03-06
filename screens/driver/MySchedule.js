@@ -51,7 +51,7 @@ export default class MySchedule extends React.Component {
 		const zoomAmount = 15;
 		return (
 			<Container>
-				<GlobalHeader type={3} header="Journey Details" navigateTo={this.navigateTo} isBackButtonActive={1} />
+				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 
 				<Content padder>
 					<View>

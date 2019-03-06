@@ -53,21 +53,4 @@ INSERT INTO coordinate_type VALUES (2, "End");
 
 INSERT INTO transaction_type VALUES (1, "Ticket purchased");
 INSERT INTO transaction_type VALUES (2, "Funds added");
-
-/*
-INSERT INTO ticket VALUES(1, 1, 1, 1, now());
-INSERT INTO ticket VALUES(2, 1, 1, 1, now());
-INSERT INTO ticket VALUES(3, 1, 1, 1, now());
-INSERT INTO ticket VALUES(4, 1, 1, 1, now());
-
-INSERT INTO journey VALUES(1, now(), now());
-INSERT INTO journey VALUES(2, now(), now());
-INSERT INTO journey VALUES(3, now(), now());
-INSERT INTO journey VALUES(4, now(), now());
-
-INSERT INTO user_journey VALUES(1, 1, 1, 1);
-INSERT INTO user_journey VALUES(1, 2, 2, 1);
-INSERT INTO user_journey VALUES(1, 3, 3, 1);
-INSERT INTO user_journey VALUES(1, 4, 4, 1);
-*/
-
+INSERT INTO transaction_type VALUES (3, "Concessionary Ticket");

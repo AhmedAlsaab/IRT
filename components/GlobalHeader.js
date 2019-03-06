@@ -51,20 +51,25 @@ export default class GlobalHeader extends Component {
 
 	render() {
 		return (
-			<Header style={this.heightAdjuster()}>
-				{this.props.type == 1 && (
-					<Image
-						source={require('../branding/logos/two_line_version/TFW_two_line_mono_negative_rgb.png')}
-						style={{ height: 70, width: 300 }}
-					/>
+				<Header style={this.heightAdjuster()}>
+				{this.props.isBackButtonActive == 1 && (
+					<Button transparent onPress={() => this.props.navigateTo()} style={{ position: 'absolute', zIndex: 1, right: 350}}>
+						<Icon name="arrow-back" />
+					</Button>
 				)}
-				{this.props.type == 2 && (
-					<Image
-						source={require('../branding/logos/four_line_version/TFW_four_line_mono_negative_rgb.png')}
-						style={{ height: 140, width: 300 }}
-					/>
-				)}
-				{this.props.type == 3 && (
+					{this.props.type == 1 && (
+						<Image
+							source={require('../branding/logos/two_line_version/TFW_two_line_mono_negative_rgb.png')}
+							style={{ height: 70, width: 300 }}
+						/>
+					)}
+					{this.props.type == 2 && (
+						<Image
+							source={require('../branding/logos/four_line_version/TFW_four_line_mono_negative_rgb.png')}
+							style={{ height: 140, width: 300 }}
+						/>
+					)}
+					{/* {this.props.type == 3 && (
 					<View style={styles.contentRow}>
 						<View>
 							{this.props.isBackButtonActive == 1 && (
@@ -82,8 +87,8 @@ export default class GlobalHeader extends Component {
 							</View>
 						</View>
 					</View>
-				)}
-			</Header>
+				)} */}
+				</Header>
 		);
 	}
 }

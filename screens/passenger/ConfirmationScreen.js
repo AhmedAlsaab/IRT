@@ -23,7 +23,7 @@ class ConfirmationScreen extends React.Component {
     };
 
     render() {
-        const data = this.props.navigation.state.params;
+        const booking = this.props.navigation.state.params;
         return (
             <StyleProvider style={getTheme(platform)}>
                 <Container>
@@ -39,14 +39,14 @@ class ConfirmationScreen extends React.Component {
                             <View style={styles.introduction}>
                                 <Text style={styles.header1}>YOUR BOOKING</Text>
                                 <Text style={styles.body}>
-                                    Thank you for booking your journey with us on <Text style={styles.bold}>{data.date}</Text>
+                                    Thank you for booking your journey with us on <Text style={styles.bold}>{booking.date}</Text>
                                 </Text>
                                 <View style={styles.coordinates}>
                                     <Text style={styles.bold}>
-                                        From: {data.data.street}, {data.data.city}
+                                        From: {booking.data.startLocation}
                                     </Text>
                                     <Text style={styles.bold}>
-                                        To: {data.data.endStreet}, {data.data.endCity}
+                                        To: {booking.data.endLocation}
                                     </Text>
                                 </View>
                                 <Text style={styles.body}>
