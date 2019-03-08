@@ -50,9 +50,10 @@ class SummaryScreen extends React.Component {
 				startLocation: `${street}, ${city}`,
 				endLocation: `${endStreet}, ${endCity}`,
 				passenger: numPassenger,
-				wheelchair: numWheelchair
+				wheelchair: numWheelchair,
 			},
-			date: moment(date).format('MMMM Do YYYY')
+			date: moment(date).format('MMMM Do YYYY'),
+			email: this.props.user.email,
 		};
 
 		fetch(`http://${ip}:3000/book`, {

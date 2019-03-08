@@ -13,7 +13,7 @@ var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
 app.engine('ejs', engines.ejs);
-app.set('views', '../views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
@@ -33,7 +33,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: ''
+	password: 'root'
 });
 
 connection.connect((error) => {
@@ -122,6 +122,7 @@ app.post('/book', (req, res) => {
 	//Get form fields
 	const data = req.body.data;
 	const date = req.body.date;
+	const email = req.body.email;
 
 	// startLocation: `${street}, ${city}`,
 	// 			endLocation: `${endStreet}, ${endCity}`,
@@ -156,7 +157,7 @@ app.post('/book', (req, res) => {
 		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: 'alsaaba@cardiff.ac.uk', // list of receivers
+			to: email, // list of receivers
 			subject: 'Your booking details', // Subject line
 			text: 'Hello world?', // plain text body
 			html: output // html body
