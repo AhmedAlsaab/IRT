@@ -12,8 +12,11 @@ var paypal = require('paypal-rest-sdk');
 var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
+const nodemailer = require('nodemailer');
+const nodemailerOauth2Key = require('../nodemailer_oauth2_key');
+
 app.engine('ejs', engines.ejs);
-app.set('views', '../views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
@@ -33,7 +36,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: ''
+	password: 'root'
 });
 
 connection.connect((error) => {
@@ -122,11 +125,8 @@ app.post('/book', (req, res) => {
 	//Get form fields
 	const data = req.body.data;
 	const date = req.body.date;
+	const email = req.body.email;
 
-	// startLocation: `${street}, ${city}`,
-	// 			endLocation: `${endStreet}, ${endCity}`,
-	// 			passenger: numPassenger,
-	// 			Wheelchair: numWheelchair
 	const output = `
 		<h1> Your confirmed booking</h1>
 		<p> Thank you for your recent booking with us. Here is a reminder of your journey details:</p>
@@ -140,23 +140,26 @@ app.post('/book', (req, res) => {
 	`;
 
 	('use strict');
-	const nodemailer = require('nodemailer');
 
+	// Referenced from https://medium.com/@nickroach_50526/sending-emails-with-node-js-using-smtp-gmail-and-oauth2-316fe9c790a1
 	async function main() {
 		let transporter = nodemailer.createTransport({
-			host: 'smtp.gmail.com',
-			port: 587,
-			secure: false, // true for 465, false for other ports
+			service: 'Gmail',
+			port: 465,
+			secure: true, // true for 465, false for other ports
 			auth: {
+				type: "OAuth2",
 				user: 'tfwirt.test@gmail.com',
-				pass: 'TfwTest123'
+				clientId: nodemailerOauth2Key.clientId,
+				clientSecret: nodemailerOauth2Key.clientSecret,
+				refreshToken: nodemailerOauth2Key.refreshToken,
 			}
 		});
 
 		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: 'alsaaba@cardiff.ac.uk', // list of receivers
+			to: email, // receiver address
 			subject: 'Your booking details', // Subject line
 			text: 'Hello world?', // plain text body
 			html: output // html body
