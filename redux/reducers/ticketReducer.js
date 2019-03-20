@@ -87,7 +87,6 @@ export default function (state = initialState, action) {
 
         case ADD_TICKET:
 
-            console.log(state.ticketsLength)
             return {
                 ...state,
                 tickets: [...state.tickets, action.payload],

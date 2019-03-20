@@ -16,7 +16,7 @@ const nodemailer = require('nodemailer');
 const nodemailerOauth2Key = require('../nodemailer_oauth2_key');
 
 app.engine('ejs', engines.ejs);
-app.set('views', '../views');
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
 const { PORT = 3000 } = process.env;
@@ -180,18 +180,18 @@ app.post('/book', (req, res) => {
 			port: 465,
 			secure: true, // true for 465, false for other ports
 			auth: {
-				type: 'OAuth2',
+				type: "OAuth2",
 				user: 'tfwirt.test@gmail.com',
 				clientId: nodemailerOauth2Key.clientId,
 				clientSecret: nodemailerOauth2Key.clientSecret,
-				refreshToken: nodemailerOauth2Key.refreshToken
+				refreshToken: nodemailerOauth2Key.refreshToken,
 			}
 		});
 
 		// setup email data
 		let mailOptions = {
 			from: '"TfW Booking" <tfwirt.test@gmail.com>', // sender address
-			to: 'vuilleumierl@cardiff.ac.uk', // receiver address
+			to: email, // receiver address
 			subject: 'Your booking details', // Subject line
 			text: 'Hello world?', // plain text body
 			html: output // html body
@@ -206,6 +206,7 @@ app.post('/book', (req, res) => {
 	res.send({ status: 10 });
 	main().catch(console.error);
 });
+
 
 app.get('/driver/schedule', function(req, res) {
 	connection.query(
@@ -264,7 +265,8 @@ app.post('/booking/temp', (req, res) => {
 	const numPassenger = req.body.numPassenger;
 	const numWheelchair = req.body.numWheelchair;
 
-	console.log(localStorage.getItem('userId'));
+	const userId = localStorage.getItem('userId');
+
 	// const userID = req.session.userId !== undefined ? req.session.userId : 1;
 	connection.query(
 		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -277,11 +279,10 @@ app.post('/booking/temp', (req, res) => {
 				[ new Date(), new Date() ],
 				(error, row, fields) => {
 					if (error) throw error;
-					// console.log(row.insertId, userID, row1.insertId, 1);
 
 					connection.query(
 						'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
-						[ row.insertId, 1, row1.insertId, 1 ],
+						[ row.insertId, userId, row1.insertId, 1 ],
 						(errors, rows, fields) => {
 							if (errors) throw errors;
 						}
@@ -553,8 +554,11 @@ app.get('/ticketsQuery', function(req, res) {
 });
 
 app.get('/user/tickets', function(req, res) {
+	const userId = localStorage.getItem('userId');
+
 	connection.query(
-		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.no_of_passengers, t.no_of_wheelchairs, t.cancelled, t.date_of_journey, t.time_of_journey, uj.completed, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id ORDER BY t.date_of_journey ASC',
+		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.no_of_passengers, t.no_of_wheelchairs, t.cancelled, t.date_of_journey, t.time_of_journey, uj.completed, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE uj.fk_user_id = ? ORDER BY t.date_of_journey ASC',
+		[ userId ],
 		function(error, rows, fields) {
 			if (error) throw error;
 

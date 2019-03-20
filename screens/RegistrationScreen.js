@@ -10,7 +10,7 @@ class RegistrationScreen extends Component {
 		firstName: 'Martin',
 		lastName: 'Jones',
 		phoneNumber: '07914287655',
-		email: 'Passenger@hotmail.com',
+		email: 'laura.vuilleumier@gmail.com',
 		password: 'Qwerty123',
 		passwordConfirm: 'Qwerty123',
 		type: 1,
