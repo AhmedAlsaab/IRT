@@ -5,7 +5,7 @@ import AppNavigator from './navigation/AppNavigator';
 import { Permissions } from 'expo';
 
 import { Provider } from 'react-redux';
-import store from './store'
+import store from './redux/store'
 
 export default class App extends React.Component {
 	static navigationOptions = {

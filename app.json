@@ -1,29 +1,30 @@
 {
-  "expo": {
-    "name": "Transport For Wales Phone App",
-    "slug": "TFW_Project",
-    "privacy": "public",
-    "sdkVersion": "32.0.0",
-    "platforms": [
-      "ios",
-      "android"
-    ],
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    }
-  }
+	"expo": {
+		"name": "Transport For Wales Phone App",
+		"slug": "TFW_Project",
+		"privacy": "public",
+		"sdkVersion": "32.0.0",
+		"platforms": [ "ios", "android" ],
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/images/icon.png",
+		"splash": {
+			"image": "./assets/images/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"updates": {
+			"fallbackToCacheTimeout": 0
+		},
+		"assetBundlePatterns": [ "**/*" ],
+		"ios": {
+			"supportsTablet": true
+		},
+		"notification": {
+			"icon": "./assets/images/Notification_Icon_2.png",
+			"color": "#000000",
+			"androidMode": "default",
+			"androidCollapsedTitle": "Unread Notification"
+		}
+	}
 }

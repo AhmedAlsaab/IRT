@@ -12,7 +12,10 @@ import API_KEY from '../../google_api_key';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 
-export default class JourneyScreen extends Component {
+import { connect } from 'react-redux';
+import { fetchTickets } from '../../redux/actions/ticketAction';
+
+class JourneyScreen extends Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -64,6 +67,9 @@ export default class JourneyScreen extends Component {
 		this.endLocationDebounced = _.debounce(this.endLocation, 500);
 	}
 
+	componentDidMount(){
+		this.props.fetchTickets()
+	}
 	// Sets the state when each input is changed
 
 	handleNumPassengersChange = (value) => {
@@ -111,7 +117,6 @@ export default class JourneyScreen extends Component {
 	getRouteDirections = async () => {
 		const { placeID, endPlaceID, date, time } = this.state;
 
-		console.log(placeID, endPlaceID);
 		if (placeID.length === 0 || endPlaceID.length === 0) {
 			return console.log('Waiting for second input');
 		}
@@ -122,9 +127,7 @@ export default class JourneyScreen extends Component {
 			);
 			// const startLoc = "EhlRdWVlbiBTdHJlZXQsIENhcmRpZmYsIFVLIi4qLAoUChIJd_pfUbccbkgR8GM8fGAnzNYSFAoSCamRx0IRO1oCEXoliDJDoPjE";
 			const json = await response.json();
-			console.log(json);
 			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
-			console.log(points);
 			iStartLat = json.routes[0].legs[0].start_location.lat;
 			const iStartLng = json.routes[0].legs[0].start_location.lng;
 			const iEndLat = json.routes[0].legs[0].end_location.lat;
@@ -143,7 +146,6 @@ export default class JourneyScreen extends Component {
 			});
 			Keyboard.dismiss();
 			//  this.map.fitToCoordinates(pointCoords);
-			console.log('yay');
 		} catch (error) {
 			console.error(error);
 		}
@@ -158,7 +160,6 @@ export default class JourneyScreen extends Component {
 		this.setState({
 			locationPredictions: jsonResult.predictions
 		});
-		console.log(jsonResult);
 	}
 
 	// Get End Location
@@ -170,7 +171,6 @@ export default class JourneyScreen extends Component {
 		this.setState({
 			endLocationPredictions: jsonResult.predictions
 		});
-		console.log(jsonResult);
 	}
 
 	// Populate the input field with selected prediction
@@ -265,6 +265,11 @@ export default class JourneyScreen extends Component {
 		this.props.navigation.navigate('Summary', data);
 	};
 
+	journey = () => {
+		this.props.navigation.navigate('RecentFav')
+	}
+
+
 	render() {
 		// Start Location Predictions - Suggestion List
 		const locationPredictions = this.state.locationPredictions.map((prediction) => (
@@ -312,7 +317,7 @@ export default class JourneyScreen extends Component {
 						<Content>
 							{/* Favourite recent journeys button */}
 							<View style={styles.secondaryButtonContainer}>
-								<Button bordered danger style={styles.secondaryButton}>
+								<Button bordered danger style={styles.secondaryButton} onPress={this.journey}>
 									<Text style={styles.secondaryButtontext}>Favourite/Recent Journeys</Text>
 								</Button>
 							</View>
@@ -506,3 +511,5 @@ const styles = StyleSheet.create({
 		color: '#ff0000'
 	}
 });
+
+export default connect (null, {fetchTickets})(JourneyScreen);

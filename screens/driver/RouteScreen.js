@@ -1,12 +1,16 @@
 import { Button, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, TextInput } from 'react-native';
-
+import { Dimensions, StyleSheet, View, TextInput, Image, AsyncStorage } from 'react-native';
+import { Constants, Location, Permissions, TaskManager } from 'expo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
+import socketIO from 'socket.io-client';
+
+//import { store } from '../../App';
+import { connect } from 'react-redux';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -24,6 +28,12 @@ class RouteScreen extends Component {
 
 		// Start / End location
 		this.state = {
+			busStartingLocationLat: 51.47667946,
+			busStartingLocationLong: -3.180427374,
+			latDriver: null,
+			longDriver: null,
+			locationResult: null,
+			driverStartedRoute: false,
 			coordinates: [
 				{
 					latitude: 51.47667946,
@@ -36,10 +46,12 @@ class RouteScreen extends Component {
 			],
 			data: [],
 			distance: '',
-			duration: ''
+			duration: '',
+			xMapCoords: []
 		};
 
 		this.mapView = null;
+		this.socket = null;
 	}
 
 	fetchData = async () => {
@@ -48,11 +60,99 @@ class RouteScreen extends Component {
 		this.setState({ data: coordinate });
 	};
 
-	componentDidMount() {
+	componentDidMount = async () => {
 		this.fetchData();
+		this.openDriverSocket();
+		this._getLocationAsync();
+	};
+
+	// Get location permission
+	_getLocationAsync = async () => {
+		let { status } = await Permissions.askAsync(Permissions.LOCATION);
+		if (status !== 'granted') {
+			this.setState({
+				locationResult: 'Permission to access location was denied'
+			});
+		}
+		// Get driver location
+		let location = await Location.getCurrentPositionAsync({});
+		this.setState({
+			locationResult: location,
+			latDriver: location.coords.latitude,
+			longDriver: location.coords.longitude,
+			hasData: true
+		});
+		console.log(location);
+	};
+
+	// Driver Socket
+	// Subscribes to socket when component is mounted
+	async openDriverSocket() {
+		this.socket = socketIO.connect(`http://${ip}:3000`);
+		this.socket.on('connect', () => {
+			console.log('driver client connected');
+			this.socket.emit('connectDriver');
+		});
 	}
 
+	// Background Tracking - Needs Redux ? - > Not sending data right now to socket
+	trackDriverLocationBackground = async () => {
+		await Location.startLocationUpdatesAsync('firstTask', {
+			accuracy: Location.Accuracy.High,
+			timeInterval: 3000,
+			distanceInterval: 5
+		});
+		console.log('Tracking?');
+	};
+
+	// Foreground Tracking - Works
+	// Emits to socket new coordinates every 3 seconds
+	trackDriverLocationForeground = async () => {
+		let locationWatch = await Location.watchPositionAsync(
+			{
+				accuracy: Location.Accuracy.High,
+				timeInterval: 3000,
+				distanceInterval: 5
+			},
+			(loc) => {
+				if (loc.timestamp) {
+					this.socket.emit('driverLocation', {
+						latitude: loc.coords.latitude,
+						longitude: loc.coords.longitude
+					});
+					//  this.props.dispatch(setGps(loc));
+
+					this.setState({
+						latDriver: loc.coords.latitude,
+						longDriver: loc.coords.longitude
+					});
+				} else {
+					//log error
+				}
+			}
+		);
+		this.setState({
+			driverStartedRoute: true
+		});
+	};
+
 	render() {
+		//if (this.state.longDriver == null) return null;
+
+		let driverMarker = null;
+
+		if (this.state.driverStartedRoute) {
+			driverMarker = (
+				<Marker
+					coordinate={{ longitude: this.state.longDriver, latitude: this.state.latDriver }}
+					title={'Service XX'}
+					description={'Bus Location'}
+				>
+					<Image source={require('../../assets/images/bus-icon.png')} style={{ width: 40, height: 40 }} />
+				</Marker>
+			);
+		}
+
 		return (
 			<View style={StyleSheet.absoluteFill}>
 				<View style={styles.bottom}>
@@ -117,7 +217,8 @@ class RouteScreen extends Component {
 							onReady={(result) => {
 								this.setState({
 									distance: result.distance,
-									duration: result.duration
+									duration: result.duration,
+									xMapCoords: result.coordinates
 								});
 
 								this.mapView.fitToCoordinates(result.coordinates, {
@@ -134,6 +235,7 @@ class RouteScreen extends Component {
 							}}
 						/>
 					)}
+					{driverMarker}
 				</MapView>
 				<Callout>
 					<View style={styles.calloutView}>
@@ -147,6 +249,18 @@ class RouteScreen extends Component {
 								<Text style={styles.journeyInfo}>
 									<Icon name="arrow-back" size={15} /> Back
 								</Text>
+							</View>
+						</Button>
+					</View>
+					<View style={styles.calloutView}>
+						<Button
+							style={styles.buttonTop}
+							onPress={() => {
+								this.trackDriverLocationForeground();
+							}}
+						>
+							<View>
+								<Text style={styles.ButtonTopText}>Start Route</Text>
 							</View>
 						</Button>
 					</View>
@@ -175,6 +289,13 @@ const styles = StyleSheet.create({
 
 		borderWidth: 1
 	},
+	buttonTop: {
+		backgroundColor: '#2dabff'
+	},
+
+	ButtonTopText: {
+		color: 'white'
+	},
 	calloutView: {
 		flexDirection: 'row',
 		// backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -192,4 +313,20 @@ const styles = StyleSheet.create({
 	}
 });
 
+const mapStateToProps = (state) => ({
+	test: state.driverReducer.newLocation
+});
+
 export default RouteScreen;
+
+// Background location tracker
+TaskManager.defineTask('firstTask', async ({ data, error }) => {
+	console.log('location update');
+	if (error) {
+		console.log(error);
+		return;
+	}
+	if (data) {
+		const { locations } = data;
+	}
+});

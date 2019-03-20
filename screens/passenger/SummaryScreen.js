@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Platform } from 'react-native';
 import { Content, Container, Button, Text, StyleProvider, Item, Row } from 'native-base';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
@@ -9,10 +9,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ip from '../../ipstore';
 import WalletBalance from './WalletBalance';
 import uuid from 'uuid/v4';
-
+import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
-import { addTransaction } from '../../actions/transactionAction';
-import { userPayForTicket } from '../../actions/userAction';
+import { addTransaction } from '../../redux/actions/transactionAction';
+import { userPayForTicket } from '../../redux/actions/userAction';
+import { addTicket } from '../../redux/actions/ticketAction';
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -24,15 +25,9 @@ class SummaryScreen extends React.Component {
 		data: [],
 		date: new Date(),
 		dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
-		total: 0.0
+		total: 0.0,
+		deviceToken: ''
 	};
-
-	// fetchData = async () => {
-	// 	const response = await fetch(`http://${ip}:3000/journey`);
-	// 	const JSONresponse = await response.json();
-	// 	console.log(JSONresponse);
-	// 	this.setState({ data: JSONresponse });
-	// };
 
 	sendEmail = () => {
 		const {
@@ -50,10 +45,10 @@ class SummaryScreen extends React.Component {
 				startLocation: `${street}, ${city}`,
 				endLocation: `${endStreet}, ${endCity}`,
 				passenger: numPassenger,
-				wheelchair: numWheelchair,
+				wheelchair: numWheelchair
 			},
 			date: moment(date).format('MMMM Do YYYY'),
-			email: this.props.user.email,
+			email: this.props.user.email
 		};
 
 		fetch(`http://${ip}:3000/book`, {
@@ -73,7 +68,7 @@ class SummaryScreen extends React.Component {
 					//User Exists
 					case 1:
 						this.setState({
-							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
+							errors: [ { title: 'Errors', content: 'There was an error whilst sending confirmation' } ]
 						});
 						break;
 				}
@@ -90,8 +85,7 @@ class SummaryScreen extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(bookingData)
-		})
-			.catch((error) => console.log(error));
+		}).catch((error) => console.log(error));
 	};
 
 	componentDidMount() {
@@ -99,6 +93,18 @@ class SummaryScreen extends React.Component {
 		this.setState({
 			total: parseInt(numPassenger * 3)
 		});
+
+		// Channel for popup notifications
+		if (Platform.OS === 'android') {
+			Expo.Notifications.createChannelAndroidAsync('reminders', {
+				name: 'Reminders',
+				priority: 'max',
+				vibrate: [ 0, 250, 250, 250 ]
+			});
+		}
+	}
+	async componentWillMount() {
+		await this.registerForPushNotificationsAsync();
 	}
 
 	payForTicket = () => {
@@ -108,6 +114,16 @@ class SummaryScreen extends React.Component {
 		}
 		//Pay for Ticket
 		//Add Transaction
+		const {
+			date,
+			street,
+			endStreet,
+			numPassenger,
+			numWheelchair,
+			city,
+			endCity,
+			time
+		} = this.props.navigation.state.params;
 		const data = {
 			current_funds: parseFloat(parseInt(this.props.user.funds) - parseInt(this.state.total)).toFixed(2),
 			spent_funds: this.state.total,
@@ -117,7 +133,7 @@ class SummaryScreen extends React.Component {
 		fetch(`http://${ip}:3000/user/addTransaction`, {
 			method: 'POST',
 			headers: {
-				'Accept': 'application/json',
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
@@ -135,12 +151,32 @@ class SummaryScreen extends React.Component {
 					fk_user_id: this.props.user.id,
 					spent_funds: this.state.total,
 					transaction_id: uuid(),
-					type: 'Ticket Purchased'
+					type: 'Ticket Purchased',
+					cancellation_fee: 0
+				});
+
+				this.props.addTicket({
+					accessibilityRequired: numWheelchair > 0 ? 1 : 0,
+					date: date,
+					time: time,
+					numPassengers: numPassenger,
+					numWheelchairs: numWheelchair,
+					cancelled: 0,
+					endTime: date,
+					expired: 0,
+					completed: 1,
+					fromCity: city,
+					fromStreet: street,
+					id: this.props.ticketslength,
+					paid: 1,
+					startTime: time,
+					toCity: endCity,
+					toStreet: endStreet,
+					used: 0
 				});
 			})
 			.catch((error) => console.log(error));
 
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
 		const navData = {
 			data: {
 				startLocation: `${street}, ${city}`,
@@ -153,21 +189,31 @@ class SummaryScreen extends React.Component {
 
 		this.bookJourney();
 		this.sendEmail();
+		this.sendPushNotification();
 		this.props.navigation.navigate('Confirmation', navData);
-
 	};
 
 	payWithConcessionary = () => {
+		const {
+			date,
+			time,
+			street,
+			endStreet,
+			numPassenger,
+			numWheelchair,
+			city,
+			endCity
+		} = this.props.navigation.state.params;
 		const data = {
 			current_funds: this.props.user.funds,
-			spent_funds: 0.00,
+			spent_funds: 0.0,
 			fk_transaction_type_id: 3
 		};
 
 		fetch(`http://${ip}:3000/user/addTransaction`, {
 			method: 'POST',
 			headers: {
-				'Accept': 'application/json',
+				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
@@ -176,20 +222,39 @@ class SummaryScreen extends React.Component {
 			.then((response) => {
 				if (response.status !== 10) return;
 
-				this.props.userPayForTicket(0.00);
+				this.props.userPayForTicket(0.0);
 
 				this.props.onAddTransaction({
 					current_funds: parseFloat(this.props.user.funds).toFixed(2),
 					date: new Date(),
 					fk_transaction_type_id: 3,
 					fk_user_id: this.props.user.id,
-					spent_funds: 0.00,
+					spent_funds: 0.0,
 					transaction_id: uuid(),
 					type: 'Concessionary Ticket'
 				});
-			})
+			});
 
-		const { date, street, endStreet, numPassenger, numWheelchair, city, endCity } = this.props.navigation.state.params;
+		this.props.addTicket({
+			accessibilityRequired: numWheelchair > 0 ? 1 : 0,
+			cancelled: 0,
+			date: date,
+			time: time,
+			numPassengers: numPassenger,
+			numWheelchairs: numWheelchair,
+			endTime: date,
+			expired: 0,
+			completed: 1,
+			fromCity: city,
+			fromStreet: street,
+			id: this.props.ticketslength,
+			paid: 1,
+			startTime: time,
+			toCity: endCity,
+			toStreet: endStreet,
+			used: 0
+		});
+
 		const navData = {
 			data: {
 				startLocation: `${street}, ${city}`,
@@ -202,8 +267,55 @@ class SummaryScreen extends React.Component {
 
 		this.bookJourney();
 		this.sendEmail();
+		this.sendPushNotification();
 		this.props.navigation.navigate('Confirmation', navData);
-	}
+	};
+
+	registerForPushNotificationsAsync = async () => {
+		const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+		let finalStatus = existingStatus;
+
+		// only ask if permissions have not already been determined, because
+		// iOS won't necessarily prompt the user a second time.
+		if (existingStatus !== 'granted') {
+			// Android remote notification permissions are granted during the app
+			// install, so this will only ask on iOS
+			const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+			finalStatus = status;
+		}
+
+		// Stop here if the user did not grant permissions
+		if (finalStatus !== 'granted') {
+			return;
+		}
+
+		// Get the token that uniquely identifies this device
+		let token = await Notifications.getExpoPushTokenAsync();
+		this.setState({
+			deviceToken: token
+		});
+		console.log(token);
+	};
+
+	sendPushNotification = () => {
+		let response = fetch('https://exp.host/--/api/v2/push/send', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				to: `${this.state.deviceToken}`,
+				sound: 'default',
+				title: 'Booking confirmation',
+				priority: 'high',
+				body: `Thank you for booking with TFW. An email confirmation will be sent to you shortly`, // insert service number, pickup location
+				sound: 'default', // android 7.0 , 6, 5 , 4
+				channelId: 'reminders', // android 8.0 later
+				icon: '../../assets/images/Notification_Icon_3.png'
+			})
+		});
+	};
 
 	navigateTo = () => {
 		this.props.navigation.navigate('Home');
@@ -211,16 +323,11 @@ class SummaryScreen extends React.Component {
 
 	render() {
 		const data = this.props.navigation.state.params;
-		console.log(this.props.user)
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
 					<Content>
-						<GlobalHeader
-							type={1}
-							navigateTo={this.navigateTo}
-							isBackButtonActive={1}
-						/>
+						<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 						<View>
 							{/* Page header and introductory text */}
 							<View style={styles.introduction}>
@@ -264,13 +371,15 @@ class SummaryScreen extends React.Component {
 													{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
 												</Text>
 											</View>
-											<View style={styles.icon}>
-												<Icon name="people" size={20} color="#bcbcbc" />
-												<Text style={styles.cardBody}>
-													{data.numWheelchair}
-													{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
-												</Text>
-											</View>
+											{data.numWheelchair > 0 ? (
+												<View style={styles.icon}>
+													<Icon name="accessible" size={20} color="#bcbcbc" />
+													<Text style={styles.cardBody}>
+														{data.numWheelchair}
+														{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
+													</Text>
+												</View>
+											) : null}
 										</View>
 									</View>
 									<View style={styles.journeyInfo}>
@@ -295,11 +404,11 @@ class SummaryScreen extends React.Component {
 								{/* Wallet information */}
 								<View style={styles.walletBlance}>
 									<WalletBalance type={2} />
-									{this.props.user.concessionary == 0 &&
+									{this.props.user.concessionary == 0 && (
 										<View style={styles.buttonContainer}>
 											<Button
 												danger
-												style={[styles.button, { backgroundColor: '#ff0000' }]}
+												style={[ styles.button, { backgroundColor: '#ff0000' } ]}
 												onPress={this.payForTicket}
 											>
 												<Text style={styles.buttonText}>Pay</Text>
@@ -316,13 +425,13 @@ class SummaryScreen extends React.Component {
 												<Text style={styles.buttonText}>Add Funds</Text>
 											</Button>
 										</View>
-									}
-									{this.props.user.concessionary == 1 &&
+									)}
+									{this.props.user.concessionary == 1 && (
 										<View style={styles.buttonButtonContainer}>
 											<View style={styles.buttonContainer}>
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: '#ff0000' }]}
+													style={[ styles.button, { backgroundColor: '#ff0000' } ]}
 													onPress={this.payForTicket}
 												>
 													<Text style={styles.buttonText}>Pay</Text>
@@ -330,7 +439,7 @@ class SummaryScreen extends React.Component {
 
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: '#ff0000' }]}
+													style={[ styles.button, { backgroundColor: '#ff0000' } ]}
 													onPress={() => {
 														this.props.navigation.navigate('AddFunds');
 													}}
@@ -338,12 +447,20 @@ class SummaryScreen extends React.Component {
 													<Text style={styles.buttonText}>Add Funds</Text>
 												</Button>
 											</View>
-											<View style={[styles.buttonContainer, { marginTop: -17, marginBottom: 25 }]}>
-												<Button bordered danger style={styles.buttonFullWidth} onPress={this.payWithConcessionary}>
+											<View
+												style={[ styles.buttonContainer, { marginTop: -17, marginBottom: 25 } ]}
+											>
+												<Button
+													bordered
+													danger
+													style={styles.buttonFullWidth}
+													onPress={this.payWithConcessionary}
+												>
 													<Text style={styles.buttonText}>Concessionary</Text>
 												</Button>
 											</View>
-										</View>}
+										</View>
+									)}
 								</View>
 							</View>
 						</View>
@@ -453,7 +570,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		width: '100%',
 		marginTop: 15,
-		justifyContent: 'space-evenly',
+		justifyContent: 'space-evenly'
 	},
 	button: {
 		width: '45%',
@@ -462,7 +579,7 @@ const styles = StyleSheet.create({
 	buttonFullWidth: {
 		width: '94%',
 		justifyContent: 'center',
-		marginBottom: 15,
+		marginBottom: 15
 	},
 	buttonButtonContainer: {
 		flexDirection: 'column'
@@ -472,12 +589,14 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = (dispatch) => {
 	return {
 		userPayForTicket: (amount) => dispatch(userPayForTicket(amount)),
-		onAddTransaction: (transaction) => dispatch(addTransaction(transaction))
+		onAddTransaction: (transaction) => dispatch(addTransaction(transaction)),
+		addTicket: (ticket) => dispatch(addTicket(ticket))
 	};
 };
 
 const mapStateToProps = (state) => ({
-	user: state.userReducer.user
+	user: state.userReducer.user,
+	ticketslength: state.ticketReducer.ticketsLength
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SummaryScreen);

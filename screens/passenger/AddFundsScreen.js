@@ -10,8 +10,8 @@ import WalletHeader from './WalletHeader';
 import WalletBalance from './WalletBalance';
 
 import { connect } from 'react-redux';
-import { addTransaction } from '../../actions/transactionAction';
-import { updateUserFunds } from '../../actions/userAction';
+import { addTransaction } from '../../redux/actions/transactionAction';
+import { updateUserFunds } from '../../redux/actions/userAction';
 
 class AddFundsScreen extends React.Component {
 	static navigationOptions = {
@@ -43,7 +43,8 @@ class AddFundsScreen extends React.Component {
 				fk_user_id: this.props.user.id,
 				spent_funds: amount,
 				transaction_id: uuid(),
-				type: 'Funds added'
+				type: 'Funds added',
+				cancellation_fee: 0
 			});
 
 			this.props.onUpdateUserFunds(amount);

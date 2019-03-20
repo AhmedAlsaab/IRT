@@ -1,5 +1,5 @@
 import { FETCH_TRANSACTIONS, ADD_TRANSACTION } from './types'
-import ip from '../ipstore'
+import ip from '../../ipstore'
 
 export function addTransaction(transaction){
     return {
@@ -16,7 +16,6 @@ export function fetchTransactions() {
             dispatch({
                 type: FETCH_TRANSACTIONS,
 				payload: response
-        })})
-        .catch((error) => console.log(error));
+        })});
     }
 }

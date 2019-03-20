@@ -10,13 +10,17 @@ import TicketsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
+import Geofence from '../screens/experimental/Geofence';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
+import RecentFavScreen from '../screens/passenger/RecentFavScreen';
+import AmendTicket from './../screens/AmendTicket';
 
 const JourneyStack = createStackNavigator(
 	{
 		Home: JourneyScreen,
 		Summary: SummaryScreen,
-		Confirmation: ConfirmationScreen,
+		RecentFav: RecentFavScreen,
+		Confirmation: ConfirmationScreen
 	},
 	{
 		initialRouteName: 'Home'
@@ -31,7 +35,9 @@ JourneyStack.navigationOptions = {
 const TicketsStack = createStackNavigator(
 	{
 		Ticket: TicketsScreen,
-		Details: TicketDetail
+		Details: TicketDetail,
+		Amend: AmendTicket,
+		Track: Geofence
 	},
 	{
 		initialRouteName: 'Ticket'

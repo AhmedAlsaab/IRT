@@ -11,7 +11,6 @@ export default class DriverSchedule extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
-
 	state = {};
 
 	componentDidMount() {}
