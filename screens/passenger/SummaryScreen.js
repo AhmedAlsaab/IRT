@@ -327,11 +327,10 @@ class SummaryScreen extends React.Component {
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
 					<Content>
-						<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
+						<GlobalHeader type={3} header='Journey Summary' navigateTo={this.navigateTo} isBackButtonActive={1} />
 						<View>
 							{/* Page header and introductory text */}
 							<View style={styles.introduction}>
-								<Text style={styles.header1}>YOUR JOURNEY</Text>
 								<Text style={styles.body}>
 									Times are an approximation and subject to change. You will receive confirmation on
 									the day of travel.

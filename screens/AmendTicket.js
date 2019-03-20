@@ -107,7 +107,8 @@ class AmendTicket extends React.Component {
             <StyleProvider style={getTheme(platform)}>
                 <Container>
                     <GlobalHeader
-                        type={1}
+                        type={3}
+                        header='Amend Ticket Details'
                         navigateTo={this.navigateTo}
                         isBackButtonActive={1}
                     />

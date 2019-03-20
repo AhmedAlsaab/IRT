@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Dimensions, Picker, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
+import { color } from 'color';
 
 class RegistrationScreen extends Component {
 	state = {
@@ -14,7 +15,19 @@ class RegistrationScreen extends Component {
 		password: 'Qwerty123',
 		passwordConfirm: 'Qwerty123',
 		type: 1,
-		errors: []
+		errors: [],
+
+		firstNameFocused: false,
+		lastNameFocused: false,
+		phoneFocused: false,
+		emailFocused: false,
+		passwordFocused: false,
+		passConfirmFocused: false,
+		passengerTypeFocused: false,
+		borderBottomColor: '#999',
+		textColor: '#999',
+		focusedBorderBottomColor: '#ff0000',
+		focusedTextColor: '#666',
 	};
 
 	onSubmit = () => {
@@ -108,77 +121,138 @@ class RegistrationScreen extends Component {
 					)}
 
 					<View style={styles.contentContainer}>
-						<View style={styles.titleContainer}>
-							<Text style={styles.title}>Create Account</Text>
-						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-person" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.firstNameFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+						}]}>
+							<Ionicons
+							name="md-person"
+							color={this.state.firstNameFocused ? this.state.focusedTextColor : this.state.textColor}
+							size={32}
+							style={styles.inputIcons} />
 							<TextInput
 								placeholder="First Name"
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.firstNameFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ firstName: text })}
 								value={this.state.firstName}
+								onFocus={() => { this.setState({ firstNameFocused: true }) }}
+								onBlur={() => { this.setState({ firstNameFocused: false }) }}
 							/>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-person" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.lastNameFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+						}]}>
+							<Ionicons
+							name="md-person"
+							color={this.state.lastNameFocused ? this.state.focusedTextColor : this.state.textColor}
+							size={32}
+							style={styles.inputIcons} />
 							<TextInput
 								placeholder="Last Name"
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.lastNameFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ lastName: text })}
 								value={this.state.lastName}
+								onFocus={() => { this.setState({ lastNameFocused: true }) }}
+								onBlur={() => { this.setState({ lastNameFocused: false }) }}
 							/>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-phone-portrait" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.phoneFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+						}]}>
+							<Ionicons
+							name="md-phone-portrait"
+							color={this.state.phoneFocused ? this.state.focusedTextColor : this.state.textColor}
+							size={32}
+							style={styles.inputIcons} />
 							<TextInput
 								placeholder="Phone Number"
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.phoneFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ phoneNumber: text })}
 								value={this.state.phoneNumber}
+								onFocus={() => { this.setState({ phoneFocused: true }) }}
+								onBlur={() => { this.setState({ phoneFocused: false }) }}
 							/>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-mail" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.emailFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+						}]}>
+							<Ionicons
+							name="md-mail"
+							color={this.state.emailFocused ? this.state.focusedTextColor : this.state.textColor}
+							size={32}
+							style={styles.inputIcons} />
 							<TextInput
 								placeholder="Email"
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.emailFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ email: text })}
 								value={this.state.email}
+								onFocus={() => { this.setState({ emailFocused: true }) }}
+								onBlur={() => { this.setState({ emailFocused: false }) }}
 							/>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.passwordFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+						}]}>
+							<Ionicons
+							name="md-lock"
+							color={this.state.passwordFocused ? this.state.focusedTextColor : this.state.textColor}
+							size={32}
+							style={styles.inputIcons} />
 							<TextInput
 								placeholder="Password"
 								secureTextEntry={true}
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.passwordFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ password: text })}
 								value={this.state.password}
+								onFocus={() => { this.setState({ passwordFocused: true }) }}
+								onBlur={() => { this.setState({ passwordFocused: false }) }}
 							/>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.passConfirmFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+						}]}>
+							<Ionicons
+							name="md-lock"
+							color={this.state.passConfirmFocused ? this.state.focusedTextColor : this.state.textColor}
+							size={32}
+							style={styles.inputIcons} />
 							<TextInput
 								placeholder="Password Confirm"
 								secureTextEntry={true}
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.passConfirmFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ passwordConfirm: text })}
 								value={this.state.passwordConfirm}
+								onFocus={() => { this.setState({ passConfirmFocused: true }) }}
+								onBlur={() => { this.setState({ passConfirmFocused: false }) }}
 							/>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-person" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {borderBottomColor: '#999'}]}>
+							<Ionicons
+							name="md-person"
+							color={'#999'}
+							size={32}
+							style={styles.inputIcons} />
 							<View style={styles.inputContainerPicker}>
-								<Text>I am a </Text>
+								<Text style={{color: '#999'}}>I am a </Text>
 								<Picker
 									name="type"
 									style={styles.inputPicker}
 									selectedValue={this.state.type}
 									onValueChange={(itemValue, itemIndex) => this.setState({ type: itemValue })}
 								>
-									<Picker.Item label="Passenger" value="1" />
-									<Picker.Item label="Driver" value="2" />
+									<Picker.Item color='#999' label="Passenger" value="1" />
+									<Picker.Item color='#999' label="Driver" value="2" />
 								</Picker>
 							</View>
 						</View>
@@ -207,8 +281,7 @@ const window = Dimensions.get('window');
 const styles = StyleSheet.create({
 	inputContainer: {
 		flexDirection: 'row',
-		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
+		borderBottomWidth: 1,
 		alignItems: 'center',
 		width
 	},
@@ -242,7 +315,8 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		flex: 1,
 		flexDirection: 'column',
-		alignItems: 'center'
+		alignItems: 'center',
+		marginTop: 30
 	},
 	titleContainer: {
 		paddingTop: 30,
@@ -257,7 +331,8 @@ const styles = StyleSheet.create({
 	},
 	inputPicker: {
 		borderWidth: 2,
-		borderColor: '#ff0000'
+		borderColor: '#ff0000',
+		color: '#999'
 	},
 	inputContainerPicker: {
 		flexDirection: 'row',

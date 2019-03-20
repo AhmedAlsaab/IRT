@@ -119,7 +119,7 @@ class TicketDetail extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
-					<GlobalHeader type={1} navigateTo={this.navigateTo} />
+					<GlobalHeader type={3} header='Ticket Details'  navigateTo={this.navigateTo} isBackButtonActive={1} />
 					<Content>
 						<View style={styles.card}>
 							<View style={styles.ticketTypeContainer}>

@@ -30,14 +30,13 @@ class ConfirmationScreen extends React.Component {
                     <Content>
                         <GlobalHeader
                             type={3}
-                            header="Confirmation"
+                            header="Booking Confirmation"
                             navigateTo={this.navigateTo}
                             isBackButtonActive={1}
                         />
                         <View>
                             {/* Page header and introductory text */}
                             <View style={styles.introduction}>
-                                <Text style={styles.header1}>YOUR BOOKING</Text>
                                 <Text style={styles.body}>
                                     Thank you for booking your journey with us on <Text style={styles.bold}>{booking.date}</Text>
                                 </Text>

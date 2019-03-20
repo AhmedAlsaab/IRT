@@ -12,11 +12,19 @@ class loginScreen extends Component {
 	state = {
 		email: 'laura.vuilleumier@gmail.com',
 		password: 'Qwerty123',
-		errors: []
+		errors: [],
+
+		isEmailFocused: false,
+		isPasswordFocused: false,
+		borderBottomColor: '#999',
+		textColor: '#999',
+		focusedBorderBottomColor: '#ff0000',
+		focusedTextColor: '#666',
+
 	};
 
 	onLoginClick = () => {
-		const message = [ { title: 'Errors', content: 'Provide correct credentials' } ];
+		const message = [{ title: 'Errors', content: 'Provide correct credentials' }];
 
 		const data = {
 			email: this.state.email,
@@ -64,39 +72,59 @@ class loginScreen extends Component {
 		return (
 			<Container>
 				<Content>
-					<GlobalHeader type={1} navigateTo={this.navigateTo} />
+					<GlobalHeader type={2} navigateTo={this.navigateTo} />
 					{this.state.errors &&
-					!!this.state.errors.length && (
-						<Accordion
-							dataArray={this.state.errors}
-							icon="add"
-							expandedIcon="remove"
-							contentStyle={styles.errorStyle}
-							expanded={0}
-						/>
-					)}
+						!!this.state.errors.length && (
+							<Accordion
+								dataArray={this.state.errors}
+								icon="add"
+								expandedIcon="remove"
+								contentStyle={styles.errorStyle}
+								expanded={0}
+							/>
+						)}
 
 					<View style={styles.contentContainer}>
 						<View style={styles.titleContainer}>
-							<Text style={styles.title}>Login</Text>
+							<Text style={styles.title}>LOGIN</Text>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-mail" size={32} style={styles.inputIcons} />
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.isEmailFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+						}]}>
+							<Ionicons
+								name="md-mail"
+								size={32}
+								color={this.state.isEmailFocused ? this.state.focusedTextColor : this.state.textColor}
+								style={styles.inputIcons} />
 							<TextInput
 								placeholder="Email"
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.isEmailFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ email: text })}
 								value={this.state.email}
+								onFocus={() => { this.setState({ isEmailFocused: true }) }}
+								onBlur={() => { this.setState({ isEmailFocused: false }) }}
 							/>
 						</View>
-						<View style={styles.inputContainer}>
-							<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<View style={[
+							styles.inputContainer, {
+								borderBottomColor: this.state.isPasswordFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+							}]}>
+							<Ionicons
+								name="md-lock" size={32}
+								color={this.state.isPasswordFocused ? this.state.focusedTextColor : this.state.textColor}
+								style={styles.inputIcons} />
 							<TextInput
 								placeholder="Password"
-								style={styles.input}
+								style={[styles.input, {
+									color: this.state.isEmailFocused ? this.state.focusedTextColor : this.state.textColor
+								}]}
 								onChangeText={(text) => this.setState({ password: text })}
 								value={this.state.password}
 								secureTextEntry={true}
+								onFocus={() => { this.setState({ isPasswordFocused: true }) }}
+								onBlur={() => { this.setState({ isPasswordFocused: false }) }}
 							/>
 						</View>
 						<View style={styles.forgotPasswordContainer}>
@@ -108,7 +136,7 @@ class loginScreen extends Component {
 							</Button>
 						</View>
 						<View style={styles.registerContainer}>
-							<Text>Dont have an account?</Text>
+							<Text style={{color: '#999'}}>Dont have an account?</Text>
 							<Text style={styles.registerText} onPress={this.onRegisterClick}>
 								REGISTER
 							</Text>
@@ -131,15 +159,15 @@ const styles = StyleSheet.create({
 	},
 	inputContainer: {
 		flexDirection: 'row',
-		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
+		borderBottomWidth: 1,
 		alignItems: 'center',
 		width,
 		marginBottom: 10
 	},
 	input: {
 		flex: 1,
-		padding: 10
+		padding: 10,
+		color: '#999999'
 	},
 	inputIcons: {
 		width: 50,
@@ -164,7 +192,8 @@ const styles = StyleSheet.create({
 		textAlign: 'left',
 		fontSize: 30,
 		fontWeight: 'bold',
-		color: 'gray'
+		color: '#666666',
+		marginBottom: 20
 	},
 	forgotPasswordContainer: {
 		width
