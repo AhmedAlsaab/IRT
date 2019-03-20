@@ -24,7 +24,9 @@
 		"express": "^4.16.4",
 		"express-session": "^1.15.6",
 		"express-validator": "^5.3.1",
+		"geolib": "^2.0.24",
 		"googleapis": "^37.2.0",
+		"immutability-helper": "^3.0.0",
 		"lodash": "^4.17.11",
 		"moment": "^2.24.0",
 		"mysql": "^2.16.0",
@@ -38,11 +40,13 @@
 		"react-native-maps": "^0.23.0",
 		"react-native-maps-directions": "^1.6.0",
 		"react-native-modal-datetime-picker": "^6.0.0",
+		"react-native-popup-dialog": "^0.17.0",
 		"react-native-vector-icons": "^6.2.0",
 		"react-navigation": "3.0.9",
 		"react-redux": "^6.0.1",
 		"redux": "^4.0.1",
 		"redux-thunk": "^2.3.0",
+		"socket.io": "^2.2.0",
 		"uuid": "^3.3.2"
 	},
 	"devDependencies": {

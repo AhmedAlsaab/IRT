@@ -1,130 +1,163 @@
 import React, { Component } from 'react';
-import { Dimensions, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Thumbnail, Button, Icon, Left, Body, Right } from 'native-base';
-import ip from '../ipstore';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import moment from 'moment';
-
-const { width, height } = Dimensions.get('window');
-const cols = 3,
-	rows = 3;
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 
 export default class TicketLayout extends Component {
-	static navigationOptions = {
-		header: null
-	};
-
-	state = {
-		expansionIsOpen: false,
-		isLoadingComplete: false,
-		ticketData: []
-	};
-
-	componentDidMount() {
-		const id = this.props.ticketId;
-		const expired = this.props.expired;
-
-		fetch(`http://${ip}:3000/ticketsQuery?id=${id}&expired=${expired}`)
-			.then((response) => response.json())
-			.then((response) => {
-				console.log(response);
-				this.setState({
-					ticketData: response.ticket
-				});
-			});
-	}
-
 	render() {
+		const ticket = this.props.ticket;
 		return (
-			<View style={{ backgroundColor: 'transparent', paddingBottom: 10, paddingLeft: 15 }}>
-				<Content>
-					<ImageBackground
-						source={require('../assets/images/active-tickets.png')}
-						style={{ width: 300, height: 275, justifyContent: 'center' }}
-					>
-						<Left>
-							<Body>
-								<TouchableOpacity style={styles.container} onPress={this.props.onOpen}>
-									{this.state.ticketData.length >= 1 && (
-										<View style={styles.container}>
-											<React.Fragment>
-												<Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
-													From:
-												</Text>
-												<Text>
-													{this.state.ticketData[0].street}, {this.state.ticketData[0].city}
-												</Text>
-												<Text>
-													Departure:{' '}
-													{moment(this.state.ticketData[0].start_time).format(
-														'dddd Do h:mm a'
-													)}
-												</Text>
-												{/* <View style={styles.imageContainer}>
-											<Image
-												source={require('../assets/images/transport.jpg')}
-												style={{
-													width: 150,
-													height: 150,
-													borderRadius: 10,
-													
-												}}
-											/>
-										</View> */}
-
-												<Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
-													To:
-												</Text>
-												<Text>
-													{this.state.ticketData[1].street}, {this.state.ticketData[1].city}
-												</Text>
-												<Text>
-													Arrival:{' '}
-													{moment(this.state.ticketData[1].end_time).format('dddd Do h:mm a')}
-												</Text>
-
-												<Text style={{ textAlign: 'left', fontWeight: 'bold', fontSize: 15 }}>
-													Your seat has been reserved!
-												</Text>
-											</React.Fragment>
-										</View>
-									)}
-								</TouchableOpacity>
-							</Body>
-						</Left>
-					</ImageBackground>
-				</Content>
+			<View style={styles.card}>
+				<View style={styles.ticketTypeContainer}>
+					{ticket.expired ?
+						<View style={[styles.ticketType, { backgroundColor: '#bcbcbc' }]}>
+							<Text style={styles.ticketTypeText}>
+								SGL
+								{/* Code prepared for return tickets - don't remove */}
+								{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
+							</Text>
+						</View>
+						:
+						<View style={styles.ticketType}>
+							<Text style={styles.ticketTypeText}>
+								SGL
+								{/* Code prepared for return tickets - don't remove */}
+								{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
+							</Text>
+						</View>
+					}
+				</View>
+				<TouchableOpacity style={styles.ticket} onPress={this.props.onOpen}>
+					<View style={styles.ticketHeader}>
+						<View style={styles.ticketDateTime}>
+							<Text style={styles.dateText}>{moment(ticket.date).format('Do MMMM YYYY')}</Text>
+							<Text style={styles.timeText}>{moment(ticket.time).format('LT')}</Text>
+						</View>
+						<View style={styles.passengerInfo}>
+							<View style={styles.icon}>
+								<IonIcon name="md-people" size={20} color="#999999" />
+								<Text style={[styles.body, { marginLeft: 5 }]}>
+									{ticket.numPassengers}
+								</Text>
+							</View>
+							{ticket.numWheelchairs > 0 ?
+								<View style={styles.icon}>
+									<MaterialIcon name="accessible" size={20} color="#999999" />
+									<Text style={[styles.body, { marginLeft: 5 }]}>
+										{ticket.numWheelchairs}
+									</Text>
+								</View>
+								: null}
+						</View>
+					</View>
+					<View style={styles.ticketDetails}>
+						<View style={styles.ticketFrom}>
+							<Text style={styles.body}>{ticket.fromStreet}, {ticket.fromCity}</Text>
+						</View>
+						<View style={styles.ticketTypeIcon}>
+							{/* Code prepared for return tickets - don't remove */}
+							{/* {ticket.return ?
+									<Icon name="ios-swap" size={30} color="#999999" />
+									:
+									<Icon name="ios-arrow-round-forward" size={30} color="#999999" />
+								} */}
+							<IonIcon name="ios-arrow-round-forward" size={30} color="#999999" />
+						</View>
+						<View style={styles.ticketTo}>
+							<Text style={styles.body}>{ticket.toStreet}, {ticket.toCity}</Text>
+						</View>
+					</View>
+				</TouchableOpacity>
 			</View>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	container: {
-		marginLeft: 10,
+	card: {
+		flex: 1,
+		flexDirection: 'row',
+		borderBottomColor: '#dfdfdf',
+		borderBottomWidth: 1
+	},
+	ticketTypeContainer: {
+		width: '10%',
+		marginRight: 10,
+		flexDirection: 'row',
+	},
+	ticketType: {
+		backgroundColor: '#ff0000',
+		top: 10,
+		flex: 1,
+		alignSelf: 'flex-start',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderTopRightRadius: 5,
+		borderBottomRightRadius: 5,
+		paddingTop: 2,
+		paddingBottom: 3,
+	},
+	ticketTypeText: {
+		color: '#fff',
+		fontWeight: 'bold',
+	},
+	ticket: {
+		width: '90%',
+		flex: 1,
+		flexDirection: 'column',
+	},
+	ticketHeader: {
+		flexDirection: 'row',
+		marginTop: 10,
+	},
+	ticketDateTime: {
+		width: '57%',
+	},
+	dateText: {
+		color: '#999999',
+		fontSize: 16,
+	},
+	timeText: {
+		color: '#666666',
+		fontSize: 18,
+		marginTop: 5,
+	},
+	passengerInfo: {
+		width: '43%',
+		flexDirection: 'row',
+		alignSelf: 'flex-start',
+	},
+	ticketDetails: {
+		marginTop: 5,
+		flex: 1,
+		flexDirection: 'row',
 		marginBottom: 10,
-		height: (height - 20 - 18) / rows - 9,
-		width: 300,
-		alignSelf: 'center',
-		paddingLeft: 34,
-		paddingTop: 20,
-		backgroundColor: 'transparent',
-		justifyContent: 'space-between'
+		width: '98%',
 	},
-	imageContainer: {
-		flex: 1
+	ticketFrom: {
+		width: '40%',
+		marginRight: 10,
+		justifyContent: 'center',
 	},
-	image: {
-		...StyleSheet.absoluteFillObject,
-		width: 10,
-		height: 10
+	ticketTypeIcon: {
+		width: '10%',
+		marginRight: 15,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
-	To: {
-		fontSize: 20,
-		marginTop: 4
+	ticketTo: {
+		width: '40%',
+		justifyContent: 'center',
 	},
-	From: {
-		backgroundColor: 'transparent',
-		fontSize: 15,
-		lineHeight: 14
-	}
+	body: {
+		color: '#999999',
+		fontSize: 14,
+	},
+	icon: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginRight: 15,
+	},
 });

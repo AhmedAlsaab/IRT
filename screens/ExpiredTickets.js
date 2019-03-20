@@ -7,7 +7,7 @@ import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import tickets from './data';
-import ip from '../ip';
+import ip from '../ipstore';
 
 import TicketLayout from './TicketLayout';
 import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';

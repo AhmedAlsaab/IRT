@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="mapstogpx.com" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+  <metadata>
+    <link href="http://www.mapstogpx.com">
+      <text>Sverrir Sigmundarson</text>
+    </link>
+    <!--desc>Map data ©2019 Google</desc-->
+    <!--copyright author="Google Inc">
+    	<year>2019</year>
+    	<license>https://developers.google.com/maps/terms</license>
+    </copyright-->
+    <!--url>https://www.google.com/maps/dir/51.4766795,-3.1804274/51.48530001,+-3.178014415/@51.4810143,-3.1837653,16z/data=!4m7!4m6!1m0!1m3!2m2!1d-3.1780144!2d51.4853!3e0?shorturl=1&hl=en</url-->
+    <time>2019-03-12T22:34:12Z</time>
+  </metadata>
+<trk>
+  <name>Cardiff CF10 1EE to 51.48530001</name>
+  <number>1</number>
+  <trkseg>
+  <trkpt lat="51.4769026" lon="-3.1805965">
+    <name>TP001</name>
+    <time>2019-03-12T22:34:12Z</time>
+  </trkpt>
+  <trkpt lat="51.47678" lon="-3.18102">
+    <name>TP002</name>
+    <time>2019-03-12T22:34:21Z</time>
+  </trkpt>
+  <trkpt lat="51.4767791" lon="-3.1810168">
+    <name>TP003</name>
+    <time>2019-03-12T22:34:22Z</time>
+  </trkpt>
+  <trkpt lat="51.47691" lon="-3.18108">
+    <name>TP004</name>
+    <time>2019-03-12T22:34:28Z</time>
+  </trkpt>
+  <trkpt lat="51.47706" lon="-3.1812">
+    <name>TP005</name>
+    <time>2019-03-12T22:34:36Z</time>
+  </trkpt>
+  <trkpt lat="51.47741" lon="-3.18149">
+    <name>TP006</name>
+    <time>2019-03-12T22:34:53Z</time>
+  </trkpt>
+  <trkpt lat="51.47743" lon="-3.18149">
+    <name>TP007</name>
+    <time>2019-03-12T22:34:54Z</time>
+  </trkpt>
+  <trkpt lat="51.4774274" lon="-3.1814934">
+    <name>TP008</name>
+    <time>2019-03-12T22:34:55Z</time>
+  </trkpt>
+  <trkpt lat="51.47745" lon="-3.18151">
+    <name>TP009</name>
+    <time>2019-03-12T22:34:56Z</time>
+  </trkpt>
+  <trkpt lat="51.47747" lon="-3.18151">
+    <name>TP010</name>
+    <time>2019-03-12T22:34:57Z</time>
+  </trkpt>
+  <trkpt lat="51.47749" lon="-3.18151">
+    <name>TP011</name>
+    <time>2019-03-12T22:34:58Z</time>
+  </trkpt>
+  <trkpt lat="51.4775" lon="-3.18149">
+    <name>TP012</name>
+    <time>2019-03-12T22:34:59Z</time>
+  </trkpt>
+  <trkpt lat="51.47752" lon="-3.18146">
+    <name>TP013</name>
+    <time>2019-03-12T22:35:00Z</time>
+  </trkpt>
+  <trkpt lat="51.47809" lon="-3.17956">
+    <name>TP014</name>
+    <time>2019-03-12T22:35:31Z</time>
+  </trkpt>
+  <trkpt lat="51.47816" lon="-3.17935">
+    <name>TP015</name>
+    <time>2019-03-12T22:35:35Z</time>
+  </trkpt>
+  <trkpt lat="51.47825" lon="-3.17904">
+    <name>TP016</name>
+    <time>2019-03-12T22:35:41Z</time>
+  </trkpt>
+  <trkpt lat="51.47827" lon="-3.17898">
+    <name>TP017</name>
+    <time>2019-03-12T22:35:42Z</time>
+  </trkpt>
+  <trkpt lat="51.4782661" lon="-3.1789763">
+    <name>TP018</name>
+    <time>2019-03-12T22:35:43Z</time>
+  </trkpt>
+  <trkpt lat="51.47828" lon="-3.17895">
+    <name>TP019</name>
+    <time>2019-03-12T22:35:44Z</time>
+  </trkpt>
+  <trkpt lat="51.4783" lon="-3.17893">
+    <name>TP020</name>
+    <time>2019-03-12T22:35:45Z</time>
+  </trkpt>
+  <trkpt lat="51.47833" lon="-3.17892">
+    <name>TP021</name>
+    <time>2019-03-12T22:35:46Z</time>
+  </trkpt>
+  <trkpt lat="51.47836" lon="-3.17892">
+    <name>TP022</name>
+    <time>2019-03-12T22:35:47Z</time>
+  </trkpt>
+  <trkpt lat="51.47838" lon="-3.17894">
+    <name>TP023</name>
+    <time>2019-03-12T22:35:48Z</time>
+  </trkpt>
+  <trkpt lat="51.47842" lon="-3.17899">
+    <name>TP024</name>
+    <time>2019-03-12T22:35:50Z</time>
+  </trkpt>
+  <trkpt lat="51.47855" lon="-3.17917">
+    <name>TP025</name>
+    <time>2019-03-12T22:35:55Z</time>
+  </trkpt>
+  <trkpt lat="51.47875" lon="-3.17945">
+    <name>TP026</name>
+    <time>2019-03-12T22:36:02Z</time>
+  </trkpt>
+  <trkpt lat="51.47901" lon="-3.17984">
+    <name>TP027</name>
+    <time>2019-03-12T22:36:12Z</time>
+  </trkpt>
+  <trkpt lat="51.47905" lon="-3.1799">
+    <name>TP028</name>
+    <time>2019-03-12T22:36:14Z</time>
+  </trkpt>
+  <trkpt lat="51.47908" lon="-3.17994">
+    <name>TP029</name>
+    <time>2019-03-12T22:36:15Z</time>
+  </trkpt>
+  <trkpt lat="51.4791" lon="-3.17998">
+    <name>TP030</name>
+    <time>2019-03-12T22:36:16Z</time>
+  </trkpt>
+  <trkpt lat="51.47914" lon="-3.18005">
+    <name>TP031</name>
+    <time>2019-03-12T22:36:18Z</time>
+  </trkpt>
+  <trkpt lat="51.47924" lon="-3.18024">
+    <name>TP032</name>
+    <time>2019-03-12T22:36:22Z</time>
+  </trkpt>
+  <trkpt lat="51.47928" lon="-3.18032">
+    <name>TP033</name>
+    <time>2019-03-12T22:36:24Z</time>
+  </trkpt>
+  <trkpt lat="51.47948" lon="-3.18072">
+    <name>TP034</name>
+    <time>2019-03-12T22:36:33Z</time>
+  </trkpt>
+  <trkpt lat="51.47969" lon="-3.18114">
+    <name>TP035</name>
+    <time>2019-03-12T22:36:42Z</time>
+  </trkpt>
+  <trkpt lat="51.47982" lon="-3.1814">
+    <name>TP036</name>
+    <time>2019-03-12T22:36:48Z</time>
+  </trkpt>
+  <trkpt lat="51.48014" lon="-3.18206">
+    <name>TP037</name>
+    <time>2019-03-12T22:37:02Z</time>
+  </trkpt>
+  <trkpt lat="51.48038" lon="-3.18251">
+    <name>TP038</name>
+    <time>2019-03-12T22:37:12Z</time>
+  </trkpt>
+  <trkpt lat="51.48074" lon="-3.18323">
+    <name>TP039</name>
+    <time>2019-03-12T22:37:27Z</time>
+  </trkpt>
+  <trkpt lat="51.48079" lon="-3.18331">
+    <name>TP040</name>
+    <time>2019-03-12T22:37:29Z</time>
+  </trkpt>
+  <trkpt lat="51.48082" lon="-3.1834">
+    <name>TP041</name>
+    <time>2019-03-12T22:37:31Z</time>
+  </trkpt>
+  <trkpt lat="51.48099" lon="-3.18371">
+    <name>TP042</name>
+    <time>2019-03-12T22:37:38Z</time>
+  </trkpt>
+  <trkpt lat="51.4809934" lon="-3.1837068">
+    <name>TP043</name>
+    <time>2019-03-12T22:37:39Z</time>
+  </trkpt>
+  <trkpt lat="51.481" lon="-3.18344">
+    <name>TP044</name>
+    <time>2019-03-12T22:37:43Z</time>
+  </trkpt>
+  <trkpt lat="51.48101" lon="-3.18317">
+    <name>TP045</name>
+    <time>2019-03-12T22:37:47Z</time>
+  </trkpt>
+  <trkpt lat="51.48103" lon="-3.18285">
+    <name>TP046</name>
+    <time>2019-03-12T22:37:51Z</time>
+  </trkpt>
+  <trkpt lat="51.48104" lon="-3.18262">
+    <name>TP047</name>
+    <time>2019-03-12T22:37:54Z</time>
+  </trkpt>
+  <trkpt lat="51.48106" lon="-3.18236">
+    <name>TP048</name>
+    <time>2019-03-12T22:37:58Z</time>
+  </trkpt>
+  <trkpt lat="51.48109" lon="-3.18203">
+    <name>TP049</name>
+    <time>2019-03-12T22:38:02Z</time>
+  </trkpt>
+  <trkpt lat="51.48111" lon="-3.1818">
+    <name>TP050</name>
+    <time>2019-03-12T22:38:05Z</time>
+  </trkpt>
+  <trkpt lat="51.4812" lon="-3.18114">
+    <name>TP051</name>
+    <time>2019-03-12T22:38:14Z</time>
+  </trkpt>
+  <trkpt lat="51.48126" lon="-3.18072">
+    <name>TP052</name>
+    <time>2019-03-12T22:38:20Z</time>
+  </trkpt>
+  <trkpt lat="51.48129" lon="-3.1805">
+    <name>TP053</name>
+    <time>2019-03-12T22:38:23Z</time>
+  </trkpt>
+  <trkpt lat="51.48142" lon="-3.17983">
+    <name>TP054</name>
+    <time>2019-03-12T22:38:32Z</time>
+  </trkpt>
+  <trkpt lat="51.48145" lon="-3.17963">
+    <name>TP055</name>
+    <time>2019-03-12T22:38:35Z</time>
+  </trkpt>
+  <trkpt lat="51.48147" lon="-3.17954">
+    <name>TP056</name>
+    <time>2019-03-12T22:38:37Z</time>
+  </trkpt>
+  <trkpt lat="51.4815" lon="-3.17942">
+    <name>TP057</name>
+    <time>2019-03-12T22:38:39Z</time>
+  </trkpt>
+  <trkpt lat="51.48153" lon="-3.17935">
+    <name>TP058</name>
+    <time>2019-03-12T22:38:41Z</time>
+  </trkpt>
+  <trkpt lat="51.48157" lon="-3.17929">
+    <name>TP059</name>
+    <time>2019-03-12T22:38:43Z</time>
+  </trkpt>
+  <trkpt lat="51.48161" lon="-3.17924">
+    <name>TP060</name>
+    <time>2019-03-12T22:38:44Z</time>
+  </trkpt>
+  <trkpt lat="51.48163" lon="-3.17923">
+    <name>TP061</name>
+    <time>2019-03-12T22:38:45Z</time>
+  </trkpt>
+  <trkpt lat="51.48169" lon="-3.17922">
+    <name>TP062</name>
+    <time>2019-03-12T22:38:47Z</time>
+  </trkpt>
+  <trkpt lat="51.48176" lon="-3.17922">
+    <name>TP063</name>
+    <time>2019-03-12T22:38:49Z</time>
+  </trkpt>
+  <trkpt lat="51.48184" lon="-3.17923">
+    <name>TP064</name>
+    <time>2019-03-12T22:38:51Z</time>
+  </trkpt>
+  <trkpt lat="51.48202" lon="-3.17928">
+    <name>TP065</name>
+    <time>2019-03-12T22:38:55Z</time>
+  </trkpt>
+  <trkpt lat="51.48208" lon="-3.17936">
+    <name>TP066</name>
+    <time>2019-03-12T22:38:57Z</time>
+  </trkpt>
+  <trkpt lat="51.48217" lon="-3.17939">
+    <name>TP067</name>
+    <time>2019-03-12T22:38:59Z</time>
+  </trkpt>
+  <trkpt lat="51.48234" lon="-3.17942">
+    <name>TP068</name>
+    <time>2019-03-12T22:39:03Z</time>
+  </trkpt>
+  <trkpt lat="51.48252" lon="-3.17943">
+    <name>TP069</name>
+    <time>2019-03-12T22:39:07Z</time>
+  </trkpt>
+  <trkpt lat="51.48265" lon="-3.17944">
+    <name>TP070</name>
+    <time>2019-03-12T22:39:10Z</time>
+  </trkpt>
+  <trkpt lat="51.48274" lon="-3.17945">
+    <name>TP071</name>
+    <time>2019-03-12T22:39:12Z</time>
+  </trkpt>
+  <trkpt lat="51.48275" lon="-3.17946">
+    <name>TP072</name>
+    <time>2019-03-12T22:39:13Z</time>
+  </trkpt>
+  <trkpt lat="51.48281" lon="-3.17947">
+    <name>TP073</name>
+    <time>2019-03-12T22:39:15Z</time>
+  </trkpt>
+  <trkpt lat="51.48291" lon="-3.1795">
+    <name>TP074</name>
+    <time>2019-03-12T22:39:17Z</time>
+  </trkpt>
+  <trkpt lat="51.48313" lon="-3.17959">
+    <name>TP075</name>
+    <time>2019-03-12T22:39:22Z</time>
+  </trkpt>
+  <trkpt lat="51.48322" lon="-3.17962">
+    <name>TP076</name>
+    <time>2019-03-12T22:39:24Z</time>
+  </trkpt>
+  <trkpt lat="51.48332" lon="-3.17969">
+    <name>TP077</name>
+    <time>2019-03-12T22:39:27Z</time>
+  </trkpt>
+  <trkpt lat="51.48343" lon="-3.17979">
+    <name>TP078</name>
+    <time>2019-03-12T22:39:30Z</time>
+  </trkpt>
+  <trkpt lat="51.48351" lon="-3.17988">
+    <name>TP079</name>
+    <time>2019-03-12T22:39:32Z</time>
+  </trkpt>
+  <trkpt lat="51.4836" lon="-3.18002">
+    <name>TP080</name>
+    <time>2019-03-12T22:39:35Z</time>
+  </trkpt>
+  <trkpt lat="51.4837" lon="-3.18022">
+    <name>TP081</name>
+    <time>2019-03-12T22:39:39Z</time>
+  </trkpt>
+  <trkpt lat="51.4837022" lon="-3.1802174">
+    <name>TP082</name>
+    <time>2019-03-12T22:39:40Z</time>
+  </trkpt>
+  <trkpt lat="51.48375" lon="-3.18033">
+    <name>TP083</name>
+    <time>2019-03-12T22:39:42Z</time>
+  </trkpt>
+  <trkpt lat="51.48381" lon="-3.18026">
+    <name>TP084</name>
+    <time>2019-03-12T22:39:44Z</time>
+  </trkpt>
+  <trkpt lat="51.48386" lon="-3.18021">
+    <name>TP085</name>
+    <time>2019-03-12T22:39:46Z</time>
+  </trkpt>
+  <trkpt lat="51.4839" lon="-3.18014">
+    <name>TP086</name>
+    <time>2019-03-12T22:39:48Z</time>
+  </trkpt>
+  <trkpt lat="51.48395" lon="-3.18005">
+    <name>TP087</name>
+    <time>2019-03-12T22:39:50Z</time>
+  </trkpt>
+  <trkpt lat="51.48401" lon="-3.17995">
+    <name>TP088</name>
+    <time>2019-03-12T22:39:52Z</time>
+  </trkpt>
+  <trkpt lat="51.48406" lon="-3.17983">
+    <name>TP089</name>
+    <time>2019-03-12T22:39:54Z</time>
+  </trkpt>
+  <trkpt lat="51.48412" lon="-3.17968">
+    <name>TP090</name>
+    <time>2019-03-12T22:39:57Z</time>
+  </trkpt>
+  <trkpt lat="51.48417" lon="-3.17952">
+    <name>TP091</name>
+    <time>2019-03-12T22:40:00Z</time>
+  </trkpt>
+  <trkpt lat="51.48421" lon="-3.17937">
+    <name>TP092</name>
+    <time>2019-03-12T22:40:03Z</time>
+  </trkpt>
+  <trkpt lat="51.48424" lon="-3.17919">
+    <name>TP093</name>
+    <time>2019-03-12T22:40:06Z</time>
+  </trkpt>
+  <trkpt lat="51.48426" lon="-3.17909">
+    <name>TP094</name>
+    <time>2019-03-12T22:40:08Z</time>
+  </trkpt>
+  <trkpt lat="51.48428" lon="-3.17897">
+    <name>TP095</name>
+    <time>2019-03-12T22:40:10Z</time>
+  </trkpt>
+  <trkpt lat="51.48429" lon="-3.17883">
+    <name>TP096</name>
+    <time>2019-03-12T22:40:12Z</time>
+  </trkpt>
+  <trkpt lat="51.48429" lon="-3.17875">
+    <name>TP097</name>
+    <time>2019-03-12T22:40:13Z</time>
+  </trkpt>
+  <trkpt lat="51.48429" lon="-3.17871">
+    <name>TP098</name>
+    <time>2019-03-12T22:40:14Z</time>
+  </trkpt>
+  <trkpt lat="51.4843" lon="-3.17854">
+    <name>TP099</name>
+    <time>2019-03-12T22:40:17Z</time>
+  </trkpt>
+  <trkpt lat="51.48429" lon="-3.17809">
+    <name>TP100</name>
+    <time>2019-03-12T22:40:23Z</time>
+  </trkpt>
+  <trkpt lat="51.48428" lon="-3.17676">
+    <name>TP101</name>
+    <time>2019-03-12T22:40:40Z</time>
+  </trkpt>
+  <trkpt lat="51.48426" lon="-3.17613">
+    <name>TP102</name>
+    <time>2019-03-12T22:40:48Z</time>
+  </trkpt>
+  <trkpt lat="51.4842606" lon="-3.1761287">
+    <name>TP103</name>
+    <time>2019-03-12T22:40:49Z</time>
+  </trkpt>
+  <trkpt lat="51.48428" lon="-3.17602">
+    <name>TP104</name>
+    <time>2019-03-12T22:40:52Z</time>
+  </trkpt>
+  <trkpt lat="51.48429" lon="-3.17592">
+    <name>TP105</name>
+    <time>2019-03-12T22:40:55Z</time>
+  </trkpt>
+  <trkpt lat="51.4843" lon="-3.17584">
+    <name>TP106</name>
+    <time>2019-03-12T22:40:57Z</time>
+  </trkpt>
+  <trkpt lat="51.48432" lon="-3.17577">
+    <name>TP107</name>
+    <time>2019-03-12T22:40:59Z</time>
+  </trkpt>
+  <trkpt lat="51.48433" lon="-3.17573">
+    <name>TP108</name>
+    <time>2019-03-12T22:41:00Z</time>
+  </trkpt>
+  <trkpt lat="51.48436" lon="-3.17571">
+    <name>TP109</name>
+    <time>2019-03-12T22:41:02Z</time>
+  </trkpt>
+  <trkpt lat="51.48438" lon="-3.17569">
+    <name>TP110</name>
+    <time>2019-03-12T22:41:03Z</time>
+  </trkpt>
+  <trkpt lat="51.48443" lon="-3.17565">
+    <name>TP111</name>
+    <time>2019-03-12T22:41:06Z</time>
+  </trkpt>
+  <trkpt lat="51.48446" lon="-3.17564">
+    <name>TP112</name>
+    <time>2019-03-12T22:41:08Z</time>
+  </trkpt>
+  <trkpt lat="51.48447" lon="-3.17564">
+    <name>TP113</name>
+    <time>2019-03-12T22:41:09Z</time>
+  </trkpt>
+  <trkpt lat="51.4844711" lon="-3.1756391">
+    <name>TP114</name>
+    <time>2019-03-12T22:41:10Z</time>
+  </trkpt>
+  <trkpt lat="51.48518" lon="-3.17606">
+    <name>TP115</name>
+    <time>2019-03-12T22:41:29Z</time>
+  </trkpt>
+  <trkpt lat="51.48524" lon="-3.1761">
+    <name>TP116</name>
+    <time>2019-03-12T22:41:31Z</time>
+  </trkpt>
+  <trkpt lat="51.48565" lon="-3.1764">
+    <name>TP117</name>
+    <time>2019-03-12T22:41:43Z</time>
+  </trkpt>
+  <trkpt lat="51.4856516" lon="-3.1763972">
+    <name>TP118</name>
+    <time>2019-03-12T22:41:44Z</time>
+  </trkpt>
+  <trkpt lat="51.48546" lon="-3.1768">
+    <name>TP119</name>
+    <time>2019-03-12T22:41:56Z</time>
+  </trkpt>
+  <trkpt lat="51.48514" lon="-3.17748">
+    <name>TP120</name>
+    <time>2019-03-12T22:42:15Z</time>
+  </trkpt>
+  <trkpt lat="51.48513" lon="-3.17752">
+    <name>TP121</name>
+    <time>2019-03-12T22:42:16Z</time>
+  </trkpt>
+  <trkpt lat="51.48513" lon="-3.17757">
+    <name>TP122</name>
+    <time>2019-03-12T22:42:18Z</time>
+  </trkpt>
+  <trkpt lat="51.48513" lon="-3.17759">
+    <name>TP123</name>
+    <time>2019-03-12T22:42:19Z</time>
+  </trkpt>
+  <trkpt lat="51.4851348" lon="-3.1775949">
+    <name>TP124</name>
+    <time>2019-03-12T22:42:20Z</time>
+  </trkpt>
+  <trkpt lat="51.48514" lon="-3.17761">
+    <name>TP125</name>
+    <time>2019-03-12T22:42:21Z</time>
+  </trkpt>
+  <trkpt lat="51.48516" lon="-3.17765">
+    <name>TP126</name>
+    <time>2019-03-12T22:42:23Z</time>
+  </trkpt>
+  <trkpt lat="51.48536" lon="-3.17788">
+    <name>TP127</name>
+    <time>2019-03-12T22:42:33Z</time>
+  </trkpt>
+  <trkpt lat="51.4853601" lon="-3.1778821">
+    <name>TP128</name>
+    <time>2019-03-12T22:42:34Z</time>
+  </trkpt>
+  </trkseg>
+</trk>
+</gpx>
