@@ -37,7 +37,6 @@ export default class TicketsScreen extends React.Component {
 	};
 
 	closeTicket = () => {
-		console.log('hello');
 		this.setState({
 			expansionIsOpen: false
 		});
@@ -75,7 +74,6 @@ export default class TicketsScreen extends React.Component {
 				// 	count = 0;
 				// })
 			}
-			console.log(ticket.length);
 		}
 
 		return (
