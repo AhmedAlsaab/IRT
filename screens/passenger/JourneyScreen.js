@@ -1,9 +1,9 @@
 import PolyLine from '@mapbox/polyline';
 import _ from 'lodash';
 import moment from 'moment';
-import { Button, Container, Content, Input, Item, StyleProvider, Text } from 'native-base';
+import { Button, Container, Content, StyleProvider, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, TextInput } from 'react-native';
+import { Keyboard, StyleSheet, TouchableHighlight, TouchableOpacity, View, TextInput } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -287,39 +287,45 @@ class JourneyScreen extends Component {
 
 	render() {
 		// Start Location Predictions - Suggestion List
-		const locationPredictions = this.state.locationPredictions.map((prediction) => (
-			<TouchableHighlight
-				onPress={() => {
-					this.pressedPrediction(
-						prediction,
-						prediction.place_id,
-						prediction.terms[0].value,
-						prediction.terms[1].value,
-						prediction.terms[2].value
-					);
-				}}
-				key={prediction.id}
-			>
-				<Text style={styles.locationSuggestion}>{prediction.description}</Text>
-			</TouchableHighlight>
-		));
-		// End Location Predictions - Suggestion Lis
-		const endLocationPredictions = this.state.endLocationPredictions.map((prediction) => (
-			<TouchableHighlight
-				onPress={() => {
-					this.pressedEndPrediction(
-						prediction,
-						prediction.place_id,
-						prediction.terms[0].value,
-						prediction.terms[1].value,
-						prediction.terms[2].value
-					);
-				}}
-				key={prediction.id}
-			>
-				<Text style={styles.locationSuggestion}>{prediction.description}</Text>
-			</TouchableHighlight>
-		));
+		var locationPredictions;
+		var endLocationPredictions;
+		<View style={styles.suggestionContainer}>
+			{locationPredictions = this.state.locationPredictions.map((prediction) => (
+				<TouchableHighlight
+					onPress={() => {
+						this.pressedPrediction(
+							prediction,
+							prediction.place_id,
+							prediction.terms[0].value,
+							prediction.terms[1].value,
+							prediction.terms[2].value
+						);
+					}}
+					key={prediction.id}
+				>
+					<Text style={styles.locationSuggestion}>{prediction.description}</Text>
+				</TouchableHighlight>
+			))};
+			</View>
+		{/* // End Location Predictions - Suggestion List */ }
+		<View style={styles.suggestionContainer}>
+			{endLocationPredictions = this.state.endLocationPredictions.map((prediction) => (
+				<TouchableHighlight
+					onPress={() => {
+						this.pressedEndPrediction(
+							prediction,
+							prediction.place_id,
+							prediction.terms[0].value,
+							prediction.terms[1].value,
+							prediction.terms[2].value
+						);
+					}}
+					key={prediction.id}
+				>
+					<Text style={styles.locationSuggestion}>{prediction.description}</Text>
+				</TouchableHighlight>
+			))};
+			</View>
 
 		return (
 			<StyleProvider style={getTheme(platform)}>
@@ -517,11 +523,16 @@ const styles = StyleSheet.create({
 		padding: 10,
 		color: colors.bodyTextColor
 	},
+	suggestionContainer: {
+		marginTop: 10,
+		marginBottom: 10,
+	},
 	locationSuggestion: {
+		color: colors.emphasisTextColor,
 		backgroundColor: 'white',
 		padding: 5,
-		fontSize: 18,
-		borderWidth: 0.5
+		borderBottomWidth: 0.5,
+		borderBottomColor: colors.emphasisTextColor,
 	},
 	contentContainer: {
 		width: '80%',
@@ -535,8 +546,8 @@ const styles = StyleSheet.create({
 	buttonContainer: {
 		flexDirection: 'row',
 		alignSelf: 'center',
-		marginTop: 15,
-		alignItems: 'center'
+		alignItems: 'center',
+		marginBottom: 15,
 	},
 	button: {
 		width: '100%',
