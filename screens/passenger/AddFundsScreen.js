@@ -5,8 +5,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
 import uuid from 'uuid/v4';
+import colors from '../../constants/Colors'
 
-import WalletHeader from './WalletHeader';
 import WalletBalance from './WalletBalance';
 
 import { connect } from 'react-redux';
@@ -21,8 +21,10 @@ class AddFundsScreen extends React.Component {
 	state = {
 		showModal: false,
 		status: '',
-		amount: 0.0,
-		funds: 0.0
+		amount: null,
+		funds: 0.0,
+
+		amountFocused: false,
 	};
 
 	onPaypalSubmit = () => {
@@ -80,7 +82,7 @@ class AddFundsScreen extends React.Component {
 
 	onAmountFocus = () => {
 		new Promise((resolve, reject) => {
-			this.setState({ amount: 0.0 });
+			this.setState({ amount: 0.0, amountFocused: true });
 			resolve();
 		}).then(() => {
 			this.textInputRef.clear();
@@ -98,28 +100,30 @@ class AddFundsScreen extends React.Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
+				<GlobalHeader type={3} header='Add Funds' navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content contentContainerStyle={styles.contentContainer}>
 					<WalletBalance />
-					<View style={styles.amountContainer}>
-						<Icon name="pluscircleo" size={25} style={styles.amountIcon} />
+					<View style={[styles.amountContainer, { borderBottomColor: this.state.amountFocused ? colors.brandColor : colors.lightBorder }]}>
+						<Icon name="pluscircleo" size={20} color={this.state.amountFocused ? colors.emphasisTextColor : colors.bodyTextColor} style={styles.amountIcon} />
 						<TextInput
-							style={styles.amountInput}
+							style={[styles.amountInput, { color: this.state.amountFocused ? colors.emphasisTextColor : colors.bodyTextColor }]}
 							ref={(ref) => (this.textInputRef = ref)}
+							placeholder='Amount'
 							onFocus={this.onAmountFocus}
+							onBlur={() => this.setState({ amountFocused: false })}
 							keyboardType="numeric"
 							onChangeText={(amount) => this.onAmountEnter(amount)}
-							value={this.state.amount.toString()}
+							value={this.state.amount ? this.state.amount.toString() : null}
 							maxLength={7}
 						/>
 					</View>
 					<View>
-						<Text style={styles.paymentHeader}>Payment Method</Text>
+						<Text style={styles.paymentHeader}>PAYMENT METHOD</Text>
 						<View style={styles.paymentOptionsContainer}>
 							<Button style={styles.paymentOption} onPress={this.onDebitCreditSubmit}>
 								<Image
 									source={require('../../assets/images/debit-card-icon.png')}
-									style={[ styles.paymentOptionImage, { width: 80, height: 60 } ]}
+									style={[styles.paymentOptionImage, { width: 80, height: 60 }]}
 								/>
 								<Text style={styles.paymentOptionText} uppercase={false}>
 									Credit/Debit Card
@@ -151,7 +155,7 @@ class AddFundsScreen extends React.Component {
 									.amount}; document.paypal.submit()`}
 							/>
 						</Modal>
-						<Text>Payment Status: {this.state.status}</Text>
+						<Text style={styles.body}>PAYMENT STATUS: {this.state.status}</Text>
 					</View>
 				</Content>
 			</Container>
@@ -173,29 +177,12 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginTop: 15
 	},
-	headerContainer: {
-		padding: 25,
-		borderBottomWidth: 1,
-		borderBottomColor: '#dfdfdf',
-		width: window.width
-	},
-	headerText: {
-		fontSize: 25,
-		fontWeight: '100',
-		color: '#919191'
-	},
-	button: {
-		width: 175,
-		justifyContent: 'center',
-		backgroundColor: '#ff0000',
-		borderRadius: 5
-	},
 	amountContainer: {
+		height: 50,
 		flexDirection: 'row',
 		alignItems: 'center',
 		width: window.width * 0.75,
-		borderBottomWidth: 1,
-		borderBottomColor: '#ff0000',
+		borderBottomWidth: 0.75,
 		margin: 30
 	},
 	amountInput: {
@@ -204,7 +191,6 @@ const styles = StyleSheet.create({
 	},
 	amountIcon: {
 		padding: 6,
-		color: 'gray'
 	},
 	paymentHeader: {
 		paddingLeft: 25,
@@ -212,7 +198,8 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		paddingBottom: 10,
 		width: window.width,
-		color: '#000'
+		color: colors.bodyTextColor,
+		fontSize: 15,
 	},
 	paymentOptionsContainer: {
 		flexDirection: 'column',
@@ -225,9 +212,9 @@ const styles = StyleSheet.create({
 	paymentOption: {
 		flex: 1,
 		borderWidth: 1,
-		borderColor: '#000',
-		backgroundColor: '#ffff',
-		borderRadius: 10,
+		borderColor: colors.bodyTextColor,
+		backgroundColor: colors.backgroundColor,
+		borderRadius: 5,
 		height: 'auto',
 		width: window.width - 50,
 		padding: 20,
@@ -238,7 +225,7 @@ const styles = StyleSheet.create({
 	},
 	paymentOptionText: {
 		flex: 5,
-		color: '#000',
+		color: colors.emphasisTextColor,
 		fontSize: 17,
 		padding: 17,
 		textTransform: 'none'
@@ -247,6 +234,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: 40,
 		resizeMode: 'contain'
+	},
+	body: {
+		color: colors.bodyTextColor,
 	}
 });
 

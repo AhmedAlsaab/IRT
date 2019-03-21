@@ -119,7 +119,7 @@ class TicketDetail extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
-					<GlobalHeader type={1} navigateTo={this.navigateTo} />
+					<GlobalHeader type={3} header='Ticket Details'  navigateTo={this.navigateTo} isBackButtonActive={1} />
 					<Content>
 						<View style={styles.card}>
 							<View style={styles.ticketTypeContainer}>
@@ -415,7 +415,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		width: '100%',
 		marginTop: 15,
-		justifyContent: 'space-evenly'
+		justifyContent: 'space-evenly',
+		marginBottom: 15
 	},
 	button: {
 		width: '45%',

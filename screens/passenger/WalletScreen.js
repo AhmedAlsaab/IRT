@@ -23,13 +23,20 @@ export default class WalletScreen extends React.Component {
 	render() {
 		return (
 			<Container>
-				<GlobalHeader type={1} navigateTo={this.navigateTo} />
-				<Content>
-					{/* <WalletHeader title="WALLET" /> */}
+				<View style={styles.header}>
+					<GlobalHeader type={1} navigateTo={this.navigateTo} />
 					<WalletBalance type={1} onSubmit={this.onSubmit} />
+				</View>
+				<Content>
 					<WalletTransaction />
 				</Content>
 			</Container>
 		);
 	}
 }
+
+const styles = StyleSheet.create({
+	header: {
+		height: 275,
+	}
+});

@@ -4,6 +4,8 @@ import { Content, Container, Button, Text, StyleProvider, Item, Row } from 'nati
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
+import colors from '../../constants/Colors';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 class ConfirmationScreen extends React.Component {
     static navigationOptions = {
@@ -30,28 +32,27 @@ class ConfirmationScreen extends React.Component {
                     <Content>
                         <GlobalHeader
                             type={3}
-                            header="Confirmation"
+                            header="Booking Confirmation"
                             navigateTo={this.navigateTo}
                             isBackButtonActive={1}
                         />
                         <View>
                             {/* Page header and introductory text */}
                             <View style={styles.introduction}>
-                                <Text style={styles.header1}>YOUR BOOKING</Text>
+                                <Icon name="calendar-check-o" color={colors.bodyTextColor} size={75} style={styles.icon} />
                                 <Text style={styles.body}>
-                                    Thank you for booking your journey with us on <Text style={styles.bold}>{booking.date}</Text>
+                                    Thank you for booking your journey with us on <Text style={styles.bold}>{booking.date}</Text> at <Text style={styles.bold}>{booking.time}</Text>.
                                 </Text>
                                 <View style={styles.coordinates}>
-                                    <Text style={styles.bold}>
-                                        From: {booking.data.startLocation}
-                                    </Text>
-                                    <Text style={styles.bold}>
-                                        To: {booking.data.endLocation}
-                                    </Text>
+                                    <Text><Text style={styles.bold}>From: </Text><Text style={styles.body}>{booking.data.startLocation}</Text></Text>
+                                    <Text><Text style={styles.bold}>To: </Text><Text style={styles.body}>{booking.data.endLocation}</Text></Text>
                                 </View>
                                 <Text style={styles.body}>
-                                    You will shortly receive an e-mail confirmation with the full details of your booking. You will
-                                    be notified again on the day of travel with updated travel times.
+                                    You will shortly receive an e-mail confirmation with the full details of your booking.
+                                </Text>
+                                <Text style={[styles.body, { marginTop: 15 }]}>
+                                    Please remember your chosen time is approximate and you will be notified again on the day of
+                                    travel with updated travel times.
                                 </Text>
                                 <View style={styles.buttonContainer}>
                                     <Button
@@ -79,20 +80,11 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignSelf: 'center'
     },
-    header1: {
-        width: '80%',
-        fontSize: 28,
-        color: 'gray',
-        marginBottom: 5
-    },
     body: {
-        color: '#bcbcbc',
-        fontSize: 20
+        color: colors.bodyTextColor,
     },
     bold: {
-        color: '#bcbcbc',
-        fontSize: 20,
-        fontWeight: 'bold',
+        color: colors.emphasisTextColor,
     },
     coordinates: {
         marginTop: 15,
@@ -105,10 +97,14 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     button: {
-        width: '100%',
+        width: '40%',
         justifyContent: 'center',
-        backgroundColor: '#ff0000'
+        backgroundColor: colors.brandColor
     },
+    icon: {
+        alignSelf: 'center',
+        marginBottom: 20,
+    }
 });
 
 export default ConfirmationScreen;

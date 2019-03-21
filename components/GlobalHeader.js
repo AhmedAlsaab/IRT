@@ -14,14 +14,14 @@ export default class GlobalHeader extends Component {
 		});
 	}
 
-	heightAdjuster = function() {
+	heightAdjuster = function () {
 		if (this.props.type == 2) {
 			return {
 				...Platform.select({
 					android: {
 						marginTop: StatusBar.currentHeight,
 						backgroundColor: '#ff0000',
-						height: 180
+						height: 180,
 					}
 				})
 			};
@@ -32,7 +32,7 @@ export default class GlobalHeader extends Component {
 					android: {
 						marginTop: StatusBar.currentHeight,
 						backgroundColor: '#ff0000',
-						height: 50
+						height: 50,
 					}
 				})
 			};
@@ -42,7 +42,7 @@ export default class GlobalHeader extends Component {
 					android: {
 						marginTop: StatusBar.currentHeight,
 						backgroundColor: '#ff0000',
-						height: 75
+						height: 60,
 					}
 				})
 			};
@@ -51,25 +51,20 @@ export default class GlobalHeader extends Component {
 
 	render() {
 		return (
-				<Header style={this.heightAdjuster()}>
-				{this.props.isBackButtonActive == 1 && (
-					<Button transparent onPress={() => this.props.navigateTo()} style={{ position: 'absolute', zIndex: 1, right: 350}}>
-						<Icon name="arrow-back" />
-					</Button>
+			<Header style={this.heightAdjuster()}>
+				{this.props.type == 1 && (
+					<Image
+						source={require('../branding/logos/two_line_version/TFW_two_line_mono_negative_rgb.png')}
+						style={{ height: 40, width: 200, alignSelf: 'center' }}
+					/>
 				)}
-					{this.props.type == 1 && (
-						<Image
-							source={require('../branding/logos/two_line_version/TFW_two_line_mono_negative_rgb.png')}
-							style={{ height: 70, width: 300 }}
-						/>
-					)}
-					{this.props.type == 2 && (
-						<Image
-							source={require('../branding/logos/four_line_version/TFW_four_line_mono_negative_rgb.png')}
-							style={{ height: 140, width: 300 }}
-						/>
-					)}
-					{/* {this.props.type == 3 && (
+				{this.props.type == 2 && (
+					<Image
+						source={require('../branding/logos/four_line_version/TFW_four_line_mono_negative_rgb.png')}
+						style={{ height: 150, width: 310, alignSelf: 'center' }}
+					/>
+				)}
+				{this.props.type == 3 && (
 					<View style={styles.contentRow}>
 						<View>
 							{this.props.isBackButtonActive == 1 && (
@@ -87,8 +82,8 @@ export default class GlobalHeader extends Component {
 							</View>
 						</View>
 					</View>
-				)} */}
-				</Header>
+				)}
+			</Header>
 		);
 	}
 }
@@ -101,13 +96,13 @@ const styles = StyleSheet.create({
 	contentRow: {
 		flex: 1,
 		flexDirection: 'row',
-		justifyContent: 'space-between'
+		alignItems: 'center',
 	},
 	innerView: {
 		textAlign: 'center'
 	},
 	titleText: {
-		marginTop: 5,
+		fontSize: 18,
 		color: 'white'
 	},
 	invisbleText: {

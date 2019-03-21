@@ -6,6 +6,7 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import TicketLayout from './TicketLayout';
 import uuid from 'uuid/v4';
+import colors from '../constants/Colors';
 
 import { connect } from 'react-redux';
 
@@ -33,6 +34,36 @@ class TicketsScreen extends React.Component {
 	navigateTo = () => {
 		this.props.navigation.navigate('Ticket');
 	};
+
+	navigateToJourneyScreen = () => {
+		this.props.navigation.navigate('Home');
+	};
+
+	activeTickets = () => {
+		var activeTickets = false;
+		if (this.props.tickets.length > 0) {
+			this.props.tickets.forEach(ticket => {
+				if (ticket.expired === 0) {
+					activeTickets = true;
+					return false;
+				}
+			});
+		};
+		return activeTickets;
+	}
+
+	expiredTickets = () => {
+		var expiredTickets = false;
+		if (this.props.tickets.length > 0) {
+			this.props.tickets.forEach(ticket => {
+				if (ticket.expired === 1) {
+					expiredTickets = true;
+					return false;
+				}
+			});
+		};
+		return expiredTickets;
+	}
 
 	render() {
 		return (
@@ -64,6 +95,18 @@ class TicketsScreen extends React.Component {
 							</View>
 						</View>
 						<View style={styles.ticketContainer}>
+							{!this.activeTickets() && this.state.showActive === 0 &&
+								<View style={styles.noTicketsContainer}>
+									<Text style={styles.noTicketsMessage}>You currently have no active tickets</Text>
+									<Button
+										danger
+										style={[styles.button, { backgroundColor: colors.brandColor }]}
+										onPress={this.navigateToJourneyScreen}
+									>
+										<Text>Plan a Journey</Text>
+									</Button>
+								</View>
+							}
 							{this.props.tickets !== 'undefined' && this.state.showActive === 0 && this.props.tickets.length > 0 && this.props.tickets.map((ticket) => {
 								if (ticket.expired === 0) {
 									return (
@@ -71,6 +114,11 @@ class TicketsScreen extends React.Component {
 									)
 								};
 							})}
+							{!this.expiredTickets() && this.state.showActive === 1 &&
+								<View style={styles.noTicketsContainer}>
+									<Text style={styles.noTicketsMessage}>You currently have no expired tickets</Text>
+								</View>
+							}
 							{this.props.tickets !== 'undefined' && this.state.showActive === 1 && this.props.tickets.length > 0 && this.props.tickets.map((ticket) => {
 								if (ticket.expired === 1) {
 									return (
@@ -88,8 +136,8 @@ class TicketsScreen extends React.Component {
 
 const styles = StyleSheet.create({
 	header: {
-		borderBottomColor: '#dfdfdf',
-		borderBottomWidth: 1
+		borderBottomColor: colors.lightBorder,
+		borderBottomWidth: 0.75
 	},
 	buttonContainer: {
 		width: '80%',
@@ -102,7 +150,7 @@ const styles = StyleSheet.create({
 	activeButtonSelected: {
 		width: '50%',
 		justifyContent: 'center',
-		backgroundColor: '#ff0000',
+		backgroundColor: colors.brandColor,
 		borderTopRightRadius: 0,
 		borderBottomRightRadius: 0,
 	},
@@ -121,12 +169,26 @@ const styles = StyleSheet.create({
 	expiredButtonSelected: {
 		width: '50%',
 		justifyContent: 'center',
-		backgroundColor: '#ff0000',
+		backgroundColor: colors.brandColor,
 		borderTopLeftRadius: 0,
 		borderBottomLeftRadius: 0,
 	},
 	ticketContainer: {
 		justifyContent: 'center',
+	},
+	noTicketsContainer: {
+		height: 200,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	noTicketsMessage: {
+		color: colors.bodyTextColor,
+	},
+	button: {
+		width: '45%',
+		justifyContent: 'center',
+		alignSelf: 'center',
+		marginTop: 20
 	},
 });
 

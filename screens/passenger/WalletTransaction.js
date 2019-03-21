@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import ip from '../../ipstore';
 import moment from 'moment';
+import colors from '../../constants/Colors'
 
 import { connect } from 'react-redux';
 import { fetchTransactions } from '../../redux/actions/transactionAction';
@@ -34,7 +34,7 @@ class WalletTransaction extends Component {
 
 		return (
 			<View>
-				<Text style={styles.transactionHeader}>Recent Transactions</Text>
+				<Text style={styles.transactionHeader}>RECENT TRANSACTIONS</Text>
 				{transactions}
 			</View>
 		)
@@ -47,8 +47,7 @@ const styles = StyleSheet.create({
 		paddingRight: 25,
 		paddingTop: 10,
 		paddingBottom: 10,
-		borderBottomColor: '#dfdfdf',
-		borderBottomWidth: 1
+		color: colors.emphasisTextColor
 	},
 	purchaseContainer: {
 		flex: 1,
@@ -57,8 +56,8 @@ const styles = StyleSheet.create({
 		paddingRight: 25,
 		paddingTop: 12,
 		paddingBottom: 12,
-		borderBottomColor: '#dfdfdf',
-		borderBottomWidth: 1
+		borderTopColor: colors.lightBorder,
+		borderTopWidth: 0.75
 	},
 	purchaseRow: {
 		flexDirection: 'row',
@@ -67,8 +66,15 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between'
 	},
 	purchaseBold: {
-		fontWeight: 'bold'
-	}
+		fontWeight: 'bold',
+		color: colors.emphasisTextColor,
+	},
+	left: {
+		color: colors.bodyTextColor,
+	},
+	right: {
+		color: colors.bodyTextColor,
+	},
 });
 
 const mapStateToProps = state => ({

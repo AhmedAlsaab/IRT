@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import moment from 'moment';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import colors from '../constants/Colors';
 
 export default class TicketLayout extends Component {
 	render() {
@@ -11,7 +12,7 @@ export default class TicketLayout extends Component {
 			<View style={styles.card}>
 				<View style={styles.ticketTypeContainer}>
 					{ticket.expired ?
-						<View style={[styles.ticketType, { backgroundColor: '#bcbcbc' }]}>
+						<View style={[styles.ticketType, { backgroundColor: colors.bodyTextColor }]}>
 							<Text style={styles.ticketTypeText}>
 								SGL
 								{/* Code prepared for return tickets - don't remove */}
@@ -36,14 +37,14 @@ export default class TicketLayout extends Component {
 						</View>
 						<View style={styles.passengerInfo}>
 							<View style={styles.icon}>
-								<IonIcon name="md-people" size={20} color="#999999" />
+								<IonIcon name="md-people" size={20} color={colors.bodyTextColor} />
 								<Text style={[styles.body, { marginLeft: 5 }]}>
 									{ticket.numPassengers}
 								</Text>
 							</View>
 							{ticket.numWheelchairs > 0 ?
 								<View style={styles.icon}>
-									<MaterialIcon name="accessible" size={20} color="#999999" />
+									<MaterialIcon name="accessible" size={20} color={colors.bodyTextColor} />
 									<Text style={[styles.body, { marginLeft: 5 }]}>
 										{ticket.numWheelchairs}
 									</Text>
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
 	card: {
 		flex: 1,
 		flexDirection: 'row',
-		borderBottomColor: '#dfdfdf',
+		borderBottomColor: colors.lightBorder,
 		borderBottomWidth: 1
 	},
 	ticketTypeContainer: {
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 3,
 	},
 	ticketTypeText: {
-		color: '#fff',
+		color: colors.backgroundColor,
 		fontWeight: 'bold',
 	},
 	ticket: {
@@ -116,11 +117,11 @@ const styles = StyleSheet.create({
 		width: '57%',
 	},
 	dateText: {
-		color: '#999999',
+		color: colors.bodyTextColor,
 		fontSize: 16,
 	},
 	timeText: {
-		color: '#666666',
+		color: colors.emphasisTextColor,
 		fontSize: 18,
 		marginTop: 5,
 	},
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	body: {
-		color: '#999999',
+		color: colors.bodyTextColor,
 		fontSize: 14,
 	},
 	icon: {
