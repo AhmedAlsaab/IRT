@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, TextInput } from 'react-native';
 import { Accordion, Button, Container, Content, Input, Item, StyleProvider, Text } from 'native-base';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -8,6 +8,7 @@ import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
+import colors from '../constants/Colors'
 
 import { connect } from 'react-redux';
 import { amendTicket } from '../redux/actions/ticketAction';
@@ -23,6 +24,8 @@ class AmendTicket extends React.Component {
         time: null,
         numWheelchair: null,
         errors: [],
+
+        wheelchairFocused: false,
     };
 
     onSubmit = () => {
@@ -140,19 +143,19 @@ class AmendTicket extends React.Component {
                                     <View>
                                         <Text style={styles.header2}>CURRENT TICKET DETAILS</Text>
                                         <View style={styles.icon}>
-                                            <Icon name="date-range" size={20} color="#bcbcbc" />
+                                            <Icon name="date-range" size={20} color={colors.bodyTextColor} />
                                             <Text style={styles.cardBody}>
                                                 {moment(data.date).format('MMMM Do YYYY')}
                                             </Text>
                                         </View>
                                         <View style={styles.icon}>
-                                            <Icon name="access-time" size={20} color="#bcbcbc" />
+                                            <Icon name="access-time" size={20} color={colors.bodyTextColor} />
                                             <Text style={styles.cardBody}>
                                                 {moment(data.time).format('LT')}
                                             </Text>
                                         </View>
                                         <View style={styles.icon}>
-                                            <Icon name="my-location" size={20} color="#bcbcbc" />
+                                            <Icon name="my-location" size={20} color={colors.bodyTextColor} />
                                             <Text style={styles.cardBody}>
                                                 {data.fromStreet}, {data.fromCity}
                                             </Text>
@@ -161,13 +164,13 @@ class AmendTicket extends React.Component {
 
                                     <View>
                                         <View style={styles.icon}>
-                                            <Icon name="location-on" size={20} color="#bcbcbc" />
+                                            <Icon name="location-on" size={20} color={colors.bodyTextColor} />
                                             <Text style={styles.cardBody}>
                                                 {data.toStreet}, {data.toCity}
                                             </Text>
                                         </View>
                                         <View style={styles.icon}>
-                                            <Icon name="people" size={20} color="#bcbcbc" />
+                                            <Icon name="people" size={20} color={colors.bodyTextColor} />
                                             <Text style={styles.cardBody}>
                                                 {data.numPassengers}
                                                 {data.numPassengers > 1 ? ' Passengers' : ' Passenger'}
@@ -175,7 +178,7 @@ class AmendTicket extends React.Component {
                                         </View>
                                         {data.numWheelchairs > 0 ?
                                             <View style={styles.icon}>
-                                                <Icon name="accessible" size={20} color="#bcbcbc" />
+                                                <Icon name="accessible" size={20} color={colors.bodyTextColor} />
                                                 <Text style={styles.cardBody}>
                                                     {data.numWheelchairs}
                                                     {data.numWheelchairs > 1 ? ' Wheelchairs' : ' Wheelchair'}
@@ -193,12 +196,13 @@ class AmendTicket extends React.Component {
                                 If you wish to change details relating to the start/end locations or total number
                                 of passengers, please cancel this ticket and re-book.
                             </Text>
+
                             {/* Date picker */}
                             <TouchableOpacity onPress={this._showDatePicker}>
-                                <View style={styles.dateTimeContainer}>
-                                    <Icon name="date-range" size={20} color="#bcbcbc" />
+                                <View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
+                                    <Icon name="date-range" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
                                     {this.state.date ? (
-                                        <Text style={[styles.dateTime, { color: '#000' }]}>
+                                        <Text style={styles.dateTime}>
                                             {moment(this.state.date).format('Do MMM YY')}
                                         </Text>
                                     ) : (
@@ -215,10 +219,10 @@ class AmendTicket extends React.Component {
 
                             {/* Time picker */}
                             <TouchableOpacity onPress={this._showTimePicker}>
-                                <View style={styles.dateTimeContainer}>
-                                    <Icon name="access-time" size={20} color="#bcbcbc" />
+                                <View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
+                                    <Icon name="access-time" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
                                     {this.state.time ? (
-                                        <Text style={[styles.dateTime, { color: '#000' }]}>
+                                        <Text style={styles.dateTime}>
                                             {moment(this.state.time).format('LT')}
                                         </Text>
                                     ) : (
@@ -232,15 +236,24 @@ class AmendTicket extends React.Component {
                                 onCancel={this._hideTimePicker}
                                 mode="time"
                             />
-                            <View>
+
+                            {/* Number of wheelchairs input */}
+                            <View style={[styles.inputContainer, {
+                                borderBottomColor: this.state.wheelchairFocused ? colors.brandColor : colors.lightBorder
+                            }]}>
                                 <Item style={styles.iconWithInput}>
-                                    <Icon name="accessible" size={20} color="#bcbcbc" />
-                                    <Input
+                                    <Icon name="accessible" size={20} color={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor} />
+                                    <TextInput
                                         maxLength={1}
                                         keyboardType="numeric"
                                         placeholder="No. of wheelchairs"
-                                        placeholderTextColor="#bcbcbc"
+                                        placeholderTextColor={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+                                        style={[styles.input, {
+                                            color: this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor
+                                        }]}
                                         onChangeText={(value) => this.handleNumWheelchairChange(value)}
+                                        onFocus={() => { this.setState({ wheelchairFocused: true }) }}
+                                        onBlur={() => { this.setState({ wheelchairFocused: false }) }}
                                     />
                                 </Item>
                             </View>
@@ -264,34 +277,42 @@ class AmendTicket extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    inputContainer: {
+        flexDirection: 'row',
+        borderBottomWidth: 0.75,
+        alignItems: 'center',
+    },
     inputs: {
         width: '80%',
         flex: 1,
         alignSelf: 'center',
         marginTop: 10,
     },
-    header1: {
-        width: '80%',
-        fontSize: 28,
-        color: 'gray',
-        marginBottom: 5
+    input: {
+        flex: 1,
+        padding: 10
     },
     header2: {
         fontSize: 16,
-        color: '#bcbcbc',
+        color: colors.emphasisTextColor,
         marginTop: 10,
         marginBottom: 10
     },
     body: {
-        color: '#bcbcbc',
+        color: colors.bodyTextColor,
         fontSize: 16
     },
     summaryCard: {
         flex: 1,
-        alignItems: 'center',
-        width: '100%',
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#d3d3d3'
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'center',
+		shadowOffset: { width: 0, height: -20 },
+		shadowColor: 'black',
+		shadowOpacity: 1,
+		elevation: 5,
+		backgroundColor: colors.backgroundColor,
+		marginBottom: 15,
     },
     cardContent: {
         flex: 1,
@@ -310,8 +331,7 @@ const styles = StyleSheet.create({
         width: '30%'
     },
     cardBody: {
-        fontSize: 18,
-        color: 'gray',
+        color: colors.bodyTextColor,
         marginLeft: 6
     },
     icon: {
@@ -319,19 +339,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 15
     },
-    dateTimeContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#d3d3d3',
-        height: 50
-    },
-    dateTime: {
-        marginLeft: 6,
-        color: '#bcbcbc',
-        fontSize: 17
-    },
+	dateTime: {
+		marginLeft: 8,
+		color: colors.bodyTextColor,
+		fontSize: 14
+	},
     buttonContainer: {
         flexDirection: 'row',
         alignSelf: 'center',
@@ -342,10 +354,7 @@ const styles = StyleSheet.create({
     button: {
         width: '100%',
         justifyContent: 'center',
-        backgroundColor: '#ff0000'
-    },
-    buttontext: {
-        color: '#000000'
+        backgroundColor: colors.brandColor
     },
 });
 

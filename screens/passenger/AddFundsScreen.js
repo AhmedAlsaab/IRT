@@ -103,7 +103,7 @@ class AddFundsScreen extends React.Component {
 				<GlobalHeader type={3} header='Add Funds' navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content contentContainerStyle={styles.contentContainer}>
 					<WalletBalance />
-					<View style={[styles.amountContainer, { borderBottomColor: this.state.amountFocused ? colors.brandColor : colors.bodyTextColor }]}>
+					<View style={[styles.amountContainer, { borderBottomColor: this.state.amountFocused ? colors.brandColor : colors.lightBorder }]}>
 						<Icon name="pluscircleo" size={20} color={this.state.amountFocused ? colors.emphasisTextColor : colors.bodyTextColor} style={styles.amountIcon} />
 						<TextInput
 							style={[styles.amountInput, { color: this.state.amountFocused ? colors.emphasisTextColor : colors.bodyTextColor }]}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, Dimensions, TouchableOpacity } from 'react-native'
+import { Text, View, Dimensions, TouchableOpacity, StyleSheet } from 'react-native'
 import { Container, Content } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader'
 import ip from '../../ipstore';
@@ -8,6 +8,7 @@ import uuid from 'uuid/v4'
 
 import { connect } from 'react-redux'
 import { favouriteTicket, removeFavouriteTicket } from '../../redux/actions/ticketAction';
+import colors from '../../constants/Colors';
 
 const { width } = Dimensions.get('window')
 class RecentFavScreen extends Component {
@@ -61,6 +62,32 @@ class RecentFavScreen extends Component {
             .catch((error) => console.log(error));
     }
 
+    favouriteJourneys = () => {
+        var favouriteJourneys = false;
+        if (this.props.tickets.length > 0) {
+            this.props.tickets.forEach(ticket => {
+                if (ticket.favourited === 1) {
+                    favouriteJourneys = true;
+                    return false;
+                }
+            });
+        };
+        return favouriteJourneys;
+    }
+
+    recentJourneys = () => {
+        var recentJourneys = false;
+        if (this.props.tickets.length > 0) {
+            this.props.tickets.forEach(ticket => {
+                if (ticket.completed === 1) {
+                    recentJourneys = true;
+                    return false;
+                }
+            });
+        };
+        return recentJourneys;
+    }
+
     render() {
         return (
             <Container>
@@ -70,15 +97,18 @@ class RecentFavScreen extends Component {
                     isBackButtonActive={1}
                 />
                 <Content>
-                    <View style={{ flexDirection: 'column', marginTop: 30, marginRight: width * 0.1, marginLeft: width * 0.1 }}>
-                        <Text style={{ marginBottom: 10 }}>FAVOURITE JOURNEYS</Text>
+                    <View style={styles.container}>
+                        <Text style={styles.header}>FAVOURITE JOURNEYS</Text>
+                        {!this.favouriteJourneys() &&
+                            <Text style={styles.body}>You do not have any saved journeys</Text>
+                        }
                         {this.props.tickets.map((ticket) => {
                             if (ticket.favourited === 1) {
                                 return (
-                                    <View style={{ flexDirection: 'row', borderColor: '#000', borderWidth: 1, padding: 10, justifyContent: 'space-between', marginBottom: 5 }} key={uuid()}>
-                                        <View style={{ flexDirection: 'column', flex: 5 }}>
-                                            <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>FROM:</Text><Text style={{ flex: 4 }}>{ticket.toStreet}, {ticket.toCity}</Text></View>
-                                            <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>TO:</Text><Text style={{ flex: 4 }}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
+                                    <View style={styles.journeyContainer} key={uuid()}>
+                                        <View style={styles.coordinateContainer}>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>FROM:</Text><Text style={styles.coordinate}>{ticket.toStreet}, {ticket.toCity}</Text></View>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>TO:</Text><Text style={styles.coordinate}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
                                         </View>
                                         <TouchableOpacity onPress={() => {
                                             this.setState({ favourited: 0, ticketId: ticket.id }, () => {
@@ -86,7 +116,7 @@ class RecentFavScreen extends Component {
                                             });
                                         }} >
                                             <View style={{ justifyContent: 'center' }}>
-                                                <Icon name="star" size={35} color="#ff0000" />
+                                                <Icon name="star" size={35} color={colors.brandColor} />
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -94,14 +124,17 @@ class RecentFavScreen extends Component {
                             }
                         })}
 
-                        <Text style={{ marginTop: 30, marginBottom: 10 }}>RECENT JOURNEYS</Text>
+                        <Text style={styles.header}>RECENT JOURNEYS</Text>
+                        {!this.recentJourneys() &&
+                            <Text style={styles.body}>You do not have any recent journeys</Text>
+                        }
                         {this.props.tickets.map((ticket) => {
                             if (ticket.completed === 1) {
                                 return (
-                                    <View style={{ flexDirection: 'row', borderColor: '#000', borderWidth: 1, padding: 10, justifyContent: 'space-between', marginBottom: 5 }} key={uuid()}>
-                                        <View style={{ flexDirection: 'column', flex: 5 }}>
-                                            <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>FROM:</Text><Text style={{ flex: 4 }}>{ticket.toStreet}, {ticket.toCity}</Text></View>
-                                            <View style={{ flexDirection: 'row' }}><Text style={{ color: '#ff0000', flex: 1 }}>TO:</Text><Text style={{ flex: 4 }}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
+                                    <View style={styles.journeyContainer} key={uuid()}>
+                                        <View style={styles.coordinateContainer}>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>FROM:</Text><Text style={styles.coordinate}>{ticket.toStreet}, {ticket.toCity}</Text></View>
+                                            <View style={styles.coordinateRow}><Text style={styles.coordinateHeader}>TO:</Text><Text style={styles.coordinate}>{ticket.fromStreet}, {ticket.fromCity}</Text></View>
                                         </View>
                                         <TouchableOpacity onPress={() => {
                                             this.setState({ favourited: 1, ticketId: ticket.id }, () => {
@@ -109,7 +142,7 @@ class RecentFavScreen extends Component {
                                             });
                                         }} >
                                             <View style={{ justifyContent: 'center' }}>
-                                                <Icon name="staro" size={35} color="#ff0000" />
+                                                <Icon name="staro" size={35} color={colors.brandColor} />
                                             </View>
                                         </TouchableOpacity>
                                     </View>
@@ -122,6 +155,51 @@ class RecentFavScreen extends Component {
         )
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: 'column',
+        marginTop: 10,
+        marginRight:
+            width * 0.1,
+        marginLeft: width * 0.1
+    },
+    header: {
+        marginBottom: 10,
+        marginTop: 20,
+        color: colors.emphasisTextColor
+    },
+    body: {
+        color: colors.bodyTextColor,
+    },
+    journeyContainer: {
+        flexDirection: 'row',
+        borderColor: colors.bodyTextColor,
+        borderWidth: 1,
+        padding: 10,
+        justifyContent: 'space-between',
+        marginBottom: 5,
+        borderRadius: 5
+    },
+    coordinateContainer: {
+        flexDirection: 'column',
+        flex: 5
+    },
+    coordinateRow: {
+        flexDirection: 'row'
+    },
+    coordinateHeader: {
+        color: colors.brandColor,
+        flex: 1
+    },
+    coordinate: {
+        flex: 4,
+        color: colors.bodyTextColor
+    },
+    iconContainer: {
+        justifyContent: 'center'
+    },
+});
 
 const mapStateToProps = state => ({
     tickets: state.ticketReducer.tickets,

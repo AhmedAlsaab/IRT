@@ -118,7 +118,7 @@ class RegistrationScreen extends Component {
 
 					<View style={styles.contentContainer}>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.firstNameFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.firstNameFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Ionicons
 							name="md-person"
@@ -137,7 +137,7 @@ class RegistrationScreen extends Component {
 							/>
 						</View>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.lastNameFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.lastNameFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Ionicons
 							name="md-person"
@@ -156,7 +156,7 @@ class RegistrationScreen extends Component {
 							/>
 						</View>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.phoneFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.phoneFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Ionicons
 							name="md-phone-portrait"
@@ -175,7 +175,7 @@ class RegistrationScreen extends Component {
 							/>
 						</View>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.emailFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.emailFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Ionicons
 							name="md-mail"
@@ -194,7 +194,7 @@ class RegistrationScreen extends Component {
 							/>
 						</View>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.passwordFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.passwordFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Ionicons
 							name="md-lock"
@@ -214,7 +214,7 @@ class RegistrationScreen extends Component {
 							/>
 						</View>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.passConfirmFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.passConfirmFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Ionicons
 							name="md-lock"
@@ -233,7 +233,7 @@ class RegistrationScreen extends Component {
 								onBlur={() => { this.setState({ passConfirmFocused: false }) }}
 							/>
 						</View>
-						<View style={[styles.inputContainer, {borderBottomColor: colors.bodyTextColor}]}>
+						<View style={[styles.inputContainer, {borderBottomColor: colors.lightBorder}]}>
 							<Ionicons
 							name="md-person"
 							color={colors.bodyTextColor}

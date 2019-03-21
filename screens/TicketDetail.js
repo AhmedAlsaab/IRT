@@ -415,7 +415,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		width: '100%',
 		marginTop: 15,
-		justifyContent: 'space-evenly'
+		justifyContent: 'space-evenly',
+		marginBottom: 15
 	},
 	button: {
 		width: '45%',

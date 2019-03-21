@@ -21,7 +21,7 @@ export default class GlobalHeader extends Component {
 					android: {
 						marginTop: StatusBar.currentHeight,
 						backgroundColor: '#ff0000',
-						height: 180
+						height: 180,
 					}
 				})
 			};
@@ -32,7 +32,7 @@ export default class GlobalHeader extends Component {
 					android: {
 						marginTop: StatusBar.currentHeight,
 						backgroundColor: '#ff0000',
-						height: 50
+						height: 50,
 					}
 				})
 			};
@@ -42,7 +42,7 @@ export default class GlobalHeader extends Component {
 					android: {
 						marginTop: StatusBar.currentHeight,
 						backgroundColor: '#ff0000',
-						height: 60
+						height: 60,
 					}
 				})
 			};

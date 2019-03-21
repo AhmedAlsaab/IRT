@@ -85,7 +85,7 @@ class loginScreen extends Component {
 							<Text style={styles.title}>LOGIN</Text>
 						</View>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.isEmailFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.isEmailFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Ionicons
 								name="md-mail"
@@ -105,7 +105,7 @@ class loginScreen extends Component {
 						</View>
 						<View style={[
 							styles.inputContainer, {
-								borderBottomColor: this.state.isPasswordFocused ? colors.brandColor : colors.bodyTextColor
+								borderBottomColor: this.state.isPasswordFocused ? colors.brandColor : colors.lightBorder
 							}]}>
 							<Ionicons
 								name="md-lock" size={32}

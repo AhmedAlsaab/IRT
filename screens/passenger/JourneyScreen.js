@@ -40,11 +40,11 @@ class JourneyScreen extends Component {
 			isDatePickerVisible: false,
 			isTimePickerVisible: false,
 
-			from: 'duke street',
-			to: 'cathays',
-			date: new Date (),
-			time: new Date (),
-			numPassenger: 1,
+			from: null,
+			to: null,
+			date: null,
+			time: null,
+			numPassenger: null,
 			numWheelchair: null,
 
 			//StartLocation
@@ -236,10 +236,8 @@ class JourneyScreen extends Component {
 
 	async onSubmit() {
 		await this.checkPassengerState();
-
 		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair } = this.state;
 
-		console.log(numPassenger, numWheelchair);
 		if (
 			placeID.length === 0 ||
 			endPlaceID.length === 0 ||
@@ -277,6 +275,8 @@ class JourneyScreen extends Component {
 	checkPassengerState = () => {
 		if (this.state.isCollapsed) {
 			this.setState({ numPassenger: 1, numWheelchair: 0 });
+		} else if (!this.state.isCollapsed && ((this.state.numWheelchair === null) || (this.state.numPassenger === (null || 0)))) {
+			this.setState({ numWheelchair: 0, numPassenger: 1 })
 		}
 	}
 
@@ -336,7 +336,7 @@ class JourneyScreen extends Component {
 
 						{/* Starting location field */}
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.fromFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.fromFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Icon
 								name="my-location"
@@ -362,7 +362,7 @@ class JourneyScreen extends Component {
 
 						{/* Destination field */}
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.toFocused ? colors.brandColor : colors.bodyTextColor
+							borderBottomColor: this.state.toFocused ? colors.brandColor : colors.lightBorder
 						}]}>
 							<Icon
 								name="location-on"
@@ -388,7 +388,7 @@ class JourneyScreen extends Component {
 
 						{/* Date picker */}
 						<TouchableOpacity onPress={this._showDatePicker}>
-							<View style={[styles.inputContainer, { borderBottomColor: colors.bodyTextColor, height: 50 }]}>
+							<View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
 								<Icon name="date-range" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
 								{this.state.date ? (
 									<Text style={styles.dateTime}>
@@ -408,7 +408,7 @@ class JourneyScreen extends Component {
 
 						{/* Time picker */}
 						<TouchableOpacity onPress={this._showTimePicker}>
-							<View style={[styles.inputContainer, { borderBottomColor: colors.bodyTextColor, height: 50 }]}>
+							<View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
 								<Icon name="access-time" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
 								{this.state.time ? (
 									<Text style={styles.dateTime}>
@@ -430,7 +430,7 @@ class JourneyScreen extends Component {
 						<Collapsible collapsed={this.state.isCollapsed}>
 							<View>
 								<View style={[styles.inputContainer, {
-									borderBottomColor: this.state.groupFocused ? colors.brandColor : colors.bodyTextColor
+									borderBottomColor: this.state.groupFocused ? colors.brandColor : colors.lightBorder
 								}]}>
 									<Icon
 										name="people"
@@ -451,7 +451,7 @@ class JourneyScreen extends Component {
 								</View>
 
 								<View style={[styles.inputContainer, {
-									borderBottomColor: this.state.wheelchairFocused ? colors.brandColor : colors.bodyTextColor
+									borderBottomColor: this.state.wheelchairFocused ? colors.brandColor : colors.lightBorder
 								}]}>
 									<Icon
 										name="accessible"

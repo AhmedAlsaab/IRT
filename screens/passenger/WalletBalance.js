@@ -10,8 +10,8 @@ class WalletBalance extends Component {
 		if (this.props.type == 2) {
 			return (
 				<React.Fragment>
-					<Text style={styles.body}>{`£${parseFloat(this.props.user.funds).toFixed(2)}`}</Text>
-					<Text style={styles.body}>WALLET BALANCE</Text>
+					<Text style={{ color: colors.emphasisTextColor, fontWeight: 'bold' }}>{`£${parseFloat(this.props.user.funds).toFixed(2)}`}</Text>
+					<Text style={styles.body}>Wallet Balance</Text>
 				</React.Fragment>
 			);
 		} else {

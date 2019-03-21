@@ -185,7 +185,8 @@ class SummaryScreen extends React.Component {
 				passenger: numPassenger,
 				wheelchair: numWheelchair
 			},
-			date: moment(date).format('MMMM Do YYYY')
+			date: moment(date).format('MMMM Do YYYY'),
+			time: moment(time).format('LT')
 		};
 
 		this.bookJourney();
@@ -448,7 +449,7 @@ class SummaryScreen extends React.Component {
 												</Button>
 											</View>
 											<View
-												style={[styles.buttonContainer, { marginTop: -17, marginBottom: 25 }]}
+												style={[styles.buttonContainer, { marginTop: -5, marginBottom: 25 }]}
 											>
 												<Button
 													bordered
@@ -519,7 +520,6 @@ const styles = StyleSheet.create({
 		width: '30%'
 	},
 	cardBody: {
-		fontSize: 18,
 		color: colors.bodyTextColor,
 		marginLeft: 6
 	},
