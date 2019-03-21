@@ -40,11 +40,11 @@ class JourneyScreen extends Component {
 			isDatePickerVisible: false,
 			isTimePickerVisible: false,
 
-			from: null,
-			to: null,
-			date: null,
-			time: null,
-			numPassenger: null,
+			from: 'duke street',
+			to: 'cathays',
+			date: new Date (),
+			time: new Date (),
+			numPassenger: 1,
 			numWheelchair: null,
 
 			//StartLocation
@@ -287,45 +287,40 @@ class JourneyScreen extends Component {
 
 	render() {
 		// Start Location Predictions - Suggestion List
-		var locationPredictions;
-		var endLocationPredictions;
-		<View style={styles.suggestionContainer}>
-			{locationPredictions = this.state.locationPredictions.map((prediction) => (
-				<TouchableHighlight
-					onPress={() => {
-						this.pressedPrediction(
-							prediction,
-							prediction.place_id,
-							prediction.terms[0].value,
-							prediction.terms[1].value,
-							prediction.terms[2].value
-						);
-					}}
-					key={prediction.id}
-				>
-					<Text style={styles.locationSuggestion}>{prediction.description}</Text>
-				</TouchableHighlight>
-			))};
-			</View>
-		{/* // End Location Predictions - Suggestion List */ }
-		<View style={styles.suggestionContainer}>
-			{endLocationPredictions = this.state.endLocationPredictions.map((prediction) => (
-				<TouchableHighlight
-					onPress={() => {
-						this.pressedEndPrediction(
-							prediction,
-							prediction.place_id,
-							prediction.terms[0].value,
-							prediction.terms[1].value,
-							prediction.terms[2].value
-						);
-					}}
-					key={prediction.id}
-				>
-					<Text style={styles.locationSuggestion}>{prediction.description}</Text>
-				</TouchableHighlight>
-			))};
-			</View>
+		const locationPredictions = this.state.locationPredictions.map((prediction) => (
+			<TouchableHighlight
+				onPress={() => {
+					this.pressedPrediction(
+						prediction,
+						prediction.place_id,
+						prediction.terms[0].value,
+						prediction.terms[1].value,
+						prediction.terms[2].value
+					);
+				}}
+				key={prediction.id}
+				style={styles.suggestionContainer}
+			>
+				<Text style={styles.locationSuggestion}>{prediction.description}</Text>
+			</TouchableHighlight>
+		));
+		// End Location Predictions - Suggestion Lis
+		const endLocationPredictions = this.state.endLocationPredictions.map((prediction) => (
+			<TouchableHighlight
+				onPress={() => {
+					this.pressedEndPrediction(
+						prediction,
+						prediction.place_id,
+						prediction.terms[0].value,
+						prediction.terms[1].value,
+						prediction.terms[2].value
+					);
+				}}
+				key={prediction.id}
+			>
+				<Text style={styles.locationSuggestion}>{prediction.description}</Text>
+			</TouchableHighlight>
+		));
 
 		return (
 			<StyleProvider style={getTheme(platform)}>
@@ -522,10 +517,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 10,
 		color: colors.bodyTextColor
-	},
-	suggestionContainer: {
-		marginTop: 10,
-		marginBottom: 10,
 	},
 	locationSuggestion: {
 		color: colors.emphasisTextColor,

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Dimensions} from 'react-native'
+import colors from '../../constants/Colors'
 
 export default class WalletHeader extends Component {
   render() {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
 		padding: 25,
 		borderBottomWidth: 1,
-        borderBottomColor: '#dfdfdf',
+        borderBottomColor: colors.bodyTextColor,
         width
     },
     headerText: {

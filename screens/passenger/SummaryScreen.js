@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';
 import { addTicket } from '../../redux/actions/ticketAction';
+import colors from '../../constants/Colors'
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -68,7 +69,7 @@ class SummaryScreen extends React.Component {
 					//User Exists
 					case 1:
 						this.setState({
-							errors: [ { title: 'Errors', content: 'There was an error whilst sending confirmation' } ]
+							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
 						});
 						break;
 				}
@@ -99,7 +100,7 @@ class SummaryScreen extends React.Component {
 			Expo.Notifications.createChannelAndroidAsync('reminders', {
 				name: 'Reminders',
 				priority: 'max',
-				vibrate: [ 0, 250, 250, 250 ]
+				vibrate: [0, 250, 250, 250]
 			});
 		}
 	}
@@ -343,13 +344,13 @@ class SummaryScreen extends React.Component {
 									<View style={styles.details}>
 										<View>
 											<View style={styles.icon}>
-												<Icon name="date-range" size={20} color="#bcbcbc" />
+												<Icon name="date-range" size={20} color={colors.bodyTextColor} />
 												<Text style={styles.cardBody}>
 													{moment(data.date).format('MMMM Do YYYY')}
 												</Text>
 											</View>
 											<View style={styles.icon}>
-												<Icon name="my-location" size={20} color="#bcbcbc" />
+												<Icon name="my-location" size={20} color={colors.bodyTextColor} />
 												<Text style={styles.cardBody}>
 													{data.street}, {data.city}
 												</Text>
@@ -358,13 +359,13 @@ class SummaryScreen extends React.Component {
 
 										<View>
 											<View style={styles.icon}>
-												<Icon name="location-on" size={20} color="#bcbcbc" />
+												<Icon name="location-on" size={20} color={colors.bodyTextColor} />
 												<Text style={styles.cardBody}>
 													{data.endStreet}, {data.endCity}
 												</Text>
 											</View>
 											<View style={styles.icon}>
-												<Icon name="people" size={20} color="#bcbcbc" />
+												<Icon name="people" size={20} color={colors.bodyTextColor} />
 												<Text style={styles.cardBody}>
 													{data.numPassenger}
 													{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
@@ -372,7 +373,7 @@ class SummaryScreen extends React.Component {
 											</View>
 											{data.numWheelchair > 0 ? (
 												<View style={styles.icon}>
-													<Icon name="accessible" size={20} color="#bcbcbc" />
+													<Icon name="accessible" size={20} color={colors.bodyTextColor} />
 													<Text style={styles.cardBody}>
 														{data.numWheelchair}
 														{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
@@ -383,7 +384,7 @@ class SummaryScreen extends React.Component {
 									</View>
 									<View style={styles.journeyInfo}>
 										<Text style={styles.cardBody}>£3.00</Text>
-										<Icon name="directions-bus" size={65} color="#bcbcbc" />
+										<Icon name="directions-bus" size={65} color={colors.bodyTextColor} />
 										<Text style={styles.cardVehicle}>Minibus</Text>
 									</View>
 								</View>
@@ -391,7 +392,7 @@ class SummaryScreen extends React.Component {
 
 							{/* Payment summary and options */}
 							<View style={styles.paymentInfo}>
-								<Text style={styles.header2}>PAYMENT</Text>
+								<Text style={styles.header}>PAYMENT</Text>
 								<Text style={styles.body}>
 									Following payment you will receive confirmation of payment and booking.
 								</Text>
@@ -407,7 +408,7 @@ class SummaryScreen extends React.Component {
 										<View style={styles.buttonContainer}>
 											<Button
 												danger
-												style={[ styles.button, { backgroundColor: '#ff0000' } ]}
+												style={[styles.button, { backgroundColor: colors.brandColor }]}
 												onPress={this.payForTicket}
 											>
 												<Text style={styles.buttonText}>Pay</Text>
@@ -430,7 +431,7 @@ class SummaryScreen extends React.Component {
 											<View style={styles.buttonContainer}>
 												<Button
 													danger
-													style={[ styles.button, { backgroundColor: '#ff0000' } ]}
+													style={[styles.button, { backgroundColor: colors.brandColor }]}
 													onPress={this.payForTicket}
 												>
 													<Text style={styles.buttonText}>Pay</Text>
@@ -438,7 +439,7 @@ class SummaryScreen extends React.Component {
 
 												<Button
 													danger
-													style={[ styles.button, { backgroundColor: '#ff0000' } ]}
+													style={[styles.button, { backgroundColor: colors.brandColor }]}
 													onPress={() => {
 														this.props.navigation.navigate('AddFunds');
 													}}
@@ -447,7 +448,7 @@ class SummaryScreen extends React.Component {
 												</Button>
 											</View>
 											<View
-												style={[ styles.buttonContainer, { marginTop: -17, marginBottom: 25 } ]}
+												style={[styles.buttonContainer, { marginTop: -17, marginBottom: 25 }]}
 											>
 												<Button
 													bordered
@@ -472,37 +473,34 @@ class SummaryScreen extends React.Component {
 
 const styles = StyleSheet.create({
 	introduction: {
-		marginTop: 15,
+		marginTop: 20,
 		width: '80%',
 		flex: 1,
 		flexDirection: 'column',
 		alignSelf: 'center'
 	},
-	header1: {
-		width: '80%',
-		fontSize: 28,
-		color: 'gray',
-		marginBottom: 5
-	},
-	header2: {
+	header: {
 		fontSize: 16,
-		color: '#bcbcbc',
+		color: colors.emphasisTextColor,
 		marginTop: 15,
 		marginBottom: 10
 	},
 	body: {
-		color: '#bcbcbc',
+		color: colors.bodyTextColor,
 		fontSize: 16
 	},
 	summaryCard: {
 		flex: 1,
+		flexDirection: 'column',
 		alignItems: 'center',
+		justifyContent: 'center',
+		shadowOffset: { width: 0, height: -20 },
+		shadowColor: 'black',
+		shadowOpacity: 1,
+		elevation: 5,
+		backgroundColor: colors.backgroundColor,
 		marginTop: 15,
-		width: '100%',
-		borderTopWidth: 0.5,
-		borderTopColor: '#d3d3d3',
-		borderBottomWidth: 0.5,
-		borderBottomColor: '#d3d3d3'
+		marginBottom: 15,
 	},
 	cardContent: {
 		flex: 1,
@@ -522,7 +520,7 @@ const styles = StyleSheet.create({
 	},
 	cardBody: {
 		fontSize: 18,
-		color: 'gray',
+		color: colors.bodyTextColor,
 		marginLeft: 6
 	},
 	cardVehicle: {
@@ -542,7 +540,7 @@ const styles = StyleSheet.create({
 	paymentText: {
 		fontSize: 18,
 		fontWeight: 'bold',
-		color: 'gray'
+		color: colors.emphasisTextColor
 	},
 	paymentSummary: {
 		flex: 1,
@@ -550,7 +548,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginTop: 15,
 		paddingBottom: 15,
-		borderBottomColor: '#d3d3d3',
+		borderBottomColor: colors.bodyTextColor,
 		borderBottomWidth: 0.5
 	},
 	walletBlance: {
