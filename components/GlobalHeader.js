@@ -42,7 +42,7 @@ export default class GlobalHeader extends Component {
 					android: {
 						marginTop: StatusBar.currentHeight,
 						backgroundColor: '#ff0000',
-						height: 50
+						height: 60
 					}
 				})
 			};
@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		alignItems: 'center',
-		height: 50,
 	},
 	innerView: {
 		textAlign: 'center'

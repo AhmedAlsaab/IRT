@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, TextInput, View } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
+import colors from '../constants/Colors';
 
 import { connect } from 'react-redux';
 import { addUser } from '../redux/actions/userAction';
@@ -16,11 +17,6 @@ class loginScreen extends Component {
 
 		isEmailFocused: false,
 		isPasswordFocused: false,
-		borderBottomColor: '#999',
-		textColor: '#999',
-		focusedBorderBottomColor: '#ff0000',
-		focusedTextColor: '#666',
-
 	};
 
 	onLoginClick = () => {
@@ -89,17 +85,17 @@ class loginScreen extends Component {
 							<Text style={styles.title}>LOGIN</Text>
 						</View>
 						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.isEmailFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+							borderBottomColor: this.state.isEmailFocused ? colors.brandColor : colors.bodyTextColor
 						}]}>
 							<Ionicons
 								name="md-mail"
 								size={32}
-								color={this.state.isEmailFocused ? this.state.focusedTextColor : this.state.textColor}
+								color={this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor}
 								style={styles.inputIcons} />
 							<TextInput
 								placeholder="Email"
 								style={[styles.input, {
-									color: this.state.isEmailFocused ? this.state.focusedTextColor : this.state.textColor
+									color: this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor
 								}]}
 								onChangeText={(text) => this.setState({ email: text })}
 								value={this.state.email}
@@ -109,16 +105,16 @@ class loginScreen extends Component {
 						</View>
 						<View style={[
 							styles.inputContainer, {
-								borderBottomColor: this.state.isPasswordFocused ? this.state.focusedBorderBottomColor : this.state.borderBottomColor
+								borderBottomColor: this.state.isPasswordFocused ? colors.brandColor : colors.bodyTextColor
 							}]}>
 							<Ionicons
 								name="md-lock" size={32}
-								color={this.state.isPasswordFocused ? this.state.focusedTextColor : this.state.textColor}
+								color={this.state.isPasswordFocused ? colors.emphasisTextColor : colors.bodyTextColor}
 								style={styles.inputIcons} />
 							<TextInput
 								placeholder="Password"
 								style={[styles.input, {
-									color: this.state.isEmailFocused ? this.state.focusedTextColor : this.state.textColor
+									color: this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor
 								}]}
 								onChangeText={(text) => this.setState({ password: text })}
 								value={this.state.password}
@@ -136,7 +132,7 @@ class loginScreen extends Component {
 							</Button>
 						</View>
 						<View style={styles.registerContainer}>
-							<Text style={{color: '#999'}}>Dont have an account?</Text>
+							<Text style={styles.body}>Dont have an account?</Text>
 							<Text style={styles.registerText} onPress={this.onRegisterClick}>
 								REGISTER
 							</Text>
@@ -155,7 +151,7 @@ const window = Dimensions.get('window');
 const styles = StyleSheet.create({
 	errorStyle: {
 		fontWeight: 'bold',
-		backgroundColor: '#f4f4f4'
+		backgroundColor: colors.backgroundColor
 	},
 	inputContainer: {
 		flexDirection: 'row',
@@ -167,7 +163,7 @@ const styles = StyleSheet.create({
 	input: {
 		flex: 1,
 		padding: 10,
-		color: '#999999'
+		color: colors.bodyTextColor
 	},
 	inputIcons: {
 		width: 50,
@@ -192,7 +188,7 @@ const styles = StyleSheet.create({
 		textAlign: 'left',
 		fontSize: 30,
 		fontWeight: 'bold',
-		color: '#666666',
+		color: colors.emphasisTextColor,
 		marginBottom: 20
 	},
 	forgotPasswordContainer: {
@@ -200,7 +196,7 @@ const styles = StyleSheet.create({
 	},
 	forgotPassword: {
 		textAlign: 'right',
-		color: '#ff0000'
+		color: colors.brandColor
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -210,7 +206,7 @@ const styles = StyleSheet.create({
 	button: {
 		width: buttonWidth,
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor
 	},
 	registerContainer: {
 		flexDirection: 'column',
@@ -219,17 +215,20 @@ const styles = StyleSheet.create({
 		marginTop: 25
 	},
 	registerText: {
-		color: '#ff0000'
+		color: colors.brandColor
 	},
 	imageContainer: {
 		height: 250,
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor
 	},
 	image: {
 		flex: 1,
 		alignSelf: 'stretch',
 		width: window.width,
 		height: window.height
+	},
+	body: {
+		color: colors.bodyTextColor
 	}
 });
 

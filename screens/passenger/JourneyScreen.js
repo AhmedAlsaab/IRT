@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Button, Container, Content, Input, Item, StyleProvider, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { Keyboard, ScrollView, StyleSheet, TouchableHighlight, TouchableOpacity, View, TextInput } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,6 +11,7 @@ import GlobalHeader from '../../components/GlobalHeader';
 import API_KEY from '../../google_api_key';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
+import colors from '../../constants/Colors';
 
 import { connect } from 'react-redux';
 import { fetchTickets } from '../../redux/actions/ticketAction';
@@ -24,6 +25,11 @@ class JourneyScreen extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			fromFocused: false,
+			toFocused: false,
+			groupFocused: false,
+			wheelchairFocused: false,
+
 			switchValue: false,
 			error: '',
 			latitude: 0,
@@ -38,8 +44,8 @@ class JourneyScreen extends Component {
 			to: null,
 			date: null,
 			time: null,
-			numPassenger: 1,
-			numWheelchair: 0,
+			numPassenger: null,
+			numWheelchair: null,
 
 			//StartLocation
 			locationPredictions: [],
@@ -228,9 +234,12 @@ class JourneyScreen extends Component {
 		this.props.navigation.navigate('');
 	};
 
-	onSubmit = () => {
+	async onSubmit() {
+		await this.checkPassengerState();
+
 		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair } = this.state;
 
+		console.log(numPassenger, numWheelchair);
 		if (
 			placeID.length === 0 ||
 			endPlaceID.length === 0 ||
@@ -264,6 +273,12 @@ class JourneyScreen extends Component {
 
 		this.props.navigation.navigate('Summary', data);
 	};
+
+	checkPassengerState = () => {
+		if (this.state.isCollapsed) {
+			this.setState({ numPassenger: 1, numWheelchair: 0 });
+		}
+	}
 
 	journey = () => {
 		this.props.navigation.navigate('RecentFav')
@@ -305,9 +320,6 @@ class JourneyScreen extends Component {
 				<Text style={styles.locationSuggestion}>{prediction.description}</Text>
 			</TouchableHighlight>
 		));
-		// Search box
-		// Start Location Input Box
-		// End Location Input Box
 
 		return (
 			<StyleProvider style={getTheme(platform)}>
@@ -317,46 +329,68 @@ class JourneyScreen extends Component {
 						{/* Favourite recent journeys button */}
 						<View style={styles.secondaryButtonContainer}>
 							<Button bordered danger style={styles.secondaryButton} onPress={this.journey}>
-								<Text style={styles.secondaryButtontext}>Favourite/Recent Journeys</Text>
+								<Text>Favourite/Recent Journeys</Text>
 							</Button>
 						</View>
 
 						{/* Starting location field */}
-						<Item style={styles.iconWithInput}>
-							<Icon name="my-location" size={20} color="#bcbcbc" />
-							<Input
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.fromFocused ? colors.brandColor : colors.bodyTextColor
+						}]}>
+							<Icon
+								name="my-location"
+								size={20}
+								color={this.state.fromFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+								style={styles.inputIcons} />
+							<TextInput
 								placeholder="From"
-								placeholderTextColor="#bcbcbc"
+								placeholderTextColor={this.state.fromFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+								style={[styles.input, {
+									color: this.state.fromFocused ? colors.emphasisTextColor : colors.bodyTextColor
+								}]}
 								onChangeText={(destination) => {
 									this.setState({ destination });
 									this.startPositionDebounced(destination);
 								}}
 								value={this.state.destination}
+								onFocus={() => { this.setState({ fromFocused: true }) }}
+								onBlur={() => { this.setState({ fromFocused: false }) }}
 							/>
-						</Item>
+						</View>
 						{locationPredictions}
 
 						{/* Destination field */}
-						<Item style={styles.iconWithInput}>
-							<Icon name="location-on" size={20} color="#bcbcbc" />
-							<Input
+						<View style={[styles.inputContainer, {
+							borderBottomColor: this.state.toFocused ? colors.brandColor : colors.bodyTextColor
+						}]}>
+							<Icon
+								name="location-on"
+								size={20}
+								color={this.state.toFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+								style={styles.inputIcons} />
+							<TextInput
 								placeholder="To"
-								placeholderTextColor="#bcbcbc"
+								placeholderTextColor={this.state.toFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+								style={[styles.input, {
+									color: this.state.toFocused ? colors.emphasisTextColor : colors.bodyTextColor
+								}]}
 								onChangeText={(endDestination) => {
 									this.setState({ endDestination });
 									this.endLocationDebounced(endDestination);
 								}}
 								value={this.state.endDestination}
+								onFocus={() => { this.setState({ toFocused: true }) }}
+								onBlur={() => { this.setState({ toFocused: false }) }}
 							/>
-						</Item>
+						</View>
 						{endLocationPredictions}
 
 						{/* Date picker */}
 						<TouchableOpacity onPress={this._showDatePicker}>
-							<View style={styles.dateTimeContainer}>
-								<Icon name="date-range" size={20} color="#bcbcbc" />
+							<View style={[styles.inputContainer, { borderBottomColor: colors.bodyTextColor, height: 50 }]}>
+								<Icon name="date-range" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
 								{this.state.date ? (
-									<Text style={[styles.dateTime, { color: '#000' }]}>
+									<Text style={styles.dateTime}>
 										{moment(this.state.date).format('Do MMM YY')}
 									</Text>
 								) : (
@@ -373,10 +407,10 @@ class JourneyScreen extends Component {
 
 						{/* Time picker */}
 						<TouchableOpacity onPress={this._showTimePicker}>
-							<View style={styles.dateTimeContainer}>
-								<Icon name="access-time" size={20} color="#bcbcbc" />
+							<View style={[styles.inputContainer, { borderBottomColor: colors.bodyTextColor, height: 50 }]}>
+								<Icon name="access-time" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
 								{this.state.time ? (
-									<Text style={[styles.dateTime, { color: '#000' }]}>
+									<Text style={styles.dateTime}>
 										{moment(this.state.time).format('LT')}
 									</Text>
 								) : (
@@ -394,27 +428,48 @@ class JourneyScreen extends Component {
 						{/* Advanced search fields, expands and collapses on button click. */}
 						<Collapsible collapsed={this.state.isCollapsed}>
 							<View>
-								<Item style={styles.iconWithInput}>
-									<Icon name="people" size={20} color="#bcbcbc" />
-									<Input
+								<View style={[styles.inputContainer, {
+									borderBottomColor: this.state.groupFocused ? colors.brandColor : colors.bodyTextColor
+								}]}>
+									<Icon
+										name="people"
+										size={20}
+										color={this.state.groupFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+										style={styles.inputIcons} />
+									<TextInput
 										keyboardType="numeric"
 										maxLength={1}
 										placeholder="Group size"
-										placeholderTextColor="#bcbcbc"
+										placeholderTextColor={this.state.groupFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+										style={[styles.input, { color: this.state.groupFocused ? colors.emphasisTextColor : colors.bodyTextColor }]}
+										value={this.state.numPassenger ? this.state.numPassenger.toString() : null}
 										onChangeText={(value) => this.handleNumPassengersChange(value)}
+										onFocus={() => { this.setState({ groupFocused: true }) }}
+										onBlur={() => { this.setState({ groupFocused: false }) }}
 									/>
-								</Item>
+								</View>
 
-								<Item style={styles.iconWithInput}>
-									<Icon name="accessible" size={20} color="#bcbcbc" />
-									<Input
+								<View style={[styles.inputContainer, {
+									borderBottomColor: this.state.wheelchairFocused ? colors.brandColor : colors.bodyTextColor
+								}]}>
+									<Icon
+										name="accessible"
+										size={20}
+										color={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+										style={styles.inputIcons} />
+									<TextInput
 										maxLength={1}
 										keyboardType="numeric"
 										placeholder="No. of wheelchairs"
-										placeholderTextColor="#bcbcbc"
+										placeholderTextColor={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+										style={[styles.input, { color: this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor }]}
+										value={this.state.numWheelchair ? this.state.numWheelchair.toString() : null}
 										onChangeText={(value) => this.handleNumWheelchairChange(value)}
+										onFocus={() => { this.setState({ wheelchairFocused: true }) }}
+										onBlur={() => { this.setState({ wheelchairFocused: false }) }}
 									/>
-								</Item>
+
+								</View>
 							</View>
 						</Collapsible>
 
@@ -447,31 +502,26 @@ class JourneyScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-	dateTimeContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginTop: 10,
-		borderBottomWidth: 0.5,
-		borderBottomColor: '#d3d3d3',
-		height: 50
-	},
 	dateTime: {
-		marginLeft: 6,
-		color: '#bcbcbc',
-		fontSize: 17
+		marginLeft: 8,
+		color: colors.bodyTextColor,
+		fontSize: 14
 	},
-	iconWithInput: {
-		marginTop: 10
+	inputContainer: {
+		flexDirection: 'row',
+		borderBottomWidth: 0.75,
+		alignItems: 'center',
+	},
+	input: {
+		flex: 1,
+		padding: 10,
+		color: colors.bodyTextColor
 	},
 	locationSuggestion: {
 		backgroundColor: 'white',
 		padding: 5,
 		fontSize: 18,
 		borderWidth: 0.5
-	},
-	flex_1: {
-		flex: 1,
-		alignItems: 'center'
 	},
 	contentContainer: {
 		width: '80%',
@@ -491,22 +541,19 @@ const styles = StyleSheet.create({
 	button: {
 		width: '100%',
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
-	},
-	buttontext: {
-		color: '#000000'
+		backgroundColor: colors.brandColor
 	},
 	secondaryButtonContainer: {
 		flexDirection: 'row',
-		marginTop: 25
+		marginTop: 25,
+		marginBottom: 20
 	},
 	secondaryButton: {
 		width: '100%',
 		justifyContent: 'center',
-		backgroundColor: '#fff'
 	},
 	secondaryButtontext: {
-		color: '#ff0000'
+		color: colors.brandColor
 	}
 });
 
