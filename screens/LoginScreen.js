@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
 	},
 	inputContainer: {
 		flexDirection: 'row',
-		borderBottomWidth: 1,
+		borderBottomWidth: 0.75,
 		alignItems: 'center',
 		width,
 		marginBottom: 10

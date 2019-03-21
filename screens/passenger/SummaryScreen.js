@@ -411,7 +411,7 @@ class SummaryScreen extends React.Component {
 												style={[styles.button, { backgroundColor: colors.brandColor }]}
 												onPress={this.payForTicket}
 											>
-												<Text style={styles.buttonText}>Pay</Text>
+												<Text>Pay</Text>
 											</Button>
 
 											<Button

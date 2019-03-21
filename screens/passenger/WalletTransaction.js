@@ -47,8 +47,6 @@ const styles = StyleSheet.create({
 		paddingRight: 25,
 		paddingTop: 10,
 		paddingBottom: 10,
-		borderBottomColor: colors.bodyTextColor,
-		borderBottomWidth: 0.75,
 		color: colors.emphasisTextColor
 	},
 	purchaseContainer: {
@@ -58,8 +56,8 @@ const styles = StyleSheet.create({
 		paddingRight: 25,
 		paddingTop: 12,
 		paddingBottom: 12,
-		borderBottomColor: colors.lightBorder,
-		borderBottomWidth: 0.75
+		borderTopColor: colors.lightBorder,
+		borderTopWidth: 0.75
 	},
 	purchaseRow: {
 		flexDirection: 'row',
