@@ -11,7 +11,7 @@ class RegistrationScreen extends Component {
 		firstName: 'Martin',
 		lastName: 'Jones',
 		phoneNumber: '07914287655',
-		email: 'laura.vuilleumier@gmail.com',
+		email: 'vuilleumierl@cardiff.ac.uk',
 		password: 'Qwerty123',
 		passwordConfirm: 'Qwerty123',
 		type: 1,

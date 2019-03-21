@@ -11,7 +11,7 @@ import { addUser } from '../redux/actions/userAction';
 
 class loginScreen extends Component {
 	state = {
-		email: 'laura.vuilleumier@gmail.com',
+		email: 'vuilleumierl@cardiff.ac.uk',
 		password: 'Qwerty123',
 		errors: [],
 
