@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ip from '../../ipstore';
 import WalletBalance from './WalletBalance';
 import uuid from 'uuid/v4';
-import { Location, Permissions, Notifications } from 'expo';
+import { Location, Permissions, Notifications} from 'expo';
 import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';

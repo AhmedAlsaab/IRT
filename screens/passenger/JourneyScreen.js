@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Button, Container, Content, StyleProvider, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Keyboard, StyleSheet, TouchableHighlight, TouchableOpacity, View, TextInput } from 'react-native';
+import { Keyboard, StyleSheet, TouchableHighlight, TouchableOpacity, View, TextInput, Platform } from 'react-native';
 import Collapsible from 'react-native-collapsible';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -12,6 +12,7 @@ import API_KEY from '../../google_api_key';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import colors from '../../constants/Colors';
+import {  Location, Permissions, Notifications } from 'expo';
 
 import { connect } from 'react-redux';
 import { fetchTickets } from '../../redux/actions/ticketAction';
@@ -74,7 +75,15 @@ class JourneyScreen extends Component {
 	}
 
 	componentDidMount() {
-		this.props.fetchTickets()
+		this.props.fetchTickets();
+		// Channel for popup notifications
+		if (Platform.OS === 'android') {
+			Expo.Notifications.createChannelAndroidAsync('reminders', {
+				name: 'Reminders',
+				priority: 'max',
+				vibrate: [0, 250, 250, 250]
+			});
+		}
 	}
 	// Sets the state when each input is changed
 
