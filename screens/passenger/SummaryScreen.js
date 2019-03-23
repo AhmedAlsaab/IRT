@@ -5,11 +5,13 @@ import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import IonIcon from 'react-native-vector-icons/Ionicons';
+
 import ip from '../../ipstore';
 import WalletBalance from './WalletBalance';
 import uuid from 'uuid/v4';
-import { Location, Permissions, Notifications} from 'expo';
+import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { addTransaction } from '../../redux/actions/transactionAction';
 import { userPayForTicket } from '../../redux/actions/userAction';
@@ -33,10 +35,12 @@ class SummaryScreen extends React.Component {
 	sendEmail = () => {
 		const {
 			date,
+			time,
 			street,
 			endStreet,
 			numPassenger,
 			numWheelchair,
+			returnTicket,
 			city,
 			endCity
 		} = this.props.navigation.state.params;
@@ -46,40 +50,27 @@ class SummaryScreen extends React.Component {
 				startLocation: `${street}, ${city}`,
 				endLocation: `${endStreet}, ${endCity}`,
 				passenger: numPassenger,
-				wheelchair: numWheelchair
+				wheelchair: numWheelchair,
+				returnTicket: returnTicket
 			},
 			date: moment(date).format('MMMM Do YYYY'),
+			time: moment(time).format('LT'),
 			email: this.props.user.email
 		};
 
-		fetch(`http://${ip}:3000/book`, {
+		fetch(`http://${ip}:3000/booking/sendEmail`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		})
-			.then((response) => response.json())
-			.then((responseJSON) => {
-				switch (responseJSON.status) {
-					//Success
-					case 10:
-						break;
-					//User Exists
-					case 1:
-						this.setState({
-							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
-						});
-						break;
-				}
-			})
-			.catch((error) => console.log(error));
+		}).catch((error) => console.log(error));
 	};
 
 	bookJourney = () => {
 		const bookingData = this.props.navigation.state.params;
-		fetch(`http://${ip}:3000/booking/temp`, {
+		fetch(`http://${ip}:3000/booking/book`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -90,10 +81,16 @@ class SummaryScreen extends React.Component {
 	};
 
 	componentDidMount() {
-		const { numPassenger } = this.props.navigation.state.params;
-		this.setState({
-			total: parseInt(numPassenger * 3)
-		});
+		const { numPassenger, returnTicket } = this.props.navigation.state.params;
+		if (returnTicket === 1) {
+			this.setState({
+				total: parseInt(numPassenger * (3 * 2))
+			})
+		} else {
+			this.setState({
+				total: parseInt(numPassenger * 3)
+			});
+		}
 
 		// Channel for popup notifications
 		if (Platform.OS === 'android') {
@@ -121,6 +118,7 @@ class SummaryScreen extends React.Component {
 			endStreet,
 			numPassenger,
 			numWheelchair,
+			returnTicket,
 			city,
 			endCity,
 			time
@@ -162,6 +160,7 @@ class SummaryScreen extends React.Component {
 					time: time,
 					numPassengers: numPassenger,
 					numWheelchairs: numWheelchair,
+					returnTicket: returnTicket,
 					cancelled: 0,
 					endTime: date,
 					expired: 0,
@@ -203,6 +202,7 @@ class SummaryScreen extends React.Component {
 			endStreet,
 			numPassenger,
 			numWheelchair,
+			returnTicket,
 			city,
 			endCity
 		} = this.props.navigation.state.params;
@@ -244,6 +244,7 @@ class SummaryScreen extends React.Component {
 			time: time,
 			numPassengers: numPassenger,
 			numWheelchairs: numWheelchair,
+			return: returnTicket,
 			endTime: date,
 			expired: 0,
 			completed: 1,
@@ -340,53 +341,59 @@ class SummaryScreen extends React.Component {
 							</View>
 
 							{/* The summary card showing booking information */}
-							<View style={styles.summaryCard}>
-								<View style={styles.cardContent}>
-									<View style={styles.details}>
-										<View>
-											<View style={styles.icon}>
-												<Icon name="date-range" size={20} color={colors.bodyTextColor} />
-												<Text style={styles.cardBody}>
-													{moment(data.date).format('MMMM Do YYYY')}
-												</Text>
-											</View>
-											<View style={styles.icon}>
-												<Icon name="my-location" size={20} color={colors.bodyTextColor} />
-												<Text style={styles.cardBody}>
-													{data.street}, {data.city}
-												</Text>
-											</View>
+							<View style={styles.cardContent}>
+								<View style={styles.ticketTypeContainer}>
+									<View style={styles.ticketType}>
+										<Text style={styles.ticketTypeText}>
+											{data.returnTicket === 1 ? 'RTN' : 'SGL'}
+										</Text>
+									</View>
+								</View>
+								<View style={styles.details}>
+									<View>
+										<View style={styles.icon}>
+											<MaterialIcon name="date-range" size={20} color={colors.bodyTextColor} />
+											<Text style={styles.cardBody}>
+												{moment(data.date).format('MMMM Do YYYY')}
+											</Text>
 										</View>
-
-										<View>
-											<View style={styles.icon}>
-												<Icon name="location-on" size={20} color={colors.bodyTextColor} />
-												<Text style={styles.cardBody}>
-													{data.endStreet}, {data.endCity}
-												</Text>
-											</View>
-											<View style={styles.icon}>
-												<Icon name="people" size={20} color={colors.bodyTextColor} />
-												<Text style={styles.cardBody}>
-													{data.numPassenger}
-													{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
-												</Text>
-											</View>
-											{data.numWheelchair > 0 ? (
-												<View style={styles.icon}>
-													<Icon name="accessible" size={20} color={colors.bodyTextColor} />
-													<Text style={styles.cardBody}>
-														{data.numWheelchair}
-														{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
-													</Text>
-												</View>
-											) : null}
+										<View style={styles.icon}>
+											<MaterialIcon name="access-time" size={20} color={colors.bodyTextColor} />
+											<Text style={styles.cardBody}>
+												{moment(data.time).format('LT')}
+											</Text>
+										</View>
+										<View style={styles.icon}>
+											<MaterialIcon name="my-location" size={20} color={colors.bodyTextColor} />
+											<Text style={styles.cardBody}>
+												{data.street}, {data.city}
+											</Text>
 										</View>
 									</View>
-									<View style={styles.journeyInfo}>
-										<Text style={styles.cardBody}>£3.00</Text>
-										<Icon name="directions-bus" size={65} color={colors.bodyTextColor} />
-										<Text style={styles.cardVehicle}>Minibus</Text>
+
+									<View>
+										<View style={styles.icon}>
+											<MaterialIcon name="location-on" size={20} color={colors.bodyTextColor} />
+											<Text style={styles.cardBody}>
+												{data.endStreet}, {data.endCity}
+											</Text>
+										</View>
+										<View style={styles.icon}>
+											<MaterialIcon name="people" size={20} color={colors.bodyTextColor} />
+											<Text style={styles.cardBody}>
+												{data.numPassenger}
+												{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
+											</Text>
+										</View>
+										{data.numWheelchair > 0 ? (
+											<View style={styles.icon}>
+												<MaterialIcon name="accessible" size={20} color={colors.bodyTextColor} />
+												<Text style={styles.cardBody}>
+													{data.numWheelchair}
+													{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
+												</Text>
+											</View>
+										) : null}
 									</View>
 								</View>
 							</View>
@@ -399,6 +406,11 @@ class SummaryScreen extends React.Component {
 								</Text>
 								<View style={styles.paymentSummary}>
 									<Text style={styles.paymentText}>Total</Text>
+									<Text style={styles.ticketBreakdown}>
+										{data.numPassenger} x
+										{data.returnTicket === 1 ? " RETURN" : " SINGLE"}
+										{data.numPassenger > 1 ? " tickets" : " ticket"}
+									</Text>
 									<Text style={styles.paymentText}>£{this.state.total}.00</Text>
 								</View>
 
@@ -467,7 +479,7 @@ class SummaryScreen extends React.Component {
 						</View>
 					</Content>
 				</Container>
-			</StyleProvider>
+			</StyleProvider >
 		);
 	}
 }
@@ -483,35 +495,25 @@ const styles = StyleSheet.create({
 	header: {
 		fontSize: 16,
 		color: colors.emphasisTextColor,
-		marginTop: 15,
 		marginBottom: 10
 	},
 	body: {
 		color: colors.bodyTextColor,
 		fontSize: 16
 	},
-	summaryCard: {
-		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		justifyContent: 'center',
+	cardContent: {
+		flexDirection: 'row',
+		marginTop: 15,
+		marginBottom: 15,
+		paddingTop: 10,
 		shadowOffset: { width: 0, height: -20 },
 		shadowColor: 'black',
 		shadowOpacity: 1,
 		elevation: 5,
 		backgroundColor: colors.backgroundColor,
-		marginTop: 15,
-		marginBottom: 15,
-	},
-	cardContent: {
-		flex: 1,
-		flexDirection: 'row',
-		marginTop: 10,
-		width: '80%',
-		justifyContent: 'space-between'
 	},
 	details: {
-		width: '70%'
+		width: '90%'
 	},
 	journeyInfo: {
 		flex: 1,
@@ -537,6 +539,11 @@ const styles = StyleSheet.create({
 		width: '80%',
 		alignSelf: 'center'
 	},
+	ticketBreakdown: {
+		color: colors.bodyTextColor,
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
 	paymentText: {
 		fontSize: 18,
 		fontWeight: 'bold',
@@ -548,8 +555,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		marginTop: 15,
 		paddingBottom: 15,
-		borderBottomColor: colors.bodyTextColor,
-		borderBottomWidth: 0.5
+		borderBottomColor: colors.lightBorder,
+		borderBottomWidth: 0.75
 	},
 	walletBlance: {
 		flex: 1,
@@ -580,7 +587,30 @@ const styles = StyleSheet.create({
 	},
 	buttonButtonContainer: {
 		flexDirection: 'column'
-	}
+	},
+	ticketTypeContainer: {
+		width: '10%',
+		marginRight: 10,
+		flexDirection: 'row',
+	},
+	ticketType: {
+		backgroundColor: colors.brandColor,
+		top: 10,
+		flex: 1,
+		alignSelf: 'flex-start',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderTopRightRadius: 5,
+		borderBottomRightRadius: 5,
+		paddingTop: 2,
+		paddingBottom: 3,
+	},
+	ticketTypeText: {
+		color: colors.backgroundColor,
+		fontWeight: 'bold',
+		fontSize: 14
+	},
 });
 
 const mapDispatchToProps = (dispatch) => {

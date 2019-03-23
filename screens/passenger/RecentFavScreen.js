@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
     },
     journeyContainer: {
         flexDirection: 'row',
-        borderColor: colors.bodyTextColor,
-        borderWidth: 1,
+        borderColor: colors.lightBorder,
+        borderWidth: 0.75,
         padding: 10,
         justifyContent: 'space-between',
         marginBottom: 5,
