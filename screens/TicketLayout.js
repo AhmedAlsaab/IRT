@@ -59,9 +59,9 @@ export default class TicketLayout extends Component {
 						<View style={styles.ticketTypeIcon}>
 							{/* Code prepared for return tickets - don't remove */}
 							{/* {ticket.return ?
-									<Icon name="ios-swap" size={30} color="#999999" />
+									<IonIcon name="ios-swap" size={30} color="#999999" />
 									:
-									<Icon name="ios-arrow-round-forward" size={30} color="#999999" />
+									<IonIcon name="ios-arrow-round-forward" size={30} color="#999999" />
 								} */}
 							<IonIcon name="ios-arrow-round-forward" size={30} color="#999999" />
 						</View>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 	},
 	ticketType: {
-		backgroundColor: '#ff0000',
+		backgroundColor: colors.brandColor,
 		top: 10,
 		flex: 1,
 		alignSelf: 'flex-start',

@@ -1,7 +1,7 @@
 import PolyLine from '@mapbox/polyline';
 import _ from 'lodash';
 import moment from 'moment';
-import { Button, Container, Content, StyleProvider, Text } from 'native-base';
+import { Button, Container, Content, StyleProvider, Text, ListItem, CheckBox, Body } from 'native-base';
 import React, { Component } from 'react';
 import { Keyboard, StyleSheet, TouchableHighlight, TouchableOpacity, View, TextInput, Platform } from 'react-native';
 import Collapsible from 'react-native-collapsible';
@@ -12,7 +12,7 @@ import API_KEY from '../../google_api_key';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import colors from '../../constants/Colors';
-import {  Location, Permissions, Notifications } from 'expo';
+import { Location, Permissions, Notifications } from 'expo';
 
 import { connect } from 'react-redux';
 import { fetchTickets } from '../../redux/actions/ticketAction';
@@ -47,6 +47,7 @@ class JourneyScreen extends Component {
 			time: null,
 			numPassenger: null,
 			numWheelchair: null,
+			return: false,
 
 			//StartLocation
 			locationPredictions: [],
@@ -275,7 +276,8 @@ class JourneyScreen extends Component {
 			date: this.state.date,
 			time: this.state.time,
 			numPassenger: this.state.numPassenger,
-			numWheelchair: this.state.numWheelchair
+			numWheelchair: this.state.numWheelchair,
+			returnTicket: this.state.return === true ? 1 : 0,
 		};
 
 		this.props.navigation.navigate('Summary', data);
@@ -435,6 +437,18 @@ class JourneyScreen extends Component {
 							mode="time"
 						/>
 
+						{/* Return journey option */}
+						<ListItem style={{ marginLeft: 0 }}>
+							<CheckBox
+								checked={this.state.return}
+								onPress={() => this.setState({ return: !this.state.return })}
+								color={colors.bodyTextColor}
+							/>
+							<Body>
+								<Text style={styles.body}>Return journey</Text>
+							</Body>
+						</ListItem>
+
 						{/* Advanced search fields, expands and collapses on button click. */}
 						<Collapsible collapsed={this.state.isCollapsed}>
 							<View>
@@ -565,6 +579,13 @@ const styles = StyleSheet.create({
 	},
 	secondaryButtontext: {
 		color: colors.brandColor
+	},
+	body: {
+		color: colors.bodyTextColor,
+		fontSize: 14
+	},
+	checkboxContainer: {
+		justifyContent: 'flex-start',
 	}
 });
 
