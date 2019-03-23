@@ -560,7 +560,7 @@ app.get('/user/tickets', function(req, res) {
 	const userId = localStorage.getItem('userId');
 
 	connection.query(
-		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.no_of_passengers, t.no_of_wheelchairs, t.cancelled, t.date_of_journey, t.time_of_journey, uj.completed, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE uj.fk_user_id = ? ORDER BY t.date_of_journey ASC',
+		'SELECT t.ticket_id, t.accessibility_required, t.used, t.expired, t.no_of_passengers, t.no_of_wheelchairs, t.returnTicket, t.cancelled, t.date_of_journey, t.time_of_journey, uj.completed, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE uj.fk_user_id = ? ORDER BY t.date_of_journey ASC',
 		[ userId ],
 		function(error, rows, fields) {
 			if (error) throw error;

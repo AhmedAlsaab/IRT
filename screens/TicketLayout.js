@@ -14,17 +14,13 @@ export default class TicketLayout extends Component {
 					{ticket.expired ?
 						<View style={[styles.ticketType, { backgroundColor: colors.bodyTextColor }]}>
 							<Text style={styles.ticketTypeText}>
-								SGL
-								{/* Code prepared for return tickets - don't remove */}
-								{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
+								{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
 							</Text>
 						</View>
 						:
 						<View style={styles.ticketType}>
 							<Text style={styles.ticketTypeText}>
-								SGL
-								{/* Code prepared for return tickets - don't remove */}
-								{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
+								{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
 							</Text>
 						</View>
 					}
@@ -57,13 +53,11 @@ export default class TicketLayout extends Component {
 							<Text style={styles.body}>{ticket.fromStreet}, {ticket.fromCity}</Text>
 						</View>
 						<View style={styles.ticketTypeIcon}>
-							{/* Code prepared for return tickets - don't remove */}
-							{/* {ticket.return ?
-									<IonIcon name="ios-swap" size={30} color="#999999" />
-									:
-									<IonIcon name="ios-arrow-round-forward" size={30} color="#999999" />
-								} */}
-							<IonIcon name="ios-arrow-round-forward" size={30} color="#999999" />
+							{ticket.returnTicket ?
+								<IonIcon name="ios-swap" size={30} color={colors.bodyTextColor} />
+								:
+								<IonIcon name="ios-arrow-round-forward" size={30} color={colors.bodyTextColor} />
+							}
 						</View>
 						<View style={styles.ticketTo}>
 							<Text style={styles.body}>{ticket.toStreet}, {ticket.toCity}</Text>
@@ -80,7 +74,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'row',
 		borderBottomColor: colors.lightBorder,
-		borderBottomWidth: 1
+		borderBottomWidth: 0.75
 	},
 	ticketTypeContainer: {
 		width: '10%',

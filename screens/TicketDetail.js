@@ -10,6 +10,7 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import uuid from 'uuid/v4';
+import colors from '../constants/Colors';
 
 import { connect } from 'react-redux';
 import { addTransaction } from '../redux/actions/transactionAction';
@@ -103,7 +104,7 @@ class TicketDetail extends React.Component {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		}).catch((err) => {});
+		}).catch((err) => { });
 	};
 
 	navigateTo = () => {
@@ -119,27 +120,23 @@ class TicketDetail extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
-					<GlobalHeader type={3} header='Ticket Details'  navigateTo={this.navigateTo} isBackButtonActive={1} />
+					<GlobalHeader type={3} header='Ticket Details' navigateTo={this.navigateTo} isBackButtonActive={1} />
 					<Content>
 						<View style={styles.card}>
 							<View style={styles.ticketTypeContainer}>
 								{ticket.expired ? (
-									<View style={[ styles.ticketType, { backgroundColor: '#bcbcbc' } ]}>
+									<View style={[styles.ticketType, { backgroundColor: colors.lightBorder }]}>
 										<Text style={styles.ticketTypeText}>
-											SGL
-											{/* Code prepared for return tickets - don't remove */}
-											{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
+											{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
 										</Text>
 									</View>
 								) : (
-									<View style={styles.ticketType}>
-										<Text style={styles.ticketTypeText}>
-											SGL
-											{/* Code prepared for return tickets - don't remove */}
-											{/* {ticket.return === 1 ? 'RTN' : 'SGL'} */}
-										</Text>
-									</View>
-								)}
+										<View style={styles.ticketType}>
+											<Text style={styles.ticketTypeText}>
+												{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
+											</Text>
+										</View>
+									)}
 							</View>
 							<View style={styles.ticket}>
 								<View style={styles.ticketHeader}>
@@ -157,13 +154,11 @@ class TicketDetail extends React.Component {
 										</Text>
 									</View>
 									<View style={styles.ticketTypeIcon}>
-										{/* Code prepared for return tickets - don't remove */}
-										{/* {ticket.return ?
-									<Icon name="ios-swap" size={30} color="#999999" />
-									:
-									<Icon name="ios-arrow-round-forward" size={30} color="#999999" />
-								} */}
-										<IonIcon name="ios-arrow-round-forward" size={30} color="#999999" />
+										{ticket.returnTicket ?
+											<IonIcon name="ios-swap" size={30} color={colors.bodyTextColor} />
+											:
+											<IonIcon name="ios-arrow-round-forward" size={30} color={colors.bodyTextColor} />
+										}
 									</View>
 									<View style={styles.ticketTo}>
 										<Text style={styles.body}>
@@ -192,19 +187,19 @@ class TicketDetail extends React.Component {
 						</View>
 
 						{ticket.expired === 0 &&
-						ticket.cancelled === 0 && (
-							<View style={styles.buttonContainer}>
-								<Button
-									danger
-									style={[ styles.button, { backgroundColor: '#ff0000' } ]}
-									onPress={() => {
-										this.navigateToTrack();
-									}}
-								>
-									<Text style={styles.buttonText}>TRACK VEHICLE</Text>
-								</Button>
-							</View>
-						)}
+							ticket.cancelled === 0 && (
+								<View style={styles.buttonContainer}>
+									<Button
+										danger
+										style={[styles.button, { backgroundColor: colors.brandColor }]}
+										onPress={() => {
+											this.navigateToTrack();
+										}}
+									>
+										<Text style={styles.buttonText}>TRACK VEHICLE</Text>
+									</Button>
+								</View>
+							)}
 
 						<View style={styles.itineraryContainer}>
 							<Text style={styles.heading}>ITINERARY DETAILS</Text>
@@ -214,15 +209,15 @@ class TicketDetail extends React.Component {
 									<Text style={styles.label}>Passengers:</Text>
 								</View>
 								<View style={styles.details}>
-									<Text style={[ styles.body, { marginTop: 5 } ]}>Single journey</Text>
+									<Text style={[styles.body, { marginTop: 5 }]}>{ticket.returnTicket === 1 ? "RETURN" : "SINGLE"}</Text>
 									<View style={styles.icon}>
-										<IonIcon name="md-people" size={20} color="#999999" />
-										<Text style={[ styles.body, { marginLeft: 7 } ]}>{ticket.numPassengers}</Text>
+										<IonIcon name="md-people" size={20} color={colors.bodyTextColor} />
+										<Text style={[styles.body, { marginLeft: 7 }]}>{ticket.numPassengers}</Text>
 									</View>
 									{ticket.numWheelchairs > 0 ? (
 										<View style={styles.icon}>
-											<MaterialIcon name="accessible" size={20} color="#999999" />
-											<Text style={[ styles.body, { marginLeft: 5 } ]}>
+											<MaterialIcon name="accessible" size={20} color={colors.bodyTextColor} />
+											<Text style={[styles.body, { marginLeft: 5 }]}>
 												{ticket.numWheelchairs}
 											</Text>
 										</View>
@@ -232,24 +227,24 @@ class TicketDetail extends React.Component {
 						</View>
 
 						{ticket.expired === 0 &&
-						ticket.cancelled === 0 && (
-							<View style={styles.buttonContainer}>
-								<Button danger bordered style={styles.button} onPress={this.cancelTicketPopup}>
-									<Text style={styles.buttonText}>CANCEL</Text>
-								</Button>
+							ticket.cancelled === 0 && (
+								<View style={styles.buttonContainer}>
+									<Button danger bordered style={styles.button} onPress={this.cancelTicketPopup}>
+										<Text style={styles.buttonText}>CANCEL</Text>
+									</Button>
 
-								<Button
-									danger
-									bordered
-									style={styles.button}
-									onPress={() => {
-										this.amendTicket(ticket);
-									}}
-								>
-									<Text style={styles.buttonText}>AMEND</Text>
-								</Button>
-							</View>
-						)}
+									<Button
+										danger
+										bordered
+										style={styles.button}
+										onPress={() => {
+											this.amendTicket(ticket);
+										}}
+									>
+										<Text style={styles.buttonText}>AMEND</Text>
+									</Button>
+								</View>
+							)}
 
 						<Dialog
 							width={0.8}
@@ -298,7 +293,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	ticketType: {
-		backgroundColor: '#ff0000',
+		backgroundColor: colors.brandColor,
 		top: 10,
 		flex: 1,
 		alignSelf: 'flex-start',
@@ -311,7 +306,7 @@ const styles = StyleSheet.create({
 		paddingBottom: 3
 	},
 	ticketTypeText: {
-		color: '#fff',
+		color: colors.backgroundColor,
 		fontWeight: 'bold'
 	},
 	ticket: {
@@ -327,11 +322,11 @@ const styles = StyleSheet.create({
 		width: '57%'
 	},
 	dateText: {
-		color: '#999999',
+		color: colors.bodyTextColor,
 		fontSize: 16
 	},
 	timeText: {
-		color: '#666666',
+		color: colors.emphasisTextColor,
 		fontSize: 18,
 		marginTop: 5
 	},
@@ -358,7 +353,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	body: {
-		color: '#999999',
+		color: colors.bodyTextColor,
 		fontSize: 14
 	},
 	icon: {
@@ -368,7 +363,7 @@ const styles = StyleSheet.create({
 		marginTop: 5
 	},
 	label: {
-		color: '#999999',
+		color: colors.bodyTextColor,
 		fontSize: 14,
 		fontWeight: 'bold',
 		marginTop: 5
@@ -377,18 +372,18 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		width: '80%',
 		borderWidth: 1,
-		borderColor: '#ff0000',
+		borderColor: colors.brandColor,
 		borderRadius: 5,
 		alignSelf: 'center'
 	},
 	qrHeader: {
-		backgroundColor: '#ff0000',
+		backgroundColor: colors.brandColor,
 		alignItems: 'center',
 		paddingTop: 5,
 		paddingBottom: 5
 	},
 	qrHeaderText: {
-		color: '#fff',
+		color: colors.backgroundColor,
 		fontSize: 14
 	},
 	itineraryContainer: {
@@ -400,7 +395,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row'
 	},
 	heading: {
-		color: '#999999',
+		color: colors.bodyTextColor,
 		fontSize: 15,
 		marginBottom: 10
 	},
