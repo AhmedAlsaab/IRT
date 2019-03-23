@@ -108,7 +108,6 @@ CREATE TABLE IF NOT EXISTS `transport`.`ticket` (
   `date_created` DATETIME NOT NULL,
   `no_of_passengers` INT(11) NOT NULL,
   `no_of_wheelchairs` INT(11) NOT NULL,
-  `return` TINYINT(4) NOT NULL DEFAULT '0',
   `date_of_journey` DATETIME NOT NULL,
   `time_of_journey` DATETIME NOT NULL,
   PRIMARY KEY (`ticket_id`))

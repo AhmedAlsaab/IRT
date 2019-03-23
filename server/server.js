@@ -68,7 +68,7 @@ var connection = mysql.createConnection({
 	host: 'localhost',
 	user: 'root',
 	database: 'transport',
-	password: 'root'
+	password: ''
 });
 
 connection.connect((error) => {
@@ -166,7 +166,7 @@ app.post('/booking/sendEmail', (req, res) => {
 		<p> Thank you for your recent booking with us. Here is a reminder of your journey details:</p>
 		<ul>
 			<li>Date: ${date}</li>
-			<li>Date: ${time}</li>
+			<li>Time: ${time}</li>
 			<li>Ticket type: ${returnTicket === 1 ? "RETURN" : "SINGLE"}</li>
 			<li>From: ${data.startLocation}</li>
 			<li>To: ${data.endLocation}</li>
