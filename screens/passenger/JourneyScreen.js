@@ -47,7 +47,7 @@ class JourneyScreen extends Component {
 			time: null,
 			numPassenger: null,
 			numWheelchair: null,
-			return: false,
+			returnTicket: false,
 
 			//StartLocation
 			locationPredictions: [],
@@ -277,7 +277,7 @@ class JourneyScreen extends Component {
 			time: this.state.time,
 			numPassenger: this.state.numPassenger,
 			numWheelchair: this.state.numWheelchair,
-			returnTicket: this.state.return === true ? 1 : 0,
+			returnTicket: this.state.returnTicket === true ? 1 : 0,
 		};
 
 		this.props.navigation.navigate('Summary', data);
@@ -440,8 +440,8 @@ class JourneyScreen extends Component {
 						{/* Return journey option */}
 						<ListItem style={{ marginLeft: 0 }}>
 							<CheckBox
-								checked={this.state.return}
-								onPress={() => this.setState({ return: !this.state.return })}
+								checked={this.state.returnTicket}
+								onPress={() => this.setState({ returnTicket: !this.state.returnTicket })}
 								color={colors.bodyTextColor}
 							/>
 							<Body>

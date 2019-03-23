@@ -35,6 +35,7 @@ class SummaryScreen extends React.Component {
 	sendEmail = () => {
 		const {
 			date,
+			time,
 			street,
 			endStreet,
 			numPassenger,
@@ -50,40 +51,26 @@ class SummaryScreen extends React.Component {
 				endLocation: `${endStreet}, ${endCity}`,
 				passenger: numPassenger,
 				wheelchair: numWheelchair,
-				return: returnTicket
+				returnTicket: returnTicket
 			},
 			date: moment(date).format('MMMM Do YYYY'),
+			time: moment(time).format('LT'),
 			email: this.props.user.email
 		};
 
-		fetch(`http://${ip}:3000/book`, {
+		fetch(`http://${ip}:3000/booking/sendEmail`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(data)
-		})
-			.then((response) => response.json())
-			.then((responseJSON) => {
-				switch (responseJSON.status) {
-					//Success
-					case 10:
-						break;
-					//User Exists
-					case 1:
-						this.setState({
-							errors: [{ title: 'Errors', content: 'There was an error whilst sending confirmation' }]
-						});
-						break;
-				}
-			})
-			.catch((error) => console.log(error));
+		}).catch((error) => console.log(error));
 	};
 
 	bookJourney = () => {
 		const bookingData = this.props.navigation.state.params;
-		fetch(`http://${ip}:3000/booking/temp`, {
+		fetch(`http://${ip}:3000/booking/book`, {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -97,7 +84,7 @@ class SummaryScreen extends React.Component {
 		const { numPassenger, returnTicket } = this.props.navigation.state.params;
 		if (returnTicket === 1) {
 			this.setState({
-				total: parseInt(numPassenger * (3 * 1.5))
+				total: parseInt(numPassenger * (3 * 2))
 			})
 		} else {
 			this.setState({

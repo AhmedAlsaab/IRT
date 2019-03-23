@@ -153,17 +153,21 @@ app.post('/login', (req, res) => {
 	});
 });
 
-app.post('/book', (req, res) => {
+app.post('/booking/sendEmail', (req, res) => {
 	//Get form fields
 	const data = req.body.data;
 	const date = req.body.date;
+	const time = req.body.time;
 	const email = req.body.email;
+	const returnTicket = req.body.returnTicket;
 
 	const output = `
 		<h1> Your confirmed booking</h1>
 		<p> Thank you for your recent booking with us. Here is a reminder of your journey details:</p>
 		<ul>
 			<li>Date: ${date}</li>
+			<li>Date: ${time}</li>
+			<li>Ticket type: ${returnTicket === 1 ? "RETURN" : "SINGLE"}</li>
 			<li>From: ${data.startLocation}</li>
 			<li>To: ${data.endLocation}</li>
 			<li>Number of passengers: ${data.passenger}</li>
@@ -203,7 +207,6 @@ app.post('/book', (req, res) => {
 		console.log('Message sent: %s', info.messageId);
 	}
 
-	res.send({ status: 10 });
 	main().catch(console.error);
 });
 
@@ -243,7 +246,7 @@ app.get('/journey', function(req, res) {
 	);
 });
 
-app.post('/booking/temp', (req, res) => {
+app.post('/booking/book', (req, res) => {
 	const startPlaceId = req.body.place_id;
 	const startStreet = req.body.street;
 	const startCity = req.body.city;
@@ -264,13 +267,13 @@ app.post('/booking/temp', (req, res) => {
 	const time = req.body.time;
 	const numPassenger = req.body.numPassenger;
 	const numWheelchair = req.body.numWheelchair;
+	const returnTicket = req.body.returnTicket;
 
 	const userId = localStorage.getItem('userId');
 
-	// const userID = req.session.userId !== undefined ? req.session.userId : 1;
 	connection.query(
-		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?)',
-		[ numPassenger, numWheelchair, 0, 0, date, time, new Date() ],
+		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, returnTicket, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+		[ numPassenger, numWheelchair, returnTicket, 0, 0, date, time, new Date() ],
 		(error, row1, fields) => {
 			if (error) throw error;
 
