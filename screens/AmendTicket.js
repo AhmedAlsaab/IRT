@@ -252,6 +252,7 @@ class AmendTicket extends React.Component {
                                             color: this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor
                                         }]}
                                         onChangeText={(value) => this.handleNumWheelchairChange(value)}
+                                        value={this.state.numWheelchair ? this.state.numWheelchair.toString() : null}
                                         onFocus={() => { this.setState({ wheelchairFocused: true }) }}
                                         onBlur={() => { this.setState({ wheelchairFocused: false }) }}
                                     />
@@ -304,15 +305,15 @@ const styles = StyleSheet.create({
     },
     summaryCard: {
         flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		justifyContent: 'center',
-		shadowOffset: { width: 0, height: -20 },
-		shadowColor: 'black',
-		shadowOpacity: 1,
-		elevation: 5,
-		backgroundColor: colors.backgroundColor,
-		marginBottom: 15,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowOffset: { width: 0, height: -20 },
+        shadowColor: 'black',
+        shadowOpacity: 1,
+        elevation: 5,
+        backgroundColor: colors.backgroundColor,
+        marginBottom: 15,
     },
     cardContent: {
         flex: 1,
@@ -339,11 +340,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 15
     },
-	dateTime: {
-		marginLeft: 8,
-		color: colors.bodyTextColor,
-		fontSize: 14
-	},
+    dateTime: {
+        marginLeft: 8,
+        color: colors.bodyTextColor,
+        fontSize: 14
+    },
     buttonContainer: {
         flexDirection: 'row',
         alignSelf: 'center',
