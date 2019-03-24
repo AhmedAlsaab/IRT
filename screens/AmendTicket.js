@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, TextInput } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView } from 'react-native';
 import { Accordion, Button, Container, Content, Input, Item, StyleProvider, Text } from 'native-base';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -115,162 +115,166 @@ class AmendTicket extends React.Component {
                         navigateTo={this.navigateTo}
                         isBackButtonActive={1}
                     />
-                    <Content>
-                        {this.state.errors &&
-                            !!this.state.errors.length && (
+                    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+                        <Content style={styles.content}>
+                            {this.state.errors &&
+                                !!this.state.errors.length && (
+                                    <Accordion
+                                        dataArray={this.state.errors}
+                                        icon="add"
+                                        expandedIcon="remove"
+                                        contentStyle={styles.errorStyle}
+                                        expanded={0}
+                                    />
+                                )}
+                            {this.state.error && (
                                 <Accordion
-                                    dataArray={this.state.errors}
+                                    dataArray={this.state.error}
                                     icon="add"
                                     expandedIcon="remove"
                                     contentStyle={styles.errorStyle}
                                     expanded={0}
                                 />
                             )}
-                        {this.state.error && (
-                            <Accordion
-                                dataArray={this.state.error}
-                                icon="add"
-                                expandedIcon="remove"
-                                contentStyle={styles.errorStyle}
-                                expanded={0}
-                            />
-                        )}
 
-                        {/* Summary of the current ticket */}
-                        <View style={styles.summaryCard}>
-                            <View style={styles.cardContent}>
-                                <View style={styles.details}>
-                                    <View>
-                                        <Text style={styles.header2}>CURRENT TICKET DETAILS</Text>
-                                        <View style={styles.icon}>
-                                            <Icon name="date-range" size={20} color={colors.bodyTextColor} />
-                                            <Text style={styles.cardBody}>
-                                                {moment(data.date).format('MMMM Do YYYY')}
-                                            </Text>
-                                        </View>
-                                        <View style={styles.icon}>
-                                            <Icon name="access-time" size={20} color={colors.bodyTextColor} />
-                                            <Text style={styles.cardBody}>
-                                                {moment(data.time).format('LT')}
-                                            </Text>
-                                        </View>
-                                        <View style={styles.icon}>
-                                            <Icon name="my-location" size={20} color={colors.bodyTextColor} />
-                                            <Text style={styles.cardBody}>
-                                                {data.fromStreet}, {data.fromCity}
-                                            </Text>
-                                        </View>
-                                    </View>
-
-                                    <View>
-                                        <View style={styles.icon}>
-                                            <Icon name="location-on" size={20} color={colors.bodyTextColor} />
-                                            <Text style={styles.cardBody}>
-                                                {data.toStreet}, {data.toCity}
-                                            </Text>
-                                        </View>
-                                        <View style={styles.icon}>
-                                            <Icon name="people" size={20} color={colors.bodyTextColor} />
-                                            <Text style={styles.cardBody}>
-                                                {data.numPassengers}
-                                                {data.numPassengers > 1 ? ' Passengers' : ' Passenger'}
-                                            </Text>
-                                        </View>
-                                        {data.numWheelchairs > 0 ?
-                                            <View style={styles.icon}>
-                                                <Icon name="accessible" size={20} color={colors.bodyTextColor} />
-                                                <Text style={styles.cardBody}>
-                                                    {data.numWheelchairs}
-                                                    {data.numWheelchairs > 1 ? ' Wheelchairs' : ' Wheelchair'}
-                                                </Text>
+                            {/* Summary of the current ticket */}
+                            <View style={styles.contentContainer}>
+                                <View style={styles.summaryCard}>
+                                    <View style={styles.cardContent}>
+                                        <View style={styles.details}>
+                                            <View>
+                                                <Text style={styles.header2}>CURRENT TICKET DETAILS</Text>
+                                                <View style={styles.icon}>
+                                                    <Icon name="date-range" size={20} color={colors.bodyTextColor} />
+                                                    <Text style={styles.cardBody}>
+                                                        {moment(data.date).format('MMMM Do YYYY')}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.icon}>
+                                                    <Icon name="access-time" size={20} color={colors.bodyTextColor} />
+                                                    <Text style={styles.cardBody}>
+                                                        {moment(data.time).format('LT')}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.icon}>
+                                                    <Icon name="my-location" size={20} color={colors.bodyTextColor} />
+                                                    <Text style={styles.cardBody}>
+                                                        {data.fromStreet}, {data.fromCity}
+                                                    </Text>
+                                                </View>
                                             </View>
-                                            : null}
+
+                                            <View>
+                                                <View style={styles.icon}>
+                                                    <Icon name="location-on" size={20} color={colors.bodyTextColor} />
+                                                    <Text style={styles.cardBody}>
+                                                        {data.toStreet}, {data.toCity}
+                                                    </Text>
+                                                </View>
+                                                <View style={styles.icon}>
+                                                    <Icon name="people" size={20} color={colors.bodyTextColor} />
+                                                    <Text style={styles.cardBody}>
+                                                        {data.numPassengers}
+                                                        {data.numPassengers > 1 ? ' Passengers' : ' Passenger'}
+                                                    </Text>
+                                                </View>
+                                                {data.numWheelchairs > 0 ?
+                                                    <View style={styles.icon}>
+                                                        <Icon name="accessible" size={20} color={colors.bodyTextColor} />
+                                                        <Text style={styles.cardBody}>
+                                                            {data.numWheelchairs}
+                                                            {data.numWheelchairs > 1 ? ' Wheelchairs' : ' Wheelchair'}
+                                                        </Text>
+                                                    </View>
+                                                    : null}
+                                            </View>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        </View>
 
-                        {/* Inputs to amend ticket including date, time and wheelchairs */}
-                        <View style={styles.inputs}>
-                            <Text style={styles.body}>
-                                If you wish to change details relating to the start/end locations or total number
-                                of passengers, please cancel this ticket and re-book.
+                                {/* Inputs to amend ticket including date, time and wheelchairs */}
+                                <View style={styles.inputs}>
+                                    <Text style={styles.body}>
+                                        If you wish to change details relating to the start/end locations or total number
+                                        of passengers, please cancel this ticket and re-book.
                             </Text>
 
-                            {/* Date picker */}
-                            <TouchableOpacity onPress={this._showDatePicker}>
-                                <View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
-                                    <Icon name="date-range" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
-                                    {this.state.date ? (
-                                        <Text style={styles.dateTime}>
-                                            {moment(this.state.date).format('Do MMM YY')}
-                                        </Text>
-                                    ) : (
-                                            <Text style={styles.dateTime}>Date</Text>
-                                        )}
-                                </View>
-                            </TouchableOpacity>
-                            <DateTimePicker
-                                isVisible={this.state.isDatePickerVisible}
-                                onConfirm={(value) => this._handleDatePicked(value)}
-                                onCancel={this._hideDatePicker}
-                                mode="date"
-                            />
-
-                            {/* Time picker */}
-                            <TouchableOpacity onPress={this._showTimePicker}>
-                                <View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
-                                    <Icon name="access-time" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
-                                    {this.state.time ? (
-                                        <Text style={styles.dateTime}>
-                                            {moment(this.state.time).format('LT')}
-                                        </Text>
-                                    ) : (
-                                            <Text style={styles.dateTime}>Time</Text>
-                                        )}
-                                </View>
-                            </TouchableOpacity>
-                            <DateTimePicker
-                                isVisible={this.state.isTimePickerVisible}
-                                onConfirm={(value) => this._handleTimePicked(value)}
-                                onCancel={this._hideTimePicker}
-                                mode="time"
-                            />
-
-                            {/* Number of wheelchairs input */}
-                            <View style={[styles.inputContainer, {
-                                borderBottomColor: this.state.wheelchairFocused ? colors.brandColor : colors.lightBorder
-                            }]}>
-                                <Item style={styles.iconWithInput}>
-                                    <Icon name="accessible" size={20} color={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor} />
-                                    <TextInput
-                                        maxLength={1}
-                                        keyboardType="numeric"
-                                        placeholder="No. of wheelchairs"
-                                        placeholderTextColor={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor}
-                                        style={[styles.input, {
-                                            color: this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor
-                                        }]}
-                                        onChangeText={(value) => this.handleNumWheelchairChange(value)}
-                                        value={this.state.numWheelchair ? this.state.numWheelchair.toString() : null}
-                                        onFocus={() => { this.setState({ wheelchairFocused: true }) }}
-                                        onBlur={() => { this.setState({ wheelchairFocused: false }) }}
+                                    {/* Date picker */}
+                                    <TouchableOpacity onPress={this._showDatePicker}>
+                                        <View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
+                                            <Icon name="date-range" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
+                                            {this.state.date ? (
+                                                <Text style={styles.dateTime}>
+                                                    {moment(this.state.date).format('Do MMM YY')}
+                                                </Text>
+                                            ) : (
+                                                    <Text style={styles.dateTime}>Date</Text>
+                                                )}
+                                        </View>
+                                    </TouchableOpacity>
+                                    <DateTimePicker
+                                        isVisible={this.state.isDatePickerVisible}
+                                        onConfirm={(value) => this._handleDatePicked(value)}
+                                        onCancel={this._hideDatePicker}
+                                        mode="date"
                                     />
-                                </Item>
-                            </View>
 
-                            {/* Submit amendments */}
-                            <View style={styles.buttonContainer}>
-                                <Button
-                                    danger
-                                    style={styles.button}
-                                    onPress={this.onSubmit}
-                                >
-                                    <Text>Amend</Text>
-                                </Button>
+                                    {/* Time picker */}
+                                    <TouchableOpacity onPress={this._showTimePicker}>
+                                        <View style={[styles.inputContainer, { borderBottomColor: colors.lightBorder, height: 50 }]}>
+                                            <Icon name="access-time" size={20} color={colors.bodyTextColor} style={styles.inputIcons} />
+                                            {this.state.time ? (
+                                                <Text style={styles.dateTime}>
+                                                    {moment(this.state.time).format('LT')}
+                                                </Text>
+                                            ) : (
+                                                    <Text style={styles.dateTime}>Time</Text>
+                                                )}
+                                        </View>
+                                    </TouchableOpacity>
+                                    <DateTimePicker
+                                        isVisible={this.state.isTimePickerVisible}
+                                        onConfirm={(value) => this._handleTimePicked(value)}
+                                        onCancel={this._hideTimePicker}
+                                        mode="time"
+                                    />
+
+                                    {/* Number of wheelchairs input */}
+                                    <View style={[styles.inputContainer, {
+                                        borderBottomColor: this.state.wheelchairFocused ? colors.brandColor : colors.lightBorder
+                                    }]}>
+                                        <Item style={styles.iconWithInput}>
+                                            <Icon name="accessible" size={20} color={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor} />
+                                            <TextInput
+                                                maxLength={1}
+                                                keyboardType="numeric"
+                                                placeholder="No. of wheelchairs"
+                                                placeholderTextColor={this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+                                                style={[styles.input, {
+                                                    color: this.state.wheelchairFocused ? colors.emphasisTextColor : colors.bodyTextColor
+                                                }]}
+                                                onChangeText={(value) => this.handleNumWheelchairChange(value)}
+                                                value={this.state.numWheelchair ? this.state.numWheelchair.toString() : null}
+                                                onFocus={() => { this.setState({ wheelchairFocused: true }) }}
+                                                onBlur={() => { this.setState({ wheelchairFocused: false }) }}
+                                            />
+                                        </Item>
+                                    </View>
+
+                                    {/* Submit amendments */}
+                                    <View style={styles.buttonContainer}>
+                                        <Button
+                                            danger
+                                            style={styles.button}
+                                            onPress={this.onSubmit}
+                                        >
+                                            <Text>Amend</Text>
+                                        </Button>
+                                    </View>
+                                </View>
                             </View>
-                        </View>
-                    </Content>
+                        </Content>
+                    </KeyboardAvoidingView>
                 </Container>
             </StyleProvider>
         );
@@ -278,6 +282,15 @@ class AmendTicket extends React.Component {
 }
 
 const styles = StyleSheet.create({
+    content: {
+        flex: 1,
+    },
+    contentContainer: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: "flex-end",
+
+	},
     inputContainer: {
         flexDirection: 'row',
         borderBottomWidth: 0.75,
@@ -304,7 +317,7 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     summaryCard: {
-        flex: 1,
+        width: '100%',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',

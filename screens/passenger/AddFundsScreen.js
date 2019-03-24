@@ -117,46 +117,42 @@ class AddFundsScreen extends React.Component {
 							maxLength={7}
 						/>
 					</View>
-					<View>
-						<Text style={styles.paymentHeader}>PAYMENT METHOD</Text>
-						<View style={styles.paymentOptionsContainer}>
-							<Button style={styles.paymentOption} onPress={this.onDebitCreditSubmit}>
-								<Image
-									source={require('../../assets/images/debit-card-icon.png')}
-									style={[styles.paymentOptionImage, { width: 80, height: 60 }]}
-								/>
-								<Text style={styles.paymentOptionText} uppercase={false}>
-									Credit/Debit Card
-								</Text>
-							</Button>
-						</View>
-						<View style={styles.paymentOptionsContainer}>
-							<Button style={styles.paymentOption} onPress={this.onPaypalSubmit}>
-								<Image
-									source={require('../../assets/images/paypal-icon.png')}
-									style={styles.paymentOptionImage}
-								/>
-								<Text style={styles.paymentOptionText} uppercase={false}>
-									PayPal
-								</Text>
-							</Button>
-						</View>
-					</View>
-					<View>
-						<Modal
-							visible={this.state.showModal}
-							onRequestClose={() => this.setState({ showModal: false })}
-						>
-							<WebView
-								style={styles.webview}
-								source={{ uri: `http://${ip}:3000/paypal-button` }}
-								onNavigationStateChange={(data) => this.handleResponse(data)}
-								injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state
-									.amount}; document.paypal.submit()`}
+					<Text style={styles.paymentHeader}>PAYMENT METHOD</Text>
+					<View style={styles.paymentOptionsContainer}>
+						<Button style={styles.paymentOption} onPress={this.onDebitCreditSubmit}>
+							<Image
+								source={require('../../assets/images/debit-card-icon.png')}
+								style={[styles.paymentOptionImage, { width: 80, height: 60 }]}
 							/>
-						</Modal>
-						<Text style={styles.body}>PAYMENT STATUS: {this.state.status}</Text>
+							<Text style={styles.paymentOptionText} uppercase={false}>
+								Credit/Debit Card
+								</Text>
+						</Button>
 					</View>
+					<View style={styles.paymentOptionsContainer}>
+						<Button style={styles.paymentOption} onPress={this.onPaypalSubmit}>
+							<Image
+								source={require('../../assets/images/paypal-icon.png')}
+								style={styles.paymentOptionImage}
+							/>
+							<Text style={styles.paymentOptionText} uppercase={false}>
+								PayPal
+								</Text>
+						</Button>
+					</View>
+					<Modal
+						visible={this.state.showModal}
+						onRequestClose={() => this.setState({ showModal: false })}
+					>
+						<WebView
+							style={styles.webview}
+							source={{ uri: `http://${ip}:3000/paypal-button` }}
+							onNavigationStateChange={(data) => this.handleResponse(data)}
+							injectedJavaScript={`document.getElementById("paypal-amount").value = ${this.state
+								.amount}; document.paypal.submit()`}
+						/>
+					</Modal>
+					<Text style={[styles.body, {marginBottom: 50}]}>PAYMENT STATUS: {this.state.status}</Text>
 				</Content>
 			</Container>
 		);
@@ -211,8 +207,8 @@ const styles = StyleSheet.create({
 	},
 	paymentOption: {
 		flex: 1,
-		borderWidth: 1,
-		borderColor: colors.bodyTextColor,
+		borderWidth: 0.75,
+		borderColor: colors.lightBorder,
 		backgroundColor: colors.backgroundColor,
 		borderRadius: 5,
 		height: 'auto',
@@ -225,7 +221,7 @@ const styles = StyleSheet.create({
 	},
 	paymentOptionText: {
 		flex: 5,
-		color: colors.emphasisTextColor,
+		color: colors.bodyTextColor,
 		fontSize: 17,
 		padding: 17,
 		textTransform: 'none'
