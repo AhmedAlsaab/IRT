@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 0.75
 	},
 	buttonContainer: {
-		width: '80%',
+		width: '92%',
 		flex: 1,
 		flexDirection: 'row',
 		alignSelf: 'center',

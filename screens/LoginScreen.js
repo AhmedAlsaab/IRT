@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Accordion, Button, Container, Content, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, TextInput, View } from 'react-native';
+import { Dimensions, StyleSheet, TextInput, View, KeyboardAvoidingView } from 'react-native';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import colors from '../constants/Colors';
@@ -67,78 +67,80 @@ class loginScreen extends Component {
 	render() {
 		return (
 			<Container>
-				<Content>
-					<GlobalHeader type={2} navigateTo={this.navigateTo} />
-					{this.state.errors &&
-						!!this.state.errors.length && (
-							<Accordion
-								dataArray={this.state.errors}
-								icon="add"
-								expandedIcon="remove"
-								contentStyle={styles.errorStyle}
-								expanded={0}
-							/>
-						)}
+				<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+					<Content style={styles.content}>
+						<GlobalHeader type={2} navigateTo={this.navigateTo} />
+						{this.state.errors &&
+							!!this.state.errors.length && (
+								<Accordion
+									dataArray={this.state.errors}
+									icon="add"
+									expandedIcon="remove"
+									contentStyle={styles.errorStyle}
+									expanded={0}
+								/>
+							)}
 
-					<View style={styles.contentContainer}>
-						<View style={styles.titleContainer}>
-							<Text style={styles.title}>LOGIN</Text>
-						</View>
-						<View style={[styles.inputContainer, {
-							borderBottomColor: this.state.isEmailFocused ? colors.brandColor : colors.lightBorder
-						}]}>
-							<Ionicons
-								name="md-mail"
-								size={32}
-								color={this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor}
-								style={styles.inputIcons} />
-							<TextInput
-								placeholder="Email"
-								style={[styles.input, {
-									color: this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor
-								}]}
-								onChangeText={(text) => this.setState({ email: text })}
-								value={this.state.email}
-								onFocus={() => { this.setState({ isEmailFocused: true }) }}
-								onBlur={() => { this.setState({ isEmailFocused: false }) }}
-							/>
-						</View>
-						<View style={[
-							styles.inputContainer, {
-								borderBottomColor: this.state.isPasswordFocused ? colors.brandColor : colors.lightBorder
+						<View style={styles.contentContainer}>
+							<View style={styles.titleContainer}>
+								<Text style={styles.title}>LOGIN</Text>
+							</View>
+							<View style={[styles.inputContainer, {
+								borderBottomColor: this.state.isEmailFocused ? colors.brandColor : colors.lightBorder
 							}]}>
-							<Ionicons
-								name="md-lock" size={32}
-								color={this.state.isPasswordFocused ? colors.emphasisTextColor : colors.bodyTextColor}
-								style={styles.inputIcons} />
-							<TextInput
-								placeholder="Password"
-								style={[styles.input, {
-									color: this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor
-								}]}
-								onChangeText={(text) => this.setState({ password: text })}
-								value={this.state.password}
-								secureTextEntry={true}
-								onFocus={() => { this.setState({ isPasswordFocused: true }) }}
-								onBlur={() => { this.setState({ isPasswordFocused: false }) }}
-							/>
-						</View>
-						<View style={styles.forgotPasswordContainer}>
-							<Text style={styles.forgotPassword}>Forgot your password?</Text>
-						</View>
-						<View style={styles.buttonContainer}>
-							<Button danger style={styles.button} onPress={this.onLoginClick}>
-								<Text>LOGIN</Text>
-							</Button>
-						</View>
-						<View style={styles.registerContainer}>
-							<Text style={styles.body}>Dont have an account?</Text>
-							<Text style={styles.registerText} onPress={this.onRegisterClick}>
-								REGISTER
+								<Ionicons
+									name="md-mail"
+									size={32}
+									color={this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+									style={styles.inputIcons} />
+								<TextInput
+									placeholder="Email"
+									style={[styles.input, {
+										color: this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor
+									}]}
+									onChangeText={(text) => this.setState({ email: text })}
+									value={this.state.email}
+									onFocus={() => { this.setState({ isEmailFocused: true }) }}
+									onBlur={() => { this.setState({ isEmailFocused: false }) }}
+								/>
+							</View>
+							<View style={[
+								styles.inputContainer, {
+									borderBottomColor: this.state.isPasswordFocused ? colors.brandColor : colors.lightBorder
+								}]}>
+								<Ionicons
+									name="md-lock" size={32}
+									color={this.state.isPasswordFocused ? colors.emphasisTextColor : colors.bodyTextColor}
+									style={styles.inputIcons} />
+								<TextInput
+									placeholder="Password"
+									style={[styles.input, {
+										color: this.state.isEmailFocused ? colors.emphasisTextColor : colors.bodyTextColor
+									}]}
+									onChangeText={(text) => this.setState({ password: text })}
+									value={this.state.password}
+									secureTextEntry={true}
+									onFocus={() => { this.setState({ isPasswordFocused: true }) }}
+									onBlur={() => { this.setState({ isPasswordFocused: false }) }}
+								/>
+							</View>
+							<View style={styles.forgotPasswordContainer}>
+								<Text style={styles.forgotPassword}>Forgot your password?</Text>
+							</View>
+							<View style={styles.buttonContainer}>
+								<Button danger style={styles.button} onPress={this.onLoginClick}>
+									<Text>LOGIN</Text>
+								</Button>
+							</View>
+							<View style={styles.registerContainer}>
+								<Text style={styles.body}>Dont have an account?</Text>
+								<Text style={styles.registerText} onPress={this.onRegisterClick}>
+									REGISTER
 							</Text>
+							</View>
 						</View>
-					</View>
-				</Content>
+					</Content>
+				</KeyboardAvoidingView>
 			</Container>
 		);
 	}
@@ -149,6 +151,9 @@ const buttonWidth = '40%';
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+	content: {
+		flex: 1,
+	},
 	errorStyle: {
 		fontWeight: 'bold',
 		backgroundColor: colors.backgroundColor
@@ -177,7 +182,9 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		flex: 1,
 		flexDirection: 'column',
-		alignItems: 'center'
+		alignItems: 'center',
+		justifyContent: "flex-end",
+
 	},
 	titleContainer: {
 		paddingTop: 30,
@@ -212,7 +219,8 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignItems: 'center',
 		width,
-		marginTop: 25
+		marginTop: 25,
+		marginBottom: 30,
 	},
 	registerText: {
 		color: colors.brandColor
