@@ -320,13 +320,13 @@ const mapStateToProps = (state) => ({
 export default RouteScreen;
 
 // Background location tracker
-TaskManager.defineTask('firstTask', async ({ data, error }) => {
-	console.log('location update');
-	if (error) {
-		console.log(error);
-		return;
-	}
-	if (data) {
-		const { locations } = data;
-	}
-});
+// TaskManager.defineTask('firstTask', async ({ data, error }) => {
+// 	console.log('location update');
+// 	if (error) {
+// 		console.log(error);
+// 		return;
+// 	}
+// 	if (data) {
+// 		const { locations } = data;
+// 	}
+// });

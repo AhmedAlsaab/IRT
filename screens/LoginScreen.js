@@ -9,6 +9,8 @@ import colors from '../constants/Colors';
 import { connect } from 'react-redux';
 import { addUser } from '../redux/actions/userAction';
 
+
+
 class loginScreen extends Component {
 	state = {
 		email: 'vuilleumierl@cardiff.ac.uk',
@@ -18,6 +20,7 @@ class loginScreen extends Component {
 		isEmailFocused: false,
 		isPasswordFocused: false,
 	};
+	
 
 	onLoginClick = () => {
 		const message = [{ title: 'Errors', content: 'Provide correct credentials' }];

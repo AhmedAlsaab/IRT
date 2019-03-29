@@ -56,8 +56,8 @@
 		"eslint-plugin-jsx-a11y": "^6.2.1",
 		"eslint-plugin-react": "^7.12.4",
 		"jest-expo": "^32.0.0",
-		"react-devtools": "^3.6.0",
-		"nodemon": "^1.18.9"
+		"nodemon": "^1.18.10",
+		"react-devtools": "^3.6.0"
 	},
 	"private": true
 }
