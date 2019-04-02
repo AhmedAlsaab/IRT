@@ -188,7 +188,6 @@ app.post('/booking/sendEmail', (req, res) => {
 	const date = req.body.date;
 	const time = req.body.time;
 	const email = req.body.email;
-	const returnTicket = req.body.returnTicket;
 
 	const output = `
 		<h1> Your confirmed booking</h1>
@@ -196,7 +195,7 @@ app.post('/booking/sendEmail', (req, res) => {
 		<ul>
 			<li>Date: ${date}</li>
 			<li>Time: ${time}</li>
-			<li>Ticket type: ${returnTicket === 1 ? 'RETURN' : 'SINGLE'}</li>
+			<li>Ticket type: ${data.returnTicket === 1 ? 'RETURN' : 'SINGLE'}</li>
 			<li>From: ${data.startLocation}</li>
 			<li>To: ${data.endLocation}</li>
 			<li>Number of passengers: ${data.passenger}</li>

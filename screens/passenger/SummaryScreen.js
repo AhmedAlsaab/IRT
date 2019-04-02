@@ -98,7 +98,7 @@ class SummaryScreen extends React.Component {
 			Expo.Notifications.createChannelAndroidAsync('reminders', {
 				name: 'Reminders',
 				priority: 'max',
-				vibrate: [ 0, 250, 250, 250 ]
+				vibrate: [0, 250, 250, 250]
 			});
 		}
 	}
@@ -318,13 +318,13 @@ class SummaryScreen extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
+					<GlobalHeader
+						type={3}
+						header="Journey Summary"
+						navigateTo={this.navigateTo}
+						isBackButtonActive={1}
+					/>
 					<Content>
-						<GlobalHeader
-							type={3}
-							header="Journey Summary"
-							navigateTo={this.navigateTo}
-							isBackButtonActive={1}
-						/>
 						<View>
 							{/* Page header and introductory text */}
 							<View style={styles.introduction}>
@@ -417,7 +417,7 @@ class SummaryScreen extends React.Component {
 										<View style={styles.buttonContainer}>
 											<Button
 												danger
-												style={[ styles.button, { backgroundColor: colors.brandColor } ]}
+												style={[styles.button, { backgroundColor: colors.brandColor }]}
 												onPress={this.payForTicket}
 											>
 												<Text>Pay</Text>
@@ -440,7 +440,7 @@ class SummaryScreen extends React.Component {
 											<View style={styles.buttonContainer}>
 												<Button
 													danger
-													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
+													style={[styles.button, { backgroundColor: colors.brandColor }]}
 													onPress={this.payForTicket}
 												>
 													<Text style={styles.buttonText}>Pay</Text>
@@ -448,7 +448,7 @@ class SummaryScreen extends React.Component {
 
 												<Button
 													danger
-													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
+													style={[styles.button, { backgroundColor: colors.brandColor }]}
 													onPress={() => {
 														this.props.navigation.navigate('AddFunds');
 													}}
@@ -457,7 +457,7 @@ class SummaryScreen extends React.Component {
 												</Button>
 											</View>
 											<View
-												style={[ styles.buttonContainer, { marginTop: -5, marginBottom: 25 } ]}
+												style={[styles.buttonContainer, { marginTop: -5, marginBottom: 25 }]}
 											>
 												<Button
 													bordered
