@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
-import { Platform, View, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { Platform, View, StyleSheet, Button, Image, Dimensions, Text } from 'react-native';
 import { Location, Permissions, Notifications } from 'expo';
 import MapView, { Polyline, Marker } from 'react-native-maps';
 import ip from '../../ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
+import { YellowBox } from 'react-native';
+YellowBox.ignoreWarnings([
+	'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?',
+	'Failed prop type: The prop `initialRegion.latitude` is marked as required in `MapView`, but its value is `null`.'
+]);
 
 let { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 
-export default class Geofence extends Component {
+export default class TrackDriver extends Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -19,18 +24,17 @@ export default class Geofence extends Component {
 		locationResult: null,
 		lat: null,
 		long: null,
+		loaded: false,
 		withinRadius: '',
 		Distance: '',
 		driverLocation: null,
 		mapCoords: null,
 		isDriverOnTheWay: false,
 		pointCoords: [],
-		deviceToken: '',
-		pickupLocation: '55 Mary Street'
+		deviceToken: ''
 	};
 
 	componentDidMount() {
-		this._getLocationAsync();
 		this.checkDriver();
 		// Channel for popup notifications
 		if (Platform.OS === 'android') {
@@ -43,6 +47,7 @@ export default class Geofence extends Component {
 	}
 
 	async componentWillMount() {
+		await this._getLocationAsync();
 		await this.registerForPushNotificationsAsync();
 	}
 
@@ -103,6 +108,7 @@ export default class Geofence extends Component {
 
 		socket.on('driverLocation', (driverLocation) => {
 			const pointCoords = [ ...this.state.pointCoords, driverLocation ];
+			const { latitude, longitude } = this.props.navigation.state.params;
 			this.setState({
 				isDriverOnTheWay: true,
 				driverLocation: driverLocation
@@ -123,7 +129,7 @@ export default class Geofence extends Component {
 					// User Position
 					{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
 					// Point Position
-					{ latitude: this.state.lat, longitude: this.state.long }
+					{ latitude, longitude }
 				);
 				this.setState({
 					withinRadius: 'Yes',
@@ -150,14 +156,20 @@ export default class Geofence extends Component {
 		}
 		// Get user's location
 		let location = await Location.getCurrentPositionAsync({});
-		this.setState({
-			locationResult: location,
-			lat: location.coords.latitude,
-			long: location.coords.longitude
-		});
+		this.setState(
+			{
+				locationResult: location,
+				lat: location.coords.latitude,
+				long: location.coords.longitude,
+				loaded: true
+			},
+			() => console.log(this.state.lat, this.state.long)
+		);
+		console.log(location.coords.latitude);
 	};
 
 	render() {
+		const pickupLocation = this.props.navigation.state.params;
 		let driverMarker = null;
 		if (this.state.isDriverOnTheWay) {
 			driverMarker = (
@@ -166,6 +178,7 @@ export default class Geofence extends Component {
 				</Marker>
 			);
 		}
+
 		return (
 			<View style={StyleSheet.absoluteFill}>
 				<MapView
@@ -181,8 +194,16 @@ export default class Geofence extends Component {
 					}}
 					showsUserLocation={true}
 				>
+					<Marker
+						pinColor={'pink'}
+						coordinate={{ latitude: pickupLocation.latitude, longitude: pickupLocation.longitude }}
+						title={pickupLocation.street}
+						description={'Your Pickup Location'}
+					/>
+
 					{driverMarker}
 				</MapView>
+
 				<View style={styles.calloutView}>
 					<Button
 						onPress={() => {

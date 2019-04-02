@@ -5,17 +5,20 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import { Button, Content, Container, Text, StyleProvider } from 'native-base';
 import Dialog, { DialogFooter, DialogButton, DialogContent, DialogTitle } from 'react-native-popup-dialog';
+import _ from 'lodash';
 import getTheme from '../native-base-theme/components';
 import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import ip from '../ipstore';
 import uuid from 'uuid/v4';
 import colors from '../constants/Colors';
+import QRCode from 'react-native-qrcode';
 
 import { connect } from 'react-redux';
 import { addTransaction } from '../redux/actions/transactionAction';
 import { userPayForTicket } from '../redux/actions/userAction';
-import { cancelTicket } from '../redux/actions/ticketAction';
+import { cancelTicket, fetchTickets } from '../redux/actions/ticketAction';
+import { postRequestAuthorized, getRequestAuthorized } from '../API';
 
 class TicketDetail extends React.Component {
 	static navigationOptions = {
@@ -40,6 +43,65 @@ class TicketDetail extends React.Component {
 		this.setState({
 			cancelTicketPopup: false
 		});
+	};
+
+	cancelTicketPopupYes = (ticketDate) => {
+		// Cancellation fee applied
+		this.cancellationFeeApplied(ticketDate).then((cancellationFeeApplied) => {
+			if (cancellationFeeApplied) {
+				this.ticketCancelledPost(1, 1);
+
+				this.props.userPayForTicket(1);
+				this.props.addTransaction({
+					current_funds: parseFloat(this.props.user.funds).toFixed(2),
+					date: new Date(),
+					fk_transaction_type_id: 4,
+					fk_user_id: this.props.user.id,
+					spent_funds: 1,
+					transaction_id: uuid(),
+					type: 'Ticket Cancelled',
+					cancellation_fee: 1
+				});
+			} else {
+				// Cancellation fee not applied
+				this.ticketCancelledPost(0, 0);
+				this.props.addTransaction({
+					current_funds: parseFloat(this.props.user.funds).toFixed(2),
+					date: new Date(),
+					fk_transaction_type_id: 4,
+					fk_user_id: this.props.user.id,
+					spent_funds: 0.0,
+					transaction_id: uuid(),
+					type: 'Ticket Cancelled',
+					cancellation_fee: 0
+				});
+			}
+
+			this.props.ticketCancelRedux(this.props.navigation.state.params.ticket.id);
+			this.cancelTicketPopupNo();
+			this.navigateTo();
+		});
+	};
+
+	cancellationFeeApplied = (ticketDate) => {
+		return getRequestAuthorized(
+			`http://${ip}:3000/user/cancelTicket/journey?ticketId=${this.props.navigation.state.params.ticket.id}`
+		).then((endTime) => {
+			const timeDiff = moment(endTime).unix() - moment(ticketDate).unix();
+
+			if (timeDiff <= 7200 && timeDiff >= 0) return Promise.resolve(true);
+			return Promise.resolve(false);
+		});
+	};
+
+	ticketCancelledPost = (amount, cancellationFeeApplied) => {
+		const data = {
+			ticketId: this.props.navigation.state.params.ticket.id,
+			amount: amount,
+			cancellationFeeApplied: cancellationFeeApplied
+		};
+
+		return postRequestAuthorized(`http://${ip}:3000/user/cancelTicket`, data);
 	};
 
 	cancelTicketPopupYes = (ticketDate) => {
@@ -97,22 +159,28 @@ class TicketDetail extends React.Component {
 			cancellationFeeApplied: cancellationFeeApplied
 		};
 
-		return fetch(`http://${ip}:3000/user/cancelTicket`, {
-			method: 'POST',
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data)
-		}).catch((err) => { });
+		return postRequestAuthorized(`http://${ip}:3000/user/cancelTicket`, data);
+	};
+
+	_getPickupLocation = () => {
+		return getRequestAuthorized(
+			`http://${ip}:3000/ticket/pickup?id=${this.props.navigation.state.params.ticket.id}`
+		)
+			.then((response) => {
+				return Promise.resolve(response);
+			})
+			.then((coords) => {
+				this.navigateToTrack(coords);
+			})
+			.catch((error) => console.log(error));
 	};
 
 	navigateTo = () => {
 		this.props.navigation.navigate('Ticket');
 	};
 
-	navigateToTrack = () => {
-		this.props.navigation.navigate('Track');
+	navigateToTrack = (startCoords) => {
+		this.props.navigation.navigate('Track', startCoords);
 	};
 
 	render() {
@@ -120,23 +188,28 @@ class TicketDetail extends React.Component {
 		return (
 			<StyleProvider style={getTheme(platform)}>
 				<Container>
-					<GlobalHeader type={3} header='Ticket Details' navigateTo={this.navigateTo} isBackButtonActive={1} />
+					<GlobalHeader
+						type={3}
+						header="Ticket Details"
+						navigateTo={this.navigateTo}
+						isBackButtonActive={1}
+					/>
 					<Content>
 						<View style={styles.card}>
 							<View style={styles.ticketTypeContainer}>
 								{ticket.expired ? (
-									<View style={[styles.ticketType, { backgroundColor: colors.lightBorder }]}>
+									<View style={[ styles.ticketType, { backgroundColor: colors.lightBorder } ]}>
 										<Text style={styles.ticketTypeText}>
 											{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
 										</Text>
 									</View>
 								) : (
-										<View style={styles.ticketType}>
-											<Text style={styles.ticketTypeText}>
-												{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
-											</Text>
-										</View>
-									)}
+									<View style={styles.ticketType}>
+										<Text style={styles.ticketTypeText}>
+											{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
+										</Text>
+									</View>
+								)}
 							</View>
 							<View style={styles.ticket}>
 								<View style={styles.ticketHeader}>
@@ -154,11 +227,15 @@ class TicketDetail extends React.Component {
 										</Text>
 									</View>
 									<View style={styles.ticketTypeIcon}>
-										{ticket.returnTicket ?
+										{ticket.returnTicket ? (
 											<IonIcon name="ios-swap" size={30} color={colors.bodyTextColor} />
-											:
-											<IonIcon name="ios-arrow-round-forward" size={30} color={colors.bodyTextColor} />
-										}
+										) : (
+											<IonIcon
+												name="ios-arrow-round-forward"
+												size={30}
+												color={colors.bodyTextColor}
+											/>
+										)}
 									</View>
 									<View style={styles.ticketTo}>
 										<Text style={styles.body}>
@@ -174,32 +251,34 @@ class TicketDetail extends React.Component {
 								<Text style={styles.qrHeaderText}>TICKET QR CODE</Text>
 							</View>
 							<View style={styles.qrCode}>
-								<Image
-									source={require('../assets/images/qrcode.jpg')}
+								<QRCode
+									value={this.state.text}
 									style={{
 										width: 150,
-										height: 150,
+										height: 10,
 										borderRadius: 10,
 										alignSelf: 'center'
 									}}
+									bgColor="red"
+									fgColor="white"
 								/>
 							</View>
 						</View>
 
 						{ticket.expired === 0 &&
-							ticket.cancelled === 0 && (
-								<View style={styles.buttonContainer}>
-									<Button
-										danger
-										style={[styles.button, { backgroundColor: colors.brandColor }]}
-										onPress={() => {
-											this.navigateToTrack();
-										}}
-									>
-										<Text style={styles.buttonText}>TRACK VEHICLE</Text>
-									</Button>
-								</View>
-							)}
+						ticket.cancelled === 0 && (
+							<View style={styles.buttonContainer}>
+								<Button
+									danger
+									style={[ styles.button, { backgroundColor: colors.brandColor } ]}
+									onPress={() => {
+										this._getPickupLocation();
+									}}
+								>
+									<Text style={styles.buttonText}>TRACK VEHICLE</Text>
+								</Button>
+							</View>
+						)}
 
 						<View style={styles.itineraryContainer}>
 							<Text style={styles.heading}>ITINERARY DETAILS</Text>
@@ -209,15 +288,17 @@ class TicketDetail extends React.Component {
 									<Text style={styles.label}>Passengers:</Text>
 								</View>
 								<View style={styles.details}>
-									<Text style={[styles.body, { marginTop: 5 }]}>{ticket.returnTicket === 1 ? "RETURN" : "SINGLE"}</Text>
+									<Text style={[ styles.body, { marginTop: 5 } ]}>
+										{ticket.returnTicket === 1 ? 'RETURN' : 'SINGLE'}
+									</Text>
 									<View style={styles.icon}>
 										<IonIcon name="md-people" size={20} color={colors.bodyTextColor} />
-										<Text style={[styles.body, { marginLeft: 7 }]}>{ticket.numPassengers}</Text>
+										<Text style={[ styles.body, { marginLeft: 7 } ]}>{ticket.numPassengers}</Text>
 									</View>
 									{ticket.numWheelchairs > 0 ? (
 										<View style={styles.icon}>
 											<MaterialIcon name="accessible" size={20} color={colors.bodyTextColor} />
-											<Text style={[styles.body, { marginLeft: 5 }]}>
+											<Text style={[ styles.body, { marginLeft: 5 } ]}>
 												{ticket.numWheelchairs}
 											</Text>
 										</View>
@@ -227,24 +308,24 @@ class TicketDetail extends React.Component {
 						</View>
 
 						{ticket.expired === 0 &&
-							ticket.cancelled === 0 && (
-								<View style={styles.buttonContainer}>
-									<Button danger bordered style={styles.button} onPress={this.cancelTicketPopup}>
-										<Text style={styles.buttonText}>CANCEL</Text>
-									</Button>
+						ticket.cancelled === 0 && (
+							<View style={styles.buttonContainer}>
+								<Button danger bordered style={styles.button} onPress={this.cancelTicketPopup}>
+									<Text style={styles.buttonText}>CANCEL</Text>
+								</Button>
 
-									<Button
-										danger
-										bordered
-										style={styles.button}
-										onPress={() => {
-											this.amendTicket(ticket);
-										}}
-									>
-										<Text style={styles.buttonText}>AMEND</Text>
-									</Button>
-								</View>
-							)}
+								<Button
+									danger
+									bordered
+									style={styles.button}
+									onPress={() => {
+										this.amendTicket(ticket);
+									}}
+								>
+									<Text style={styles.buttonText}>AMEND</Text>
+								</Button>
+							</View>
+						)}
 
 						<Dialog
 							width={0.8}

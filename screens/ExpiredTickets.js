@@ -8,6 +8,7 @@ import platform from '../native-base-theme/variables/platform';
 import GlobalHeader from '../components/GlobalHeader';
 import tickets from './data';
 import ip from '../ipstore';
+import { getRequestAuthorized } from '../../API';
 
 import TicketLayout from './TicketLayout';
 import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
@@ -25,7 +26,7 @@ export default class TicketsScreen extends React.Component {
 	};
 
 	componentDidMount() {
-		fetch(`http://${ip}:3000/ticketsExpired`).then((response) => response.json()).then((response) => {
+		getRequestAuthorized(`http://${ip}:3000/ticketsExpired`).then((response) => {
 			this.setState({
 				ticketData: response.ticketExpired
 			});
@@ -85,7 +86,7 @@ export default class TicketsScreen extends React.Component {
 							<View style={styles.titleContainer}>
 								<Text style={styles.title}>My Tickets</Text>
 							</View>
-							<View style={{flex: 1, flexDirection: 'row', paddingTop: 25, paddingBottom: 25}}>
+							<View style={{ flex: 1, flexDirection: 'row', paddingTop: 25, paddingBottom: 25 }}>
 								<Button bordered danger style={styles.secondaryButton}>
 									<Text style={styles.secondaryButtontext}>Active Tickets</Text>
 								</Button>
@@ -93,7 +94,6 @@ export default class TicketsScreen extends React.Component {
 									<Text style={styles.secondaryButtontext}>Expired Tickets</Text>
 								</Button>
 								<View>{ticket}</View>
-
 							</View>
 						</Content>
 					</Container>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: 'column',
 		alignSelf: 'center',
-		backgroundColor: 'transparent',
+		backgroundColor: 'transparent'
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -151,17 +151,17 @@ const styles = StyleSheet.create({
 	buttontext: {
 		color: '#000000'
 	},
-    secondaryButton: {
+	secondaryButton: {
 		flex: 1,
 		flexDirection: 'row',
-		width: '50%',
-    },
+		width: '50%'
+	},
 	secondaryButtontext: {
 		color: '#ff0000'
 	},
 	Container: {
 		paddingTop: 20,
-		backgroundColor: 'transparent',
+		backgroundColor: 'transparent'
 	},
 	title: {
 		textAlign: 'center',

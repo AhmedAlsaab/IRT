@@ -6,6 +6,7 @@ import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
+import { getRequestAuthorized } from '../../API' 
 
 export default class MySchedule extends React.Component {
 	static navigationOptions = {
@@ -25,22 +26,10 @@ export default class MySchedule extends React.Component {
 		}
 	};
 
-	fetchData = async () => {
-		const response = await fetch(`http://${ip}:3000/driver/stops`);
-		const coordinate = await response.json();
-		this.setState({ data: coordinate });
-	};
-
 	componentDidMount() {
-		this.fetchData();
+		getRequestAuthorized(`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`)
+		.then((coordinate) => this.setState({ data: coordinate }));
 	}
-
-	TestStates = () => {
-		const data = {
-			coordsArray: this.state.data
-		};
-		console.log(data);
-	};
 
 	navigateTo = () => {
 		this.props.navigation.navigate('DailySchedule');
@@ -127,7 +116,7 @@ export default class MySchedule extends React.Component {
 						</View>
 						<MapView
 							onPress={() => {
-								this.props.navigation.navigate('Route');
+								this.props.navigation.navigate('Route', {id: this.props.navigation.state.params.id});
 							}}
 							style={styles.map}
 							minZoomLevel={zoomAmount}

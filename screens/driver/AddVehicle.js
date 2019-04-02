@@ -1,0 +1,484 @@
+import { Accordion, Button, Container, Content, Text, ListItem, CheckBox, Body } from 'native-base';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView, Picker } from 'react-native';
+import GlobalHeader from '../../components/GlobalHeader';
+import colors from '../../constants/Colors';
+import ip from '../../ipstore';
+var vehicleData = require('../../vehicleData.json');
+
+import { connect } from 'react-redux';
+import { addVehicle } from './../../redux/actions/vehicleAction';
+import { fetchVehicles } from '../../redux/actions/vehicleAction';
+import { postRequestAuthorized } from '../../API';
+
+class AddVehicle extends React.Component {
+	static navigationOptions = {
+		header: null
+	};
+	state = {
+		makeId: null,
+		make: null,
+		model: null,
+		registration: null,
+		numSeats: null,
+		wheelchairAccess: false,
+		numWheelchairs: null,
+		currentlyDriven: null,
+		vehicleType: null,
+
+		registrationFocused: false,
+		numSeatsFocused: false,
+		vehicleTypeFocused: false,
+
+		models: []
+	};
+
+	onSubmit = () => {
+		const { make, model, registration, numSeats, numWheelchairs, vehicleType } = this.state;
+		const data = {
+			make: make,
+			model: model,
+			registration: registration.toUpperCase(),
+			numPassengers: numSeats,
+			numWheelchairs: numWheelchairs ? numWheelchairs : 0,
+			currentlyDriven: 0,
+			vehicleType: vehicleType
+		};
+		postRequestAuthorized(`http://${ip}:3000/driver/vehicles/addVehicle`, data)
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						this.props.addVehicle(data);
+						this.props.navigation.state.params.onFetchNewVehicleId();
+						this.navigateTo();
+						break;
+					//Input Validation Failed
+					case 0:
+						this.setState({
+							errors: this.parseErrors(responseJSON.errors)
+						});
+						break;
+				}
+			})
+			.catch((error) => console.log(error));
+	};
+
+	parseErrors = (errorList) => {
+		var errors = {
+			title: 'Errors',
+			content: ''
+		};
+
+		for (var i = 0; i < errorList.length; i++) {
+			errors.content += errorList[i].msg + '\n';
+		}
+
+		return [ errors ];
+	};
+
+	componentDidUpdate() {
+		this.props.fetchVehicles();
+	}
+
+	onMakeSelect = (itemId, itemMake) => {
+		this.setState({
+			makeId: itemId,
+			make: itemMake
+		});
+		this.props.navigation.navigate('AddVehicle');
+	};
+
+	onModelSelect = (itemModel) => {
+		this.setState({
+			model: itemModel
+		});
+		this.setState({ models: [] });
+		this.props.navigation.navigate('AddVehicle');
+	};
+
+	navigateToMakeSelect = () => {
+		this.setState({ model: null, models: [] });
+		const data = {
+			vehicleData: vehicleData.car_makes,
+			selectType: 'make',
+			header: 'Select a Make',
+			dividers: true
+		};
+		this.props.navigation.navigate('MakeModelSelect', {
+			onMakeSelect: this.onMakeSelect,
+			onNavigateBack: this.onNavigateBack,
+			data: data
+		});
+	};
+
+	navigateToModelSelect = () => {
+		this.determineModels();
+		const data = {
+			vehicleData: this.state.models,
+			selectType: 'model',
+			header: 'Select a Model',
+			dividers: false,
+			makeId: this.state.makeId
+		};
+		this.props.navigation.navigate('MakeModelSelect', {
+			onModelSelect: this.onModelSelect,
+			onNavigateBack: this.onNavigateBack,
+			data: data
+		});
+	};
+
+	determineModels = () => {
+		vehicleData.car_models.forEach((item) => {
+			if (this.state.makeId === item.make_id) {
+				this.setState({
+					models: this.state.models.push(item)
+				});
+			}
+		});
+	};
+
+	onNavigateBack = () => {
+		this.setState({ models: [] });
+		this.props.navigation.navigate('AddVehicle');
+	};
+
+	navigateTo = () => {
+		this.props.navigation.navigate('MyVehicles');
+	};
+
+	render() {
+		return (
+			<Container>
+				<GlobalHeader type={3} navigateTo={this.navigateTo} header="Add a vehicle" isBackButtonActive={1} />
+				<Content>
+					{this.state.errors &&
+					!!this.state.errors.length && (
+						<Accordion
+							dataArray={this.state.errors}
+							icon="add"
+							expandedIcon="remove"
+							contentStyle={styles.errorStyle}
+							expanded={0}
+						/>
+					)}
+					{this.state.error && (
+						<Accordion
+							dataArray={this.state.error}
+							icon="add"
+							expandedIcon="remove"
+							contentStyle={styles.errorStyle}
+							expanded={0}
+						/>
+					)}
+					<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+						<Content style={styles.content}>
+							<View style={styles.contentContainer}>
+								{/* Car make */}
+								<TouchableOpacity
+									onPress={this.navigateToMakeSelect}
+									style={[
+										styles.inputContainer,
+										{ borderBottomColor: colors.lightBorder, height: 50 }
+									]}
+								>
+									<Text style={styles.text}>{this.state.make ? this.state.make : 'Make'}</Text>
+								</TouchableOpacity>
+
+								{/* Car model */}
+								<TouchableOpacity
+									disabled={this.state.makeId ? false : true}
+									onPress={this.navigateToModelSelect}
+									style={[
+										styles.inputContainer,
+										{ borderBottomColor: colors.lightBorder, height: 50 }
+									]}
+								>
+									<Text
+										style={[
+											styles.text,
+											{ color: this.state.makeId ? colors.bodyTextColor : colors.lightBorder }
+										]}
+									>
+										{this.state.model ? this.state.model : 'Model'}
+									</Text>
+								</TouchableOpacity>
+
+								{/* Car registration */}
+								<View
+									style={[
+										styles.inputContainer,
+										{
+											borderBottomColor: this.state.registrationFocused
+												? colors.brandColor
+												: colors.lightBorder
+										}
+									]}
+								>
+									<TextInput
+										placeholder="Registration"
+										placeholderTextColor={
+											this.state.registrationFocused ? (
+												colors.emphasisTextColor
+											) : (
+												colors.bodyTextColor
+											)
+										}
+										style={[
+											styles.input,
+											{
+												color: this.state.registrationFocused
+													? colors.emphasisTextColor
+													: colors.bodyTextColor
+											}
+										]}
+										onChangeText={(registration) => {
+											this.setState({ registration });
+										}}
+										value={this.state.registration ? this.state.registration.toString() : null}
+										onFocus={() => {
+											this.setState({ registrationFocused: true });
+										}}
+										onBlur={() => {
+											this.setState({ registrationFocused: false });
+										}}
+									/>
+								</View>
+
+								{/* Car number of seats */}
+								<View
+									style={[
+										styles.inputContainer,
+										{
+											borderBottomColor: this.state.numSeatsFocused
+												? colors.brandColor
+												: colors.lightBorder
+										}
+									]}
+								>
+									<TextInput
+										placeholder="No. of passenger seats"
+										placeholderTextColor={
+											this.state.numSeatsFocused ? colors.emphasisTextColor : colors.bodyTextColor
+										}
+										style={[
+											styles.input,
+											{
+												color: this.state.numSeatsFocused
+													? colors.emphasisTextColor
+													: colors.bodyTextColor
+											}
+										]}
+										onChangeText={(numSeats) => {
+											this.setState({ numSeats });
+										}}
+										value={this.state.numSeats ? this.state.numSeats.toString() : null}
+										onFocus={() => {
+											this.setState({ numSeatsFocused: true });
+										}}
+										onBlur={() => {
+											this.setState({ numSeatsFocused: false });
+										}}
+									/>
+								</View>
+
+								{/* Wheelchair spaces option */}
+								<ListItem
+									style={{
+										marginLeft: 5,
+										borderBottomWidth: 0.75,
+										borderBottomColor: colors.lightBorder
+									}}
+								>
+									<CheckBox
+										checked={this.state.wheelchairAccess}
+										onPress={() =>
+											this.setState({ wheelchairAccess: !this.state.wheelchairAccess })}
+										color={colors.bodyTextColor}
+									/>
+									<Body>
+										<Text style={styles.body}>Wheelchair spaces?</Text>
+									</Body>
+								</ListItem>
+
+								{/* Car number of wheelchairs */}
+								{this.state.wheelchairAccess ? (
+									<View
+										style={[
+											styles.inputContainer,
+											{
+												borderBottomColor: this.state.wheelchairAccessFocused
+													? colors.brandColor
+													: colors.lightBorder,
+												marginLeft: 28
+											}
+										]}
+									>
+										<TextInput
+											placeholder="No. of wheelchair spaces"
+											placeholderTextColor={
+												this.state.wheelchairAccessFocused ? (
+													colors.emphasisTextColor
+												) : (
+													colors.bodyTextColor
+												)
+											}
+											style={[
+												styles.input,
+												{
+													color: this.state.wheelchairAccessFocused
+														? colors.emphasisTextColor
+														: colors.bodyTextColor
+												}
+											]}
+											onChangeText={(numWheelchairs) => {
+												this.setState({ numWheelchairs });
+											}}
+											value={
+												this.state.numWheelchairs ? this.state.numWheelchairs.toString() : null
+											}
+											onFocus={() => {
+												this.setState({ wheelchairAccessFocused: true });
+											}}
+											onBlur={() => {
+												this.setState({ wheelchairAccessFocused: false });
+											}}
+										/>
+									</View>
+								) : null}
+
+								<View
+									style={[
+										styles.inputContainer,
+										{ borderBottomColor: colors.lightBorder, height: 50 }
+									]}
+								>
+									<Picker
+										name="type"
+										style={styles.inputPicker}
+										itemStyle={{ color: colors.bodyTextColor }}
+										selectedValue={this.state.vehicleType}
+										onValueChange={(itemValue, itemIndex) =>
+											this.setState({ vehicleType: itemValue })}
+									>
+										<Picker.Item
+											color={colors.bodyTextColor}
+											size={5}
+											label="Select a vehicle type"
+											value={0}
+										/>
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Bus" value={1} />
+										<Picker.Item
+											color={colors.bodyTextColor}
+											fontSize={5}
+											label="Mini Bus"
+											value={2}
+										/>
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Taxi" value={3} />
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Car" value={4} />
+									</Picker>
+								</View>
+
+								{/* Add vehicle */}
+								<View style={styles.buttonContainer}>
+									<Button danger style={styles.button} onPress={() => this.onSubmit()}>
+										<Text>Add Vehicle</Text>
+									</Button>
+								</View>
+							</View>
+						</Content>
+					</KeyboardAvoidingView>
+				</Content>
+			</Container>
+		);
+	}
+}
+
+const styles = StyleSheet.create({
+	content: {
+		flex: 1
+	},
+	dateTime: {
+		marginLeft: 8,
+		color: colors.bodyTextColor,
+		fontSize: 14
+	},
+	inputContainer: {
+		flexDirection: 'row',
+		borderBottomWidth: 0.75,
+		alignItems: 'center'
+	},
+	input: {
+		width: '100%',
+		padding: 10,
+		color: colors.bodyTextColor
+	},
+	inputPicker: {
+		height: 50,
+		width: 350
+	},
+	locationSuggestion: {
+		color: colors.emphasisTextColor,
+		backgroundColor: 'white',
+		padding: 5,
+		borderBottomWidth: 0.5,
+		borderBottomColor: colors.emphasisTextColor
+	},
+	contentContainer: {
+		width: '80%',
+		marginTop: 20,
+		marginBottom: 20,
+		flex: 1,
+		flexDirection: 'column',
+		alignSelf: 'center',
+		justifyContent: 'flex-end'
+	},
+	map: {
+		...StyleSheet.absoluteFillObject
+	},
+	buttonContainer: {
+		flexDirection: 'row',
+		alignSelf: 'center',
+		alignItems: 'center',
+		marginTop: 20,
+		marginBottom: 15
+	},
+	button: {
+		width: '100%',
+		justifyContent: 'center',
+		backgroundColor: colors.brandColor
+	},
+	secondaryButtonContainer: {
+		flexDirection: 'row',
+		marginTop: 25,
+		marginBottom: 20
+	},
+	secondaryButton: {
+		width: '100%',
+		justifyContent: 'center'
+	},
+	secondaryButtontext: {
+		color: colors.brandColor
+	},
+	body: {
+		color: colors.bodyTextColor,
+		fontSize: 14
+	},
+	checkboxContainer: {
+		justifyContent: 'flex-start'
+	},
+	text: {
+		fontSize: 14,
+		color: colors.bodyTextColor,
+		padding: 10
+	}
+});
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		addVehicle: (vehicle) => dispatch(addVehicle(vehicle)),
+		fetchVehicles: () => dispatch(fetchVehicles())
+	};
+};
+
+export default connect(null, mapDispatchToProps)(AddVehicle);

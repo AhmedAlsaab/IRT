@@ -6,6 +6,7 @@ import DriverNavigator from './DriverNavigator';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegistrationScreen';
 
+
 export default createAppContainer(
 	createSwitchNavigator({
 		// You could add another route here for authentication.
@@ -14,6 +15,6 @@ export default createAppContainer(
 		Login: LoginScreen,
 		Register: RegisterScreen,
 		Passenger: PassengerNavigator,
-		Driver: DriverNavigator
+		Driver: DriverNavigator,
 	})
 );
