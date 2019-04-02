@@ -11,19 +11,15 @@ export default class TicketLayout extends Component {
 		return (
 			<View style={styles.card}>
 				<View style={styles.ticketTypeContainer}>
-					{ticket.expired ?
-						<View style={[styles.ticketType, { backgroundColor: colors.bodyTextColor }]}>
-							<Text style={styles.ticketTypeText}>
-								{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
-							</Text>
+					{ticket.expired ? (
+						<View style={[ styles.ticketType, { backgroundColor: colors.bodyTextColor } ]}>
+							<Text style={styles.ticketTypeText}>{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}</Text>
 						</View>
-						:
+					) : (
 						<View style={styles.ticketType}>
-							<Text style={styles.ticketTypeText}>
-								{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}
-							</Text>
+							<Text style={styles.ticketTypeText}>{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}</Text>
 						</View>
-					}
+					)}
 				</View>
 				<TouchableOpacity style={styles.ticket} onPress={this.props.onOpen}>
 					<View style={styles.ticketHeader}>
@@ -34,33 +30,33 @@ export default class TicketLayout extends Component {
 						<View style={styles.passengerInfo}>
 							<View style={styles.icon}>
 								<IonIcon name="md-people" size={20} color={colors.bodyTextColor} />
-								<Text style={[styles.body, { marginLeft: 5 }]}>
-									{ticket.numPassengers}
-								</Text>
+								<Text style={[ styles.body, { marginLeft: 5 } ]}>{ticket.numPassengers}</Text>
 							</View>
-							{ticket.numWheelchairs > 0 ?
+							{ticket.numWheelchairs > 0 ? (
 								<View style={styles.icon}>
 									<MaterialIcon name="accessible" size={20} color={colors.bodyTextColor} />
-									<Text style={[styles.body, { marginLeft: 5 }]}>
-										{ticket.numWheelchairs}
-									</Text>
+									<Text style={[ styles.body, { marginLeft: 5 } ]}>{ticket.numWheelchairs}</Text>
 								</View>
-								: null}
+							) : null}
 						</View>
 					</View>
 					<View style={styles.ticketDetails}>
 						<View style={styles.ticketFrom}>
-							<Text style={styles.body}>{ticket.fromStreet}, {ticket.fromCity}</Text>
+							<Text style={styles.body}>
+								{ticket.fromStreet}, {ticket.fromCity}
+							</Text>
 						</View>
 						<View style={styles.ticketTypeIcon}>
-							{ticket.returnTicket ?
+							{ticket.returnTicket ? (
 								<IonIcon name="ios-swap" size={30} color={colors.bodyTextColor} />
-								:
+							) : (
 								<IonIcon name="ios-arrow-round-forward" size={30} color={colors.bodyTextColor} />
-							}
+							)}
 						</View>
 						<View style={styles.ticketTo}>
-							<Text style={styles.body}>{ticket.toStreet}, {ticket.toCity}</Text>
+							<Text style={styles.body}>
+								{ticket.toStreet}, {ticket.toCity}
+							</Text>
 						</View>
 					</View>
 				</TouchableOpacity>
@@ -79,7 +75,7 @@ const styles = StyleSheet.create({
 	ticketTypeContainer: {
 		width: '10%',
 		marginRight: 10,
-		flexDirection: 'row',
+		flexDirection: 'row'
 	},
 	ticketType: {
 		backgroundColor: colors.brandColor,
@@ -92,67 +88,67 @@ const styles = StyleSheet.create({
 		borderTopRightRadius: 5,
 		borderBottomRightRadius: 5,
 		paddingTop: 2,
-		paddingBottom: 3,
+		paddingBottom: 3
 	},
 	ticketTypeText: {
 		color: colors.backgroundColor,
-		fontWeight: 'bold',
+		fontWeight: 'bold'
 	},
 	ticket: {
 		width: '90%',
 		flex: 1,
-		flexDirection: 'column',
+		flexDirection: 'column'
 	},
 	ticketHeader: {
 		flexDirection: 'row',
-		marginTop: 10,
+		marginTop: 10
 	},
 	ticketDateTime: {
-		width: '57%',
+		width: '57%'
 	},
 	dateText: {
 		color: colors.bodyTextColor,
-		fontSize: 16,
+		fontSize: 16
 	},
 	timeText: {
 		color: colors.emphasisTextColor,
 		fontSize: 18,
-		marginTop: 5,
+		marginTop: 5
 	},
 	passengerInfo: {
 		width: '43%',
 		flexDirection: 'row',
-		alignSelf: 'flex-start',
+		alignSelf: 'flex-start'
 	},
 	ticketDetails: {
 		marginTop: 5,
 		flex: 1,
 		flexDirection: 'row',
 		marginBottom: 10,
-		width: '98%',
+		width: '98%'
 	},
 	ticketFrom: {
 		width: '40%',
 		marginRight: 10,
-		justifyContent: 'center',
+		justifyContent: 'center'
 	},
 	ticketTypeIcon: {
 		width: '10%',
 		marginRight: 15,
 		justifyContent: 'center',
-		alignItems: 'center',
+		alignItems: 'center'
 	},
 	ticketTo: {
 		width: '40%',
-		justifyContent: 'center',
+		justifyContent: 'center'
 	},
 	body: {
 		color: colors.bodyTextColor,
-		fontSize: 14,
+		fontSize: 14
 	},
 	icon: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginRight: 15,
-	},
+		marginRight: 15
+	}
 });

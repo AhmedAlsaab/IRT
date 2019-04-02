@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-	tickets: state.ticketReducer.tickets
+	tickets: state.ticketReducer.tickets,
 });
 
 export default connect(mapStateToProps)(TicketsScreen);

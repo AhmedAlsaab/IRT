@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import colors from '../constants/Colors';
 
 import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/passenger/JourneyScreen';
@@ -10,15 +11,21 @@ import TicketsScreen from '../screens/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
-import Geofence from '../screens/experimental/Geofence';
+import TrackDriver from '../screens/passenger/TrackDriver';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 import RecentFavScreen from '../screens/passenger/RecentFavScreen';
 import AmendTicket from './../screens/AmendTicket';
+import ResultScreen from '../screens/passenger/ResultScreen';
+import ChangePassword from '../screens/passenger/ChangePassword';
+import ContactScreen from '../screens/passenger/ContactScreen';
+import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
+import AddressScreen from '../screens/passenger/AddressScreen';
 
 const JourneyStack = createStackNavigator(
 	{
 		Home: JourneyScreen,
 		Summary: SummaryScreen,
+		Results: ResultScreen,
 		RecentFav: RecentFavScreen,
 		Confirmation: ConfirmationScreen
 	},
@@ -37,7 +44,7 @@ const TicketsStack = createStackNavigator(
 		Ticket: TicketsScreen,
 		Details: TicketDetail,
 		Amend: AmendTicket,
-		Track: Geofence
+		Track: TrackDriver
 	},
 	{
 		initialRouteName: 'Ticket'
@@ -64,9 +71,17 @@ WalletStack.navigationOptions = {
 	tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name={Platform.OS === 'ios' ? 'ios-card' : 'md-card'} />
 };
 
-const AccountStack = createStackNavigator({
-	Account: AccountsScreen
-});
+const AccountStack = createStackNavigator(
+	{
+		Account: AccountsScreen,
+		Contact: ContactScreen,
+		Settings: AccountsScreen,
+		ChangeDetails: ChangeDetailsScreen,
+		ChangePassword: ChangePassword,
+		AddAddress: AddressScreen
+	},
+	{ initialRouteName: 'Account' }
+);
 
 AccountStack.navigationOptions = {
 	tabBarLabel: 'Settings',
@@ -84,10 +99,10 @@ export default createBottomTabNavigator(
 	},
 	{
 		tabBarOptions: {
-			activeTintColor: 'white',
-			inactiveTintColor: '#a30000',
+			activeTintColor: colors.tabIconSelected,
+			inactiveTintColor: colors.tabIconDefault,
 			style: {
-				backgroundColor: '#ff0000'
+				backgroundColor: colors.brandColor
 			}
 		}
 	}

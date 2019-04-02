@@ -5,10 +5,12 @@ var mysql = require('mysql');
 var app = express();
 
 var bcrypt = require('bcryptjs');
+var JWTAuth = require('./JWTAuth');
 var saltRounds = 10;
 
 var engines = require('consolidate');
 var paypal = require('paypal-rest-sdk');
+var config = require('./config');
 var paypalApiKey = require('../paypal_api_key');
 var ip = require('../ipstore');
 
@@ -18,8 +20,6 @@ const nodemailerOauth2Key = require('../nodemailer_oauth2_key');
 app.engine('ejs', engines.ejs);
 app.set('views', './views');
 app.set('view engine', 'ejs');
-
-const { PORT = 3000 } = process.env;
 
 const validatorOptions = {
 	customValidators: {
@@ -65,10 +65,10 @@ io.on('connection', (socket) => {
 // Change to your credentials
 // Use Database provided in folders or ask in Teams
 var connection = mysql.createConnection({
-	host: 'localhost',
+	host: '127.0.0.1',
 	user: 'root',
 	database: 'transport',
-	password: 'comsc'
+	password: ''
 });
 
 connection.connect((error) => {
@@ -80,6 +80,34 @@ paypal.configure({
 	mode: 'sandbox', //sandbox or live
 	client_id: paypalApiKey.client_id,
 	client_secret: paypalApiKey.client_secret
+});
+
+app.all('*', (req, res, next) => {
+	let JWTConfirmed = false;
+	config.excludedRoutes.map((route) => {
+		if (route === req.path) JWTConfirmed = true;
+	});
+
+	if (JWTConfirmed) return next();
+	return JWTAuth.verifyJWTRESTRequest(req, res, next);
+});
+
+app.get('/journey', (req, res) => {
+	const journeyId = req.query.journeyId;
+
+	connection.query(
+		'SELECT * FROM coordinate WHERE fk_journey_id = ? AND removed = 0',
+		[ journeyId ],
+		(error, rows, fields) => {
+			if (error) throw error;
+
+			connection.query('SELECT * FROM journey WHERE journey_id = ?', [ journeyId ], (error, row, fields) => {
+				if (error) throw error;
+
+				res.send({ results: rows, start_time: row[0].start_time, end_time: row[0].end_time });
+			});
+		}
+	);
 });
 
 app.post('/register', (req, res) => {
@@ -146,8 +174,9 @@ app.post('/login', (req, res) => {
 			if (error) throw error;
 			if (!success) return res.send({ status: 0 });
 			else {
+				var token = JWTAuth.createJWTToken(rows[0].user_id);
 				localStorage.setItem('userId', rows[0].user_id);
-				return res.send({ content: rows[0], status: 10 });
+				return res.send({ content: rows[0], status: 10, token: token });
 			}
 		});
 	});
@@ -167,7 +196,7 @@ app.post('/booking/sendEmail', (req, res) => {
 		<ul>
 			<li>Date: ${date}</li>
 			<li>Time: ${time}</li>
-			<li>Ticket type: ${returnTicket === 1 ? "RETURN" : "SINGLE"}</li>
+			<li>Ticket type: ${returnTicket === 1 ? 'RETURN' : 'SINGLE'}</li>
 			<li>From: ${data.startLocation}</li>
 			<li>To: ${data.endLocation}</li>
 			<li>Number of passengers: ${data.passenger}</li>
@@ -184,11 +213,11 @@ app.post('/booking/sendEmail', (req, res) => {
 			port: 465,
 			secure: true, // true for 465, false for other ports
 			auth: {
-				type: "OAuth2",
+				type: 'OAuth2',
 				user: 'tfwirt.test@gmail.com',
 				clientId: nodemailerOauth2Key.clientId,
 				clientSecret: nodemailerOauth2Key.clientSecret,
-				refreshToken: nodemailerOauth2Key.refreshToken,
+				refreshToken: nodemailerOauth2Key.refreshToken
 			}
 		});
 
@@ -210,17 +239,12 @@ app.post('/booking/sendEmail', (req, res) => {
 	main().catch(console.error);
 });
 
-
 app.get('/driver/schedule', function(req, res) {
+	const journeyId = req.query.id;
 	connection.query(
-		`  SELECT c.street, c.city, c.fk_coordinate_type_id, c.longitude, c.latitude, t.date_of_journey, t.time_of_journey,
-	t.no_of_passengers, t.no_of_wheelchairs
-FROM ticket t
-JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id 
-JOIN journey j ON uj.fk_journey_id = j.journey_id 
-JOIN coordinate c ON j.journey_id = c.fk_journey_id
-WHERE c.fk_coordinate_type_id = 1;`,
-		function(error, rows, fields) {
+		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, c.longitude, c.latitude, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND c.removed = 0 ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
+		[ journeyId ],
+		(error, rows, fields) => {
 			if (error) console.log(error);
 			else {
 				res.send(rows);
@@ -229,96 +253,254 @@ WHERE c.fk_coordinate_type_id = 1;`,
 	);
 });
 
-app.get('/journey', function(req, res) {
+app.get('/ticket/pickup', function(req, res) {
+	const { id } = req.query;
 	connection.query(
-		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
-		FROM ticket t
-		JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id 
-		JOIN journey j ON uj.fk_journey_id = j.journey_id 
-		JOIN coordinate c ON j.journey_id = c.fk_journey_id
-		ORDER BY j.journey_id DESC LIMIT 2`,
-		function(error, rows, fields) {
+		'SELECT c.latitude, c.longitude, c.street, t.no_of_passengers FROM coordinate c JOIN ticket t ON t.fk_coordinate_id = c.coordinate_id WHERE t.ticket_id = ?',
+		[ id ],
+		(error, rows, fields) => {
 			if (error) console.log(error);
 			else {
-				res.send(rows);
+				res.send(rows[0]);
+			}
+		}
+	);
+});
+
+app.get('/user/cancelTicket/journey', function(req, res) {
+	const { ticketId } = req.query;
+	connection.query(
+		`SELECT DISTINCT j.end_time FROM ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON c.fk_journey_id = j.journey_id WHERE t.ticket_id = ? LIMIT 1`,
+		[ ticketId ],
+		(error, rows, fields) => {
+			if (error) console.log(error);
+			else {
+				res.send(rows[0].end_time);
+			}
+		}
+	);
+});
+
+app.get('/driver/vehicles/getVehicles', function(req, res) {
+	const userId = localStorage.getItem('userId');
+
+	connection.query(
+		`SELECT v.vehicle_id, v.registration, v.make, v.model, v.passenger_seats, v.wheelchair_spaces, v.currently_driven,
+			v.fk_vehicle_type_id
+		FROM vehicle v
+		JOIN user_vehicle uv
+		ON uv.fk_vehicle_id = v.vehicle_id
+		WHERE uv.fk_user_id = ?`,
+		[ userId ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send(rows);
+		}
+	);
+});
+
+app.post('/driver/vehicles/addVehicle', (req, res) => {
+	//Check for errors in user input
+	req.checkBody('make', 'Make cannot be empty').trim().notEmpty();
+	req.checkBody('model', 'Model cannot be empty').trim().notEmpty();
+	req.checkBody('registration', 'Registration cannot be empty').trim().notEmpty();
+	req
+		.checkBody('registration', 'Must be a valid UK vehicle registration')
+		.matches(
+			/^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/
+		)
+		.trim();
+	req.checkBody('numPassengers', 'Number of seats cannot be empty').trim().notEmpty();
+	req.checkBody('numPassengers', 'Number of seats must be a numerical value').isNumeric();
+	req.checkBody('numWheelchairs', 'Number of wheelchairs must be a numerical value').isNumeric();
+	req.checkBody('vehicleType', 'Please select a vehicle type').not(1 || 2 || 3 || 4);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+	const make = req.body.make;
+	const model = req.body.model;
+	const registration = req.body.registration;
+	const numPassengers = req.body.numPassengers;
+	const numWheelchairs = req.body.numWheelchairs;
+	const vehicleType = req.body.vehicleType;
+
+	const userId = localStorage.getItem('userId');
+
+	connection.query(
+		`INSERT INTO vehicle (make, model, registration, passenger_seats, wheelchair_spaces, currently_driven,
+			fk_vehicle_type_id)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		[ make, model, registration, numPassengers, numWheelchairs, 0, vehicleType ],
+		(error, row, fields) => {
+			if (error) throw error;
+
+			connection.query(
+				`INSERT INTO user_vehicle (fk_user_id, fk_vehicle_id)
+				VALUES (?, ?)`,
+				[ userId, row.insertId ],
+				(error, row, fields) => {
+					if (error) throw error;
+					else {
+						res.send({ status: 10 });
+					}
+				}
+			);
+		}
+	);
+});
+
+app.post('/driver/vehicles/removeVehicle', (req, res) => {
+	const vehicleId = req.body.id;
+
+	connection.query(
+		`DELETE user_vehicle, vehicle
+		FROM user_vehicle
+		INNER JOIN vehicle
+		ON user_vehicle.fk_vehicle_id = vehicle.vehicle_id
+		WHERE vehicle.vehicle_id = ?`,
+		[ vehicleId ],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
+			}
+		}
+	);
+});
+
+app.post('/driver/vehicles/selectVehicle', (req, res) => {
+	const vehicleToBeSelectedId = req.body.vehicleToBeSelectedId;
+	const selectedVehicle = req.body.selectedVehicle;
+
+	if (selectedVehicle) {
+		const id = selectedVehicle.id;
+		connection.query(
+			`UPDATE vehicle SET currently_driven = ?
+			WHERE vehicle_id = ?`,
+			[ 0, id ],
+			(error, row, fields) => {
+				if (error) throw error;
+			}
+		);
+	}
+	connection.query(
+		`UPDATE vehicle SET currently_driven = ?
+		WHERE vehicle_id = ?`,
+		[ 1, vehicleToBeSelectedId ],
+		(error, row, fields) => {
+			if (error) throw error;
+			else {
+				res.send({ status: 10 });
 			}
 		}
 	);
 });
 
 app.post('/booking/book', (req, res) => {
-	const startPlaceId = req.body.place_id;
-	const startStreet = req.body.street;
-	const startCity = req.body.city;
-	const startCountry = req.body.country;
-	const startLat = req.body.lat;
-	const startLng = req.body.lng;
-	const startType = req.body.startType;
+	const {
+		place_id,
+		street,
+		city,
+		country,
+		lat,
+		lng,
+		startType,
+		date,
+		time,
+		numPassenger,
+		numWheelchair,
+		returnTicket
+	} = req.body.jData;
+	const { jId } = req.body;
 
-	const endPlaceId = req.body.endPlaceID;
-	const endStreet = req.body.endStreet;
-	const endCity = req.body.endCity;
-	const endCountry = req.body.endCountry;
-	const endLat = req.body.endLat;
-	const endLng = req.body.endLng;
-	const endType = req.body.endType;
+	connection.beginTransaction((err) => {
+		if (err) throw error;
 
-	const date = req.body.date;
-	const time = req.body.time;
-	const numPassenger = req.body.numPassenger;
-	const numWheelchair = req.body.numWheelchair;
-	const returnTicket = req.body.returnTicket;
-
-	const userId = localStorage.getItem('userId');
-
-	connection.query(
-		'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, returnTicket, used, expired, date_of_journey, time_of_journey, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-		[ numPassenger, numWheelchair, returnTicket, 0, 0, date, time, new Date() ],
-		(error, row1, fields) => {
-			if (error) throw error;
-
-			connection.query(
-				'INSERT INTO journey (start_time, end_time) VALUES (?, ?)',
-				[ new Date(), new Date() ],
-				(error, row, fields) => {
-					if (error) throw error;
-
-					connection.query(
-						'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
-						[ row.insertId, userId, row1.insertId, 1 ],
-						(errors, rows, fields) => {
-							if (errors) throw errors;
-						}
-					);
-
-					connection.query(
-						'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-						[
-							startPlaceId,
-							startStreet,
-							startCity,
-							startCountry,
-							startLat,
-							startLng,
-							startType,
-							row.insertId
-						],
-						(error, row, fields) => {
-							if (error) throw error;
-						}
-					);
-
-					connection.query(
-						'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-						[ endPlaceId, endStreet, endCity, endCountry, endLat, endLng, endType, row.insertId ],
-						(error, row, fields) => {
-							if (error) throw error;
-						}
-					);
+		connection.query(
+			'SELECT * FROM coordinate WHERE fk_journey_id = ? AND place_id = ?',
+			[ jId, place_id ],
+			(error, row, fields) => {
+				if (error) {
+					return connection.rollback(function() {
+						throw error;
+					});
 				}
-			);
-		}
-	);
+
+				new Promise((resolve, reject) => {
+					if (row.length >= 1) {
+						if (row[0].removed === 1) {
+							connection.query(
+								'UPDATE coordinate SET removed = 0 WHERE coordinate_id = ?',
+								[ row[0].coordinate_id ],
+								(error, row1, fields) => {
+									if (error) {
+										return connection.rollback(function() {
+											throw error;
+										});
+									}
+									return resolve(row[0].coordinate_id);
+								}
+							);
+						} else return resolve(row[0].coordinate_id);
+					} else {
+						connection.query(
+							'INSERT INTO coordinate (place_id, street, city, country, latitude, longitude, fk_coordinate_type_id, fk_journey_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+							[ place_id, street, city, country, lat, lng, startType, jId ],
+							(error, row1, fields) => {
+								if (error) {
+									return connection.rollback(function() {
+										throw error;
+									});
+								}
+								return resolve(row1.insertId);
+							}
+						);
+					}
+				})
+					.then((id) => {
+						connection.query(
+							'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, returnTicket, used, expired, date_of_journey, time_of_journey, date_created, fk_coordinate_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+							[ numPassenger, numWheelchair, returnTicket, 0, 0, date, time, new Date(), id ],
+							(error, row2, fields) => {
+								if (error) {
+									return connection.rollback(function() {
+										throw error;
+									});
+								}
+
+								connection.query(
+									'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
+									[ jId, req.userId, row2.insertId, 1 ],
+									(error, row3, fields) => {
+										if (error) {
+											return connection.rollback(function() {
+												throw error;
+											});
+										}
+
+										connection.commit((err) => {
+											if (err) {
+												return connection.rollback(() => {
+													throw err;
+												});
+											}
+										});
+									}
+								);
+							}
+						);
+					})
+					.catch((error) => {
+						throw error;
+					});
+			}
+		);
+	});
 });
 
 app.get('/paypal-button', (req, res) => {
@@ -367,22 +549,18 @@ app.get('/paypal', (req, res) => {
 });
 
 app.get('/user/amount', (req, res) => [
-	connection.query(
-		'select funds from user where user_id = ?',
-		[ localStorage.getItem('userId') ],
-		(error, rows, fields) => {
-			if (error) throw error;
-			else {
-				res.send(rows[0]);
-			}
+	connection.query('SELECT funds FROM user WHERE user_id = ?', [ req.userId ], (error, rows, fields) => {
+		if (error) throw error;
+		else {
+			res.send(rows[0]);
 		}
-	)
+	})
 ]);
 
 app.get('/user/transactions', (req, res) => [
 	connection.query(
 		'SELECT t.*, tt.type FROM transaction t JOIN transaction_type tt ON tt.transaction_type_id = t.fk_transaction_type_id WHERE fk_user_id = ? ORDER BY date DESC',
-		[ localStorage.getItem('userId') ],
+		[ req.userId ],
 		(error, rows, fields) => {
 			if (error) throw error;
 			else {
@@ -392,15 +570,24 @@ app.get('/user/transactions', (req, res) => [
 	)
 ]);
 
-app.get('/driver/stops', function(req, res) {
+app.get('/driver/journeys', (req, res) => {
 	connection.query(
-		`SELECT c.street, c.city, c.fk_coordinate_type_id, t.date_of_journey, t.time_of_journey, t.no_of_passengers, t.no_of_wheelchairs
-		FROM ticket t
-		JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id 
-		JOIN journey j ON uj.fk_journey_id = j.journey_id 
-		JOIN coordinate c ON j.journey_id = c.fk_journey_id
-		WHERE c.fk_coordinate_type_id = 1`,
+		`SELECT j.*, c.* FROM journey j JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_coordinate_type_id = 1 OR c.fk_coordinate_type_id = 2 AND c.removed = 0`,
 		function(error, rows, fields) {
+			if (error) throw error;
+			else {
+				res.send(rows);
+			}
+		}
+	);
+});
+
+app.get('/driver/stops', function(req, res) {
+	const journeyId = req.query.id;
+	connection.query(
+		`SELECT DISTINCT c.street, c.city, c.fk_coordinate_type_id, j.start_time, j.end_time, t.no_of_passengers, t.no_of_wheelchairs FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND c.removed = 0 ORDER BY (CASE fk_coordinate_type_id WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 END) ASC`,
+		[ journeyId ],
+		(error, rows, fields) => {
 			if (error) throw error;
 			else {
 				res.send(rows);
@@ -455,16 +642,15 @@ app.post('/user/addTransaction', (req, res) => {
 	const current_funds = req.body.current_funds;
 	const spent_funds = req.body.spent_funds;
 	const fk_transaction_type_id = req.body.fk_transaction_type_id;
-	const userId = localStorage.getItem('userId');
 
 	connection.query(
 		'INSERT INTO transaction (current_funds, spent_funds, date, fk_transaction_type_id, fk_user_id) VALUES(?, ?, ?, ?, ?)',
-		[ current_funds, spent_funds, new Date(), fk_transaction_type_id, userId, userId ],
+		[ current_funds, spent_funds, new Date(), fk_transaction_type_id, req.userId ],
 		(error, row, fields) => {
 			if (error) throw error;
 			connection.query(
 				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
-				[ spent_funds, userId ],
+				[ spent_funds, req.userId ],
 				(error, row, fields) => {
 					if (error) throw error;
 					else {
@@ -477,30 +663,55 @@ app.post('/user/addTransaction', (req, res) => {
 });
 
 app.post('/user/cancelTicket', (req, res) => {
-	const userId = localStorage.getItem('userId');
-	const ticketId = req.body.ticketId;
-	const amount = req.body.amount;
-	const cancellationFeeApplied = req.body.cancellationFeeApplied;
+	const { ticketId, amount, cancellationFeeApplied } = req.body;
 
 	connection.beginTransaction((err) => {
 		if (err) throw error;
 
 		connection.query(
-			'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1, t.expired = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
-			[ userId, ticketId ],
+			'SELECT COUNT(*) AS count FROM ticket WHERE cancelled = 0 AND expired = 0 AND fk_coordinate_id = (SELECT fk_coordinate_id FROM ticket WHERE ticket_id = ?)',
+			[ ticketId ],
 			(error, row, fields) => {
 				if (error) {
 					return connection.rollback(function() {
 						throw error;
 					});
 				}
+
+				connection.query(
+					'UPDATE ticket t JOIN user_journey uj ON t.ticket_id = uj.fk_ticket_id SET t.cancelled = 1, t.expired = 1 WHERE uj.fk_user_id = ? AND uj.fk_ticket_id = ?',
+					[ req.userId, ticketId ],
+					(error, row1, fields) => {
+						if (error) {
+							return connection.rollback(function() {
+								throw error;
+							});
+						}
+
+						console.log(row[0].count);
+						//Remove coordinate if it connected to only 1 ticket, before the ticket gets cancelled/expired (only remove if its a virtual bus stop (fk_coordinate_type_id = 3))
+						if (row[0].count === 1) {
+							connection.query(
+								'UPDATE coordinate SET removed = 1 WHERE coordinate_id = (SELECT fk_coordinate_id FROM ticket WHERE ticket_id = ?) AND fk_coordinate_type_id = 3',
+								[ ticketId ],
+								(error, row, fields) => {
+									if (error) {
+										return connection.rollback(function() {
+											throw error;
+										});
+									}
+								}
+							);
+						}
+					}
+				);
 			}
 		);
 
 		if (cancellationFeeApplied) {
 			connection.query(
 				'UPDATE user SET funds = funds - ? WHERE user_id = ?',
-				[ amount, userId ],
+				[ amount, req.userId ],
 				(error, row, fields) => {
 					if (error) {
 						return connection.rollback(function() {
@@ -525,6 +736,167 @@ app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });
 
+app.get('/userDetails', function(req, res) {
+	connection.query(
+		'SELECT forename, surname, email, phone_number FROM user WHERE user_id = ?',
+		[ localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ details: rows[0] });
+		}
+	);
+});
+
+app.post('/userChangeForename', function(req, res) {
+	const forename = req.body.forename;
+
+	connection.query(
+		'UPDATE user SET forename = ? WHERE user_id=?',
+		[ forename, localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ status: 10 });
+		}
+	);
+});
+
+app.post('/userChangeSurname', function(req, res) {
+	const surname = req.body.surname;
+
+	connection.query(
+		'UPDATE user SET surname = ? WHERE user_id=?',
+		[ surname, localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ status: 10 });
+		}
+	);
+});
+
+app.post('/userChangePhoneNumber', function(req, res) {
+	const phoneNumber = req.body.phoneNumber;
+
+	connection.query(
+		'UPDATE user SET phone_number = ? WHERE user_id=?',
+		[ phoneNumber, localStorage.getItem('userId') ],
+		function(error, rows, fields) {
+			if (error) throw error;
+
+			res.send({ status: 10 });
+		}
+	);
+});
+
+app.post('/userChangeEmail', function(req, res) {
+	const email = req.body.email;
+
+	connection.query('SELECT * FROM user WHERE email=?', [ email ], function(error, rows, fields) {
+		if (error) throw error;
+		if (rows.length > 0) return res.send({ status: 1 });
+
+		connection.query(
+			'UPDATE user SET email = ? WHERE user_id=?',
+			[ email, localStorage.getItem('userId') ],
+			function(error, rows, fields) {
+				if (error) throw error;
+
+				res.send({ status: 10 });
+			}
+		);
+	});
+});
+
+app.post('/addAddress', function(req, res) {
+	const city = req.body.city;
+	const street = req.body.street;
+	const house_number = req.body.house_number;
+	const postcode = req.body.postcode;
+	const userId = localStorage.getItem('userId');
+
+	connection.query('SELECT fk_address_id FROM user WHERE user_id=?', [ userId ], (error, row, fields) => {
+		if (error) throw error;
+		if (row[0].fk_address_id === null) {
+			connection.query(
+				'INSERT INTO address (city, street, house_number, postcode) VALUES (?, ?, ?, ?)',
+				[ city, street, house_number, postcode ],
+				(error, row, fields) => {
+					if (error) throw error;
+
+					connection.query(
+						'UPDATE user SET fk_address_id = ? WHERE user_id = ?',
+						[ row.insertId, userId ],
+						(error, row, fields) => {
+							if (error) throw error;
+							return res.send({ status: 10 });
+						}
+					);
+				}
+			);
+		} else {
+			connection.query(
+				'UPDATE address SET city = ?, street = ?, house_number = ?, postcode = ? WHERE address_id = ?',
+				[ city, street, house_number, postcode, row[0].fk_address_id ],
+				(error, row1, fields) => {
+					if (error) throw error;
+
+					connection.query(
+						'UPDATE user SET fk_address_id = ? WHERE user_id = ?',
+						[ row[0].fk_address_id, userId ],
+						(error, row2, fields) => {
+							if (error) throw error;
+							return res.send({ status: 10 });
+						}
+					);
+				}
+			);
+		}
+	});
+});
+
+app.post('/userUpdatePassword', function(req, res) {
+	const { currentPassword, newPassword, confirmPassword } = req.body;
+	req
+		.checkBody('newPassword', 'Password must include 8 characters, 1 upper case and 1 lower case')
+		.matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
+		.trim();
+	req.checkBody('confirmPassword', 'Passwords must match').equals(newPassword);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+	connection.query(
+		'SELECT * FROM user WHERE user_id = ? LIMIT 1',
+		[ localStorage.getItem('userId') ],
+		(error, rows, fields) => {
+			if (error) throw error;
+			if (rows.length < 1) return res.send({ status: 0 });
+
+			bcrypt.compare(currentPassword, rows[0].password, (error, success) => {
+				if (error) throw error;
+				if (!success) return res.send({ status: 0 });
+				else {
+					bcrypt.hash(newPassword, saltRounds, (error, hash) => {
+						connection.query(
+							'UPDATE user SET password = ? WHERE user_id = ?',
+							[ hash, localStorage.getItem('userId') ],
+							(error, rows, fields) => {
+								if (error) throw error;
+								return res.send({ status: 10 });
+							}
+						);
+					});
+				}
+			});
+		}
+	);
+});
+
 app.get('/tickets', function(req, res) {
 	connection.query('SELECT ticket_id FROM ticket WHERE expired = 0', function(error, rows, fields) {
 		if (error) throw error;
@@ -541,21 +913,6 @@ app.get('/ticketsExpired', function(req, res) {
 	});
 });
 
-app.get('/ticketsQuery', function(req, res) {
-	const id = req.query.id;
-	const expired = req.query.expired;
-
-	connection.query(
-		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE t.ticket_id = ? AND t.expired = ?',
-		[ id, expired ],
-		function(error, rows, fields) {
-			if (error) throw error;
-
-			res.send({ ticket: rows });
-		}
-	);
-});
-
 app.get('/user/tickets', function(req, res) {
 	const userId = localStorage.getItem('userId');
 
@@ -570,16 +927,16 @@ app.get('/user/tickets', function(req, res) {
 	);
 });
 
-app.get('/ticketsQuery1', function(req, res) {
-	const id = req.query.id;
+app.get('/journeyResults', (req, res) => {
+	const street = req.query.street;
+	const city = req.query.city;
 
 	connection.query(
-		'SELECT DISTINCT t.ticket_id, t.accessibility_required, t.used, t.expired, uj.paid, j.start_time, j.end_time, c.street, c.city, c.fk_coordinate_type_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id JOIN journey j ON uj.fk_journey_id = j.journey_id JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE t.ticket_id = ?',
-		[ id ],
-		function(error, rows, fields) {
+		'SELECT j.journey_id FROM coordinate c JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.street = ? AND c.city = ? AND c.fk_coordinate_type_id = 2',
+		[ street, city ],
+		(error, rows, fields) => {
 			if (error) throw error;
-
-			res.send({ ticket: rows });
+			res.send({ results: rows });
 		}
 	);
 });
@@ -635,4 +992,4 @@ app.start = app.listen = function() {
 	return server.listen.apply(server, arguments);
 };
 
-app.start(PORT);
+app.start(config.port);

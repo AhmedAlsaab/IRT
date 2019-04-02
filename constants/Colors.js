@@ -15,5 +15,6 @@ export default {
 	brandColor: '#ff0000',
 	bodyTextColor: '#999',
 	emphasisTextColor: '#666',
-	lightBorder: '#c1c1c1c1'
+	lightBorder: '#c1c1c1c1',
+	success: '#28A745',
 };

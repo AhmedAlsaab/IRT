@@ -1,11 +1,40 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Button, Container, Content, Text } from 'native-base';
+import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
+import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
+import colors from '../../constants/Colors';
+import ip from '../../ipstore';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { getRequestAuthorized } from '../../API';
 
 export default class AccountsScreen extends Component {
 	static navigationOptions = {
 		header: null
+	};
+
+	state = {
+		userDetails: null,
+		forename: '',
+		surname: '',
+		email: '',
+		phoneNumber: ''
+	};
+
+	componentDidMount() {
+		const id = this.props.userId;
+		getRequestAuthorized(`http://${ip}:3000/userDetails?id=${id}`).then((response) => {
+			this.setState({
+				userDetails: response.details,
+				forename: response.details.forename,
+				surname: response.details.surname,
+				email: response.details.email,
+				phoneNumber: response.details.phone_number
+			});
+		});
+	}
+
+	contact = () => {
+		this.props.navigation.navigate('Contact');
 	};
 
 	logout = () => {
@@ -16,14 +45,70 @@ export default class AccountsScreen extends Component {
 		this.props.navigation.navigate('');
 	};
 
+	details = () => {
+		this.props.navigation.navigate('ChangeDetails');
+	};
+
+	theme = () => {
+		this.props.navigation.navigate('SetTheme');
+	};
+
 	render() {
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
-				<Content contentContainerStyle={styles.contentContainer}>
-					<View>
-						<Button style={styles.logoutButton} onPress={this.logout}>
-							<Text>Log Out</Text>
+				<Content style={styles.contentContainer}>
+					<View style={styles.secondaryButtonContainer}>
+						<Button bordered danger style={styles.secondaryButton} onPress={this.details}>
+							<Text style={styles.secondaryButtontext}>My Details</Text>
+						</Button>
+					</View>
+
+					{this.state.userDetails !== null && (
+						<View style={styles.container}>
+							<React.Fragment>
+								<View style={styles.detailContainer}>
+									<Icon name="person" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>Forename: {this.state.userDetails.forename}</Text>
+									<TouchableOpacity onPress={this.details}>
+										<Icon name="update" size={30} style={styles.updateIcon} />
+									</TouchableOpacity>
+								</View>
+								<View style={styles.detailContainer}>
+									<Icon name="person" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>Surname: {this.state.userDetails.surname}</Text>
+									<TouchableOpacity onPress={this.details}>
+										<Icon name="update" size={30} style={styles.updateIcon} />
+									</TouchableOpacity>
+								</View>
+								<View style={styles.detailContainer}>
+									<Icon name="mail" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>Email: {this.state.userDetails.email}</Text>
+									<TouchableOpacity onPress={this.details}>
+										<Icon name="update" size={30} style={styles.updateIcon} />
+									</TouchableOpacity>
+								</View>
+								<View style={styles.detailContainer}>
+									<Icon name="phone-android" size={32} style={styles.inputIcons} />
+									<Text style={styles.detailView}>
+										Phone Number: {this.state.userDetails.phone_number}
+									</Text>
+									<TouchableOpacity onPress={this.details}>
+										<Icon name="update" size={30} style={styles.updateIcon} />
+									</TouchableOpacity>
+								</View>
+							</React.Fragment>
+						</View>
+					)}
+
+					<View style={styles.secondaryButtonContainer}>
+						<Button bordered danger style={styles.secondaryButton} onPress={this.contact}>
+							<Text style={styles.secondaryButtontext}>Emergency Contacts</Text>
+						</Button>
+					</View>
+					<View style={styles.secondaryButtonContainer}>
+						<Button bordered danger style={styles.button} onPress={this.logout}>
+							<Text style={styles.buttonText}>Log Out</Text>
 						</Button>
 					</View>
 				</Content>
@@ -31,14 +116,57 @@ export default class AccountsScreen extends Component {
 		);
 	}
 }
+const width = '100%';
+const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+	button: {
+		width: '100%',
+		justifyContent: 'center',
+		backgroundColor: '#ff0000'
+	},
 	contentContainer: {
+		width: '80%',
 		flex: 1,
-		alignItems: 'center',
-		justifyContent: 'center'
+		flexDirection: 'column',
+		alignSelf: 'center'
 	},
 	logoutButton: {
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor,
+		justifyContent: 'center',
+		marginTop: 25,
+		alignSelf: 'center'
+	},
+	secondaryButtonContainer: {
+		flexDirection: 'row',
+		marginTop: 25
+	},
+	secondaryButton: {
+		width: '100%',
+		justifyContent: 'center',
+		backgroundColor: '#fff'
+	},
+	secondaryButtontext: {
+		color: '#ff0000'
+	},
+	buttonText: {
+		color: 'white'
+	},
+	detailContainer: {
+		flexDirection: 'row',
+		borderBottomWidth: 2,
+		borderBottomColor: '#ff0000',
+		width,
+		justifyContent: 'center'
+	},
+	detailView: {
+		flex: 1,
+		paddingLeft: 10,
+		fontSize: 16
+	},
+	inputIcons: {
+		width: 50,
+		padding: 10,
+		textAlign: 'center'
 	}
 });

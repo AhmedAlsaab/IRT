@@ -9,8 +9,8 @@ import API_KEY from '../../google_api_key';
 import ip from '../../ipstore';
 import socketIO from 'socket.io-client';
 
-//import { store } from '../../App';
-import { connect } from 'react-redux';
+import uuid from 'uuid/v4';
+import { getRequestAuthorized } from '../../API';
 
 const { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
@@ -44,6 +44,8 @@ class RouteScreen extends Component {
 					longitude: -3.178014415
 				}
 			],
+			startCoords: null,
+			endCoords: null,
 			data: [],
 			distance: '',
 			duration: '',
@@ -55,9 +57,33 @@ class RouteScreen extends Component {
 	}
 
 	fetchData = async () => {
-		const response = await fetch(`http://${ip}:3000/driver/schedule`);
-		const coordinate = await response.json();
-		this.setState({ data: coordinate });
+		const coordinate = await getRequestAuthorized(
+			`http://${ip}:3000/driver/schedule?id=${this.props.navigation.state.params.id}`
+		);
+
+		for (let i = 0; i < coordinate.length; i++) {
+			const element = coordinate[i];
+
+			switch (element.fk_coordinate_type_id) {
+				case 1:
+					this.setState({
+						startCoords: { latitude: element.latitude, longitude: element.longitude }
+					});
+					break;
+
+				case 2:
+					this.setState({
+						endCoords: { latitude: element.latitude, longitude: element.longitude }
+					});
+					break;
+
+				case 3:
+					this.setState({
+						data: [ ...this.state.data, element ]
+					});
+					break;
+			}
+		}
 	};
 
 	componentDidMount = async () => {
@@ -129,6 +155,7 @@ class RouteScreen extends Component {
 				} else {
 					//log error
 				}
+				console.log(loc);
 			}
 		);
 		this.setState({
@@ -182,31 +209,42 @@ class RouteScreen extends Component {
 					ref={(c) => (this.mapView = c)}
 					onPress={this.onMapPress}
 				>
-					{this.state.coordinates.map((coordinate, index) => (
-						<MapView.Marker
-							pinColor="rgba(46, 49, 50, 0.5)"
-							key={`coordinate_${index}`}
-							coordinate={coordinate}
-							title={'Predefined Stop'}
-							description={'start/end destination of the service'}
-						/>
-					))}
-					{this.state.data.map((marker, index) => (
+					{this.state.data.map((stop) => (
 						<Marker
 							pinColor={'green'}
-							key={index}
-							coordinate={{ longitude: marker.longitude, latitude: marker.latitude }}
-							title={marker.street}
-							description={`Passengers: ${marker.no_of_passengers.toString()}`}
+							key={uuid()}
+							coordinate={{ latitude: stop.latitude, longitude: stop.longitude }}
+							title={`${stop.street}, ${stop.city}`}
+							description={`Passengers: ${stop.no_of_passengers.toString()}`}
 						/>
 					))}
 
+					{this.state.startCoords !== null && (
+						<MapView.Marker
+							pinColor="rgba(46, 49, 50, 0.5)"
+							key={uuid()}
+							coordinate={this.state.startCoords}
+							title={'Predefined Stop'}
+							description={'Start destination of the service'}
+						/>
+					)}
+
+					{this.state.endCoords !== null && (
+						<MapView.Marker
+							pinColor="rgba(46, 49, 50, 0.5)"
+							key={uuid()}
+							coordinate={this.state.endCoords}
+							title={'Predefined Stop'}
+							description={'End destination of the service'}
+						/>
+					)}
+
 					{this.state.data.length >= 1 && (
 						<MapViewDirections
-							origin={this.state.coordinates[0]}
+							origin={this.state.startCoords}
 							//	waypoints={this.state.coordinates.length > 2 ? this.state.coordinates.slice(1, -1) : null}
 							waypoints={this.state.data}
-							destination={this.state.coordinates[this.state.coordinates.length - 1]}
+							destination={this.state.endCoords}
 							apikey={API_KEY}
 							strokeWidth={4}
 							strokeColor="rgba(253, 113, 103, 1)"
@@ -311,10 +349,6 @@ const styles = StyleSheet.create({
 		height: 40,
 		width: '90%'
 	}
-});
-
-const mapStateToProps = (state) => ({
-	test: state.driverReducer.newLocation
 });
 
 export default RouteScreen;

@@ -6,14 +6,48 @@ import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
+import { getRequestAuthorized } from '../../API';
 
-export default class DriverSchedule extends React.Component {
+import { connect } from 'react-redux';
+import { fetchVehicles } from '../../redux/actions/vehicleAction';
+
+class DriverSchedule extends React.Component {
 	static navigationOptions = {
 		header: null
 	};
-	state = {};
 
-	componentDidMount() {}
+	state = {
+		journeys: []
+	};
+
+	componentDidMount() {
+		this.props.fetchVehicles();
+		getRequestAuthorized(`http://${ip}:3000/driver/journeys`).then((response) => {
+			let journey = {};
+			for (let i = 0; i < response.length; i++) {
+				const element = response[i];
+
+				if (i % 2 === 0) {
+					journey.id = element.journey_id;
+					journey.fromCity = element.city;
+					journey.fromStreet = element.street;
+					journey.startTime = element.start_time;
+					journey.endTime = element.end_time;
+					continue;
+				}
+
+				journey.toCity = element.city;
+				journey.toStreet = element.street;
+
+				this.setState({
+					journeys: [ ...this.state.journeys, journey ]
+				});
+
+				journey = {};
+			}
+			console.log(this.state.journeys);
+		});
+	}
 
 	TestStates = () => {
 		const data = {
@@ -30,74 +64,60 @@ export default class DriverSchedule extends React.Component {
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
-
 				<Content padder>
-					<View style={styles.cardContainer}>
-						<Card style={styles.card}>
-							<CardItem header bordered style={styles.cardTitle}>
-								<Icon name="schedule" size={40} />
-								<H1> 12:00 - 13:00 </H1>
-								<Right>
-									<Icon
-										name="arrow-forward"
-										size={40}
-										onPress={() => {
-											this.props.navigation.navigate('SelectedJourney');
-										}}
-									/>
-								</Right>
-							</CardItem>
+					{console.log(this.state.journeys.length)}
+					{this.state.journeys.map((journey, key) => {
+						return (
+							<View style={styles.cardContainer} key={key}>
+								<Card style={styles.card}>
+									<CardItem header bordered style={styles.cardTitle}>
+										<Icon name="schedule" size={40} />
+										<H1>
+											{' '}
+											{moment(journey.startTime).format('hh:mm a')} -{' '}
+											{moment(journey.endTime).format('hh:mm a')}{' '}
+										</H1>
+										<Right>
+											<Icon
+												name="arrow-forward"
+												size={40}
+												onPress={() => {
+													this.props.navigation.navigate('SelectedJourney', {
+														id: journey.id
+													});
+												}}
+											/>
+										</Right>
+									</CardItem>
 
-							<View>
-								<Content>
-									<CardItem>
-										<Icon name="directions-bus" size={20} color="#bcbcbc" />
-										<Text style={styles.cardHeaders}>Service Number: 43</Text>
-									</CardItem>
-									<CardItem>
-										<Icon name="my-location" size={20} color="#bcbcbc" />
-										<Text style={styles.cardHeaders}>Cardiff Central</Text>
-									</CardItem>
-									<CardItem style={styles.middleCard} />
-									<View style={styles.middleCard} />
-								</Content>
-								<CardItem>
-									<Icon name="location-on" size={20} color="#bcbcbc" />
-									<Text style={styles.cardHeaders}>Cardiff University </Text>
-								</CardItem>
+									<View>
+										<Content>
+											<CardItem>
+												<Icon name="directions-bus" size={20} color="#bcbcbc" />
+												<Text style={styles.cardHeaders}>
+													Service Number: {Math.floor(Math.random() * 1000000)}
+												</Text>
+											</CardItem>
+											<CardItem>
+												<Icon name="my-location" size={20} color="#bcbcbc" />
+												<Text
+													style={styles.cardHeaders}
+												>{`${journey.fromStreet}, ${journey.fromCity}`}</Text>
+											</CardItem>
+											<CardItem style={styles.middleCard} />
+											<View style={styles.middleCard} />
+										</Content>
+										<CardItem>
+											<Icon name="location-on" size={20} color="#bcbcbc" />
+											<Text
+												style={styles.cardHeaders}
+											>{`${journey.toStreet}, ${journey.toCity}`}</Text>
+										</CardItem>
+									</View>
+								</Card>
 							</View>
-						</Card>
-					</View>
-					<View style={styles.cardContainer}>
-						<Card style={styles.card}>
-							<CardItem header bordered style={styles.cardTitle}>
-								<Icon name="schedule" size={40} />
-								<H1> 13:30 - 15:00 </H1>
-								<Right>
-									<Icon name="arrow-forward" size={40} />
-								</Right>
-							</CardItem>
-
-							<View>
-								<Content>
-									<CardItem>
-										<Icon name="directions-bus" size={20} color="#bcbcbc" />
-										<Text style={styles.cardHeaders}>Service Number: 61</Text>
-									</CardItem>
-									<CardItem>
-										<Icon name="my-location" size={20} color="#bcbcbc" />
-										<Text style={styles.cardHeaders}>Cardiff University</Text>
-									</CardItem>
-									<CardItem style={styles.middleCard} />
-									<View style={styles.middleCard} />
-								</Content>
-								<CardItem>
-									<Icon name="location-on" size={20} color="#bcbcbc" />
-									<Text style={styles.cardHeaders}>Heath </Text>
-								</CardItem>
-							</View>
-						</Card>
-					</View>
+						);
+					})}
 				</Content>
 			</Container>
 		);
@@ -126,3 +146,5 @@ const styles = StyleSheet.create({
 		backgroundColor: 'rgba(49, 46, 50, 0.1)'
 	}
 });
+
+export default connect(null, { fetchVehicles })(DriverSchedule);
