@@ -106,51 +106,57 @@ class TicketDetail extends React.Component {
 
 	cancelTicketPopupYes = (ticketDate) => {
 		// Cancellation fee applied
-		if (this.cancellationFeeApplied(ticketDate)) {
-			new Promise((resolve, reject) => {
-				this.props.userPayForTicket(1);
-				resolve();
-			}).then(() => {
+		this.cancellationFeeApplied(ticketDate)
+		.then((cancellationFeeApplied) => {
+			if (cancellationFeeApplied) {
+					this.ticketCancelledPost(1, 1)
+					this.props.userPayForTicket(1);
+					this.props.addTransaction({
+						current_funds: parseFloat(this.props.user.funds).toFixed(2),
+						date: new Date(),
+						fk_transaction_type_id: 4,
+						fk_user_id: this.props.user.id,
+						spent_funds: 1,
+						transaction_id: uuid(),
+						type: 'Ticket Cancelled',
+						cancellation_fee: 1
+					})
+			}
+	
+			// Cancellation fee not applied
+			else {
+				this.ticketCancelledPost(0, 0)
 				this.props.addTransaction({
 					current_funds: parseFloat(this.props.user.funds).toFixed(2),
 					date: new Date(),
 					fk_transaction_type_id: 4,
 					fk_user_id: this.props.user.id,
-					spent_funds: 1,
+					spent_funds: 0.00,
 					transaction_id: uuid(),
 					type: 'Ticket Cancelled',
-					cancellation_fee: 1
-				});
-			});
-			this.ticketCancelledPost(0, 1);
-		} else {
-			// Cancellation fee not applied
-			this.props.addTransaction({
-				current_funds: parseFloat(this.props.user.funds).toFixed(2),
-				date: new Date(),
-				fk_transaction_type_id: 4,
-				fk_user_id: this.props.user.id,
-				spent_funds: 0,
-				transaction_id: uuid(),
-				type: 'Ticket Cancelled',
-				cancellation_fee: 0
-			});
-			this.ticketCancelledPost(0, 0);
-		}
+					cancellation_fee: 0
+				})
+			}
+			
+			this.props.ticketCancelRedux(this.props.navigation.state.params.ticket.id)
+			this.cancelTicketPopupNo();
+			this.navigateTo()
+		})
+	}
 
-		this.props.ticketCancelRedux(this.props.navigation.state.params.ticket.id);
-		this.cancelTicketPopupNo();
-		this.navigateTo();
-	};
 
 	cancellationFeeApplied = (ticketDate) => {
-		//Mock date at the moment, until we can get a journey time
-		const journeytime = moment(ticketDate).add(1, 'hour');
-		const timeDiff = moment(journeytime).unix() - moment(ticketDate).unix();
+		return getRequestAuthorized(`http://${ip}:3000/user/cancelTicket/journey?ticketId=${this.props.navigation.state.params.ticket.id}`)
+		.then((endTime) => {
+			const timeDiff = moment(endTime).unix() - moment(ticketDate).unix();
 
-		if (timeDiff <= 7200 && timeDiff >= 0) return true;
-		return false;
-	};
+			if (timeDiff <= 7200 && timeDiff >= 0) return Promise.resolve(true);
+			return Promise.resolve(false);
+		})
+	
+	}
+
+
 
 	ticketCancelledPost = (amount, cancellationFeeApplied) => {
 		const data = {
