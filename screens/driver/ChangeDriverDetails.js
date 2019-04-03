@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions, TextInput } from 'react-native';
-import {
-	Button,
-	Container,
-	Text,
-	Header,
-	Content,
-	Left,
-	Right,
-} from 'native-base';
+import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { getRequestAuthorized, postRequestAuthorized } from '../../API';
 
 export default class ChangeDriverDetails extends Component {
 	static navigationOptions = {
@@ -21,24 +14,23 @@ export default class ChangeDriverDetails extends Component {
 	state = {
 		userDetails: null,
 		forename: '',
-		surname:'',
-		email:'',
-		phoneNumber:''
-    };
-    
-    componentDidMount() {
+		surname: '',
+		email: '',
+		phoneNumber: ''
+	};
+
+	componentDidMount() {
 		const id = this.props.userId;
-		fetch(`http://${ip}:3000/userDetails?id=${id}`).then((response) => response.json()).then((response) => {
-		this.setState({
+		getRequestAuthorized(`http://${ip}:3000/userDetails?id=${id}`).then((response) => {
+			this.setState({
 				userDetails: response.details,
 				forename: response.details.forename,
 				surname: response.details.surname,
 				email: response.details.email,
-				phoneNumber: response.details.phone_number,
+				phoneNumber: response.details.phone_number
 			});
 		});
-    }
-    
+	}
 
 	navigateTo = () => {
 		this.props.navigation.navigate('');
@@ -48,226 +40,163 @@ export default class ChangeDriverDetails extends Component {
 		this.props.navigation.navigate('Account');
 	};
 
-
 	onChangePassword = () => {
-		this.props.navigation.navigate('DriverPassword')
-    }
-    
-    onChangeForename = () => {
-		const {forename} = this.state;
-		fetch(`http://${ip}:3000/userChangeForename`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({forename})
-		}).then((response) => response.json())
-		.then((responseJSON) => {
-			switch (responseJSON.status) {
-				//Success
-				case 10:
-					alert('Updated forename')
-					break;
-				//If email exist
-					case 1:
-					alert('Could not update')
-					break;
-			}
-		})
-			.catch(err => {
-				console.log(err)
-
-			})
+		this.props.navigation.navigate('DriverPassword');
 	};
-	
 
-	
+	onChangeForename = () => {
+		const { forename } = this.state;
+		postRequestAuthorized(`http://${ip}:3000/userChangeForename`, { forename })
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						alert('Updated forename');
+						break;
+					//If email exist
+					case 1:
+						alert('Could not update');
+						break;
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 	onChangeSurname = () => {
-		const {surname} = this.state;
-		fetch(`http://${ip}:3000/userChangeSurname`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({surname})
-		}).then((response) => response.json())
-		.then((responseJSON) => {
-			switch (responseJSON.status) {
-				//Success
-				case 10:
-					alert('Updated Surname')
-					break;
-				//If email exist
+		const { surname } = this.state;
+		postRequestAuthorized(`http://${ip}:3000/userChangeSurname`, { surname })
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						alert('Updated Surname');
+						break;
+					//If email exist
 					case 1:
-					alert('Could not update')
-					break;
-			}
-		})
-			.catch(err => {
-				console.log(err)
-
+						alert('Could not update');
+						break;
+				}
 			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
-	
-
 
 	onChangeEmail = () => {
-		const {email} = this.state;
-		fetch(`http://${ip}:3000/userChangeEmail`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({email})
-		}).then((response) => response.json())
-		.then((responseJSON) => {
-			switch (responseJSON.status) {
-				//Success
-				case 10:
-					alert('Updated')
-					break;
-				//If email exist
+		const { email } = this.state;
+		postRequestAuthorized(`http://${ip}:3000/userChangeEmail`, { email })
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						alert('Updated');
+						break;
+					//If email exist
 					case 1:
-					alert('Could not update as email already exist')
-					break;
-			}
-		})
-			.catch(err => {
-				console.log(err)
-
+						alert('Could not update as email already exist');
+						break;
+				}
 			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
-
 
 	onChangeNumber = () => {
-		const {phoneNumber} = this.state;
-		fetch(`http://${ip}:3000/userChangePhoneNumber`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({phoneNumber})
-		}).then((response) => response.json())
-		.then((responseJSON) => {
-			switch (responseJSON.status) {
-				//Success
-				case 10:
-					alert('Updated')
-					break;
-				//If email exist
+		const { phoneNumber } = this.state;
+		postRequestAuthorized(`http://${ip}:3000/userChangePhoneNumber`, { phoneNumber })
+			.then((responseJSON) => {
+				switch (responseJSON.status) {
+					//Success
+					case 10:
+						alert('Updated');
+						break;
+					//If email exist
 					case 1:
-					alert('Could not update as email already exist')
-					break;
-			}
-		})
-			.catch(err => {
-				console.log(err)
-
+						alert('Could not update as email already exist');
+						break;
+				}
 			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
-
-
 
 	render() {
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<Content style={styles.contentContainer} padder>
-			
 					<View style={styles.secondaryButtonContainer}>
 						<Button bordered danger style={styles.secondaryButton} onPress={this.settings}>
 							<Text style={styles.secondaryButtontext}>Settings</Text>
 						</Button>
 					</View>
 
-				
 					<View>
-						<Text style={styles.title}>
-							Update Details
-								</Text>
+						<Text style={styles.title}>Update Details</Text>
 					</View>
 					{this.state.userDetails !== null && (
-					<React.Fragment>
-					<View style={styles.inputContainer}>
-						<Icon name="person" size={32} style={styles.inputIcons} />
-						<TextInput
-							onChangeText={(text) => this.setState({forename: text})}
-							placeholder="First Name"
-							style={styles.input}
-							value={this.state.forename}
-						/>
-						<TouchableOpacity onPress={this.onChangeForename}>
-								<Icon
-                                    name='update'
-                                    size={30}
-									style={styles.updateIcon}>
-								</Icon>
-						</TouchableOpacity>
-					</View>
-					<View style={styles.inputContainer}>
-						<Icon name="person" size={32} style={styles.inputIcons} />
-						<TextInput
-							onChangeText={(text) => this.setState({surname: text})}
-							placeholder="Last Name"
-							style={styles.input}
-							value={this.state.surname}
-						/>
-							<TouchableOpacity onPress={this.onChangeSurname}>
-								<Icon
-                                    name='update'
-                                    size={30}
-									style={styles.updateIcon}>
-								</Icon>
+						<React.Fragment>
+							<View style={styles.inputContainer}>
+								<Icon name="person" size={32} style={styles.inputIcons} />
+								<TextInput
+									onChangeText={(text) => this.setState({ forename: text })}
+									placeholder="First Name"
+									style={styles.input}
+									value={this.state.forename}
+								/>
+								<TouchableOpacity onPress={this.onChangeForename}>
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
-					</View>
-					<View style={styles.inputContainer}>
-						<Icon name="mail" size={32} style={styles.inputIcons} />
-						<TextInput
-							onChangeText={(text) => this.setState({email: text})}
-							placeholder="Email"
-							style={styles.input}
-							value={this.state.email}
-						/>
-						<TouchableOpacity onPress={this.onChangeEmail}>
-								<Icon
-                                    name='update'
-                                    size={30}
-									style={styles.updateIcon}>
-								</Icon>
+							</View>
+							<View style={styles.inputContainer}>
+								<Icon name="person" size={32} style={styles.inputIcons} />
+								<TextInput
+									onChangeText={(text) => this.setState({ surname: text })}
+									placeholder="Last Name"
+									style={styles.input}
+									value={this.state.surname}
+								/>
+								<TouchableOpacity onPress={this.onChangeSurname}>
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
-					</View>
-					<View style={styles.inputContainer}>
-						<Icon name="person" size={32} style={styles.inputIcons} />
-						<TextInput
-							onChangeText={(text) => this.setState({phoneNumber: text})}
-							placeholder="Phone Number"
-							style={styles.input}
-							value={this.state.phoneNumber}
-						/>
-						<TouchableOpacity onPress={this.onChangeNumber}>
-								<Icon
-                                    name='update'
-                                    size={30}
-									style={styles.updateIcon}>
-								</Icon>
+							</View>
+							<View style={styles.inputContainer}>
+								<Icon name="mail" size={32} style={styles.inputIcons} />
+								<TextInput
+									onChangeText={(text) => this.setState({ email: text })}
+									placeholder="Email"
+									style={styles.input}
+									value={this.state.email}
+								/>
+								<TouchableOpacity onPress={this.onChangeEmail}>
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
-					</View>
-					</React.Fragment>
+							</View>
+							<View style={styles.inputContainer}>
+								<Icon name="person" size={32} style={styles.inputIcons} />
+								<TextInput
+									onChangeText={(text) => this.setState({ phoneNumber: text })}
+									placeholder="Phone Number"
+									style={styles.input}
+									value={this.state.phoneNumber}
+								/>
+								<TouchableOpacity onPress={this.onChangeNumber}>
+									<Icon name="update" size={30} style={styles.updateIcon} />
+								</TouchableOpacity>
+							</View>
+						</React.Fragment>
 					)}
-					
+
 					<View style={styles.secondaryButtonContainer}>
 						<Button bordered danger style={styles.button} onPress={this.onChangePassword}>
 							<Text style={styles.buttonText}>Update Password</Text>
 						</Button>
 					</View>
-					
-
 				</Content>
-
 			</Container>
 		);
 	}
@@ -287,8 +216,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginTop: 30,
-		justifyContent: 'center',
-
+		justifyContent: 'center'
 	},
 	button: {
 		width: '100%',
@@ -355,5 +283,5 @@ const styles = StyleSheet.create({
 	updateIcon: {
 		padding: 6,
 		color: 'gray'
-	},
+	}
 });
