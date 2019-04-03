@@ -77,7 +77,10 @@ class JourneyScreen extends Component {
 			endCountry: 'UK',
 			endLat: 51.4599197,
 			endLng: -3.1844829,
-			endType: 2
+			endType: 2,
+
+			destination: '',
+			endDestination: ''
 		};
 		this.startPositionDebounced = _.debounce(this.startPosition, 500);
 		this.endLocationDebounced = _.debounce(this.endLocation, 500);
@@ -292,7 +295,18 @@ class JourneyScreen extends Component {
 		this.textInputTo.clear();
 		this.textInputGroupSize.clear();
 		this.textInputWheelChair.clear();
-		this.textInputDate.clear();
+
+		this.setState({
+			from: null,
+			to: null,
+			date: null,
+			time: null,
+			numPassenger: 1,
+			numWheelchair: 0,
+			returnTicket: false,
+			destination: '',
+			endDestination: ''
+		});
 	}
 
 	checkPassengerState = () => {
