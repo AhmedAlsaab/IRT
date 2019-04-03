@@ -37,11 +37,11 @@ export default class ChangePassword extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated');
+						alert('Successfully Updated Phone Number');
 						break;
 					//If email exist
 					case (1, 0):
-						alert('Could not update as email already exist');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})

@@ -53,13 +53,11 @@ export default class AccountsScreen extends Component {
 		postRequestAuthorized(`http://${ip}:3000/userChangeForename`, { forename })
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
-					//Success
 					case 10:
-						alert('Updated forename');
+						alert('Successfully Updated First Name');
 						break;
-					//If email exist
 					case 1:
-						alert('Could not update');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -75,11 +73,10 @@ export default class AccountsScreen extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated Surname');
+						alert('Successfully Updated Last Name');
 						break;
-					//If email exist
 					case 1:
-						alert('Could not update');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -95,7 +92,7 @@ export default class AccountsScreen extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated');
+						alert('Successfully Updated Email');
 						break;
 					//If email exist
 					case 1:
@@ -115,11 +112,11 @@ export default class AccountsScreen extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated');
+						alert('Successfully Updated Phone Number');
 						break;
 					//If email exist
 					case 1:
-						alert('Could not update as email already exist');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
