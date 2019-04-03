@@ -288,6 +288,11 @@ class JourneyScreen extends Component {
 		};
 
 		this.props.navigation.navigate('Results', data);
+		this.textInputFrom.clear();
+		this.textInputTo.clear();
+		this.textInputGroupSize.clear();
+		this.textInputWheelChair.clear();
+		this.textInputDate.clear();
 	}
 
 	checkPassengerState = () => {
@@ -396,6 +401,7 @@ class JourneyScreen extends Component {
 										onBlur={() => {
 											this.setState({ fromFocused: false });
 										}}
+										ref={(ref) => (this.textInputFrom = ref)}
 									/>
 								</View>
 								{locationPredictions}
@@ -441,6 +447,7 @@ class JourneyScreen extends Component {
 										onBlur={() => {
 											this.setState({ toFocused: false });
 										}}
+										ref={(ref) => (this.textInputTo = ref)}
 									/>
 								</View>
 								{endLocationPredictions}
@@ -460,9 +467,9 @@ class JourneyScreen extends Component {
 											style={styles.inputIcons}
 										/>
 										{this.state.date ? (
-											<Text style={styles.dateTime}>
+											<TextInput style={styles.dateTime}>
 												{moment(this.state.date).format('Do MMM YY')}
-											</Text>
+											</TextInput>
 										) : (
 											<Text style={styles.dateTime}>Date</Text>
 										)}
@@ -575,6 +582,7 @@ class JourneyScreen extends Component {
 												onBlur={() => {
 													this.setState({ groupFocused: false });
 												}}
+												ref={(ref) => (this.textInputGroupSize = ref)}
 											/>
 										</View>
 
@@ -631,6 +639,7 @@ class JourneyScreen extends Component {
 												onBlur={() => {
 													this.setState({ wheelchairFocused: false });
 												}}
+												ref={(ref) => (this.textInputWheelChair = ref)}
 											/>
 										</View>
 									</View>
