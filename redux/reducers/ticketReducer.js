@@ -66,6 +66,7 @@ export default function(state = initialState, action) {
 
 		case AMEND_TICKET:
 			const data = action.payload;
+			console.log(data)
 
 			return {
 				...state,

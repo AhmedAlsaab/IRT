@@ -18,7 +18,7 @@ const nodemailer = require('nodemailer');
 const nodemailerOauth2Key = require('../nodemailer_oauth2_key');
 
 app.engine('ejs', engines.ejs);
-app.set('views', './views');
+app.set('views', '../views');
 app.set('view engine', 'ejs');
 
 const validatorOptions = {
@@ -68,7 +68,7 @@ var connection = mysql.createConnection({
 	host: '127.0.0.1',
 	user: 'root',
 	database: 'transport',
-	password: ''
+	password: 'comsc'
 });
 
 connection.connect((error) => {

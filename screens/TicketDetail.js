@@ -251,17 +251,16 @@ class TicketDetail extends React.Component {
 								<Text style={styles.qrHeaderText}>TICKET QR CODE</Text>
 							</View>
 							<View style={styles.qrCode}>
-								<QRCode
-									value={this.state.text}
+								<Image
+									source={require('../assets/images/qrcode.jpg')}
 									style={{
 										width: 150,
-										height: 10,
+										height: 150,
 										borderRadius: 10,
 										alignSelf: 'center'
 									}}
-									bgColor="black"
-									fgColor="white"
 								/>
+
 							</View>
 						</View>
 
