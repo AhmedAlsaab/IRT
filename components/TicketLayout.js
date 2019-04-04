@@ -11,17 +11,19 @@ export default class TicketLayout extends Component {
 		return (
 			<View style={styles.card}>
 				<View style={styles.ticketTypeContainer}>
+					{/* Determines the ticket type to display and color based on active or expired */}
 					{ticket.expired ? (
-						<View style={[ styles.ticketType, { backgroundColor: colors.bodyTextColor } ]}>
+						<View style={[styles.ticketType, { backgroundColor: colors.bodyTextColor }]}>
 							<Text style={styles.ticketTypeText}>{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}</Text>
 						</View>
 					) : (
-						<View style={styles.ticketType}>
-							<Text style={styles.ticketTypeText}>{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}</Text>
-						</View>
-					)}
+							<View style={styles.ticketType}>
+								<Text style={styles.ticketTypeText}>{ticket.returnTicket === 1 ? 'RTN' : 'SGL'}</Text>
+							</View>
+						)}
 				</View>
 				<TouchableOpacity style={styles.ticket} onPress={this.props.onOpen}>
+					{/* Ticket details */}
 					<View style={styles.ticketHeader}>
 						<View style={styles.ticketDateTime}>
 							<Text style={styles.dateText}>{moment(ticket.date).format('Do MMMM YYYY')}</Text>
@@ -30,12 +32,12 @@ export default class TicketLayout extends Component {
 						<View style={styles.passengerInfo}>
 							<View style={styles.icon}>
 								<IonIcon name="md-people" size={20} color={colors.bodyTextColor} />
-								<Text style={[ styles.body, { marginLeft: 5 } ]}>{ticket.numPassengers}</Text>
+								<Text style={[styles.body, { marginLeft: 5 }]}>{ticket.numPassengers}</Text>
 							</View>
 							{ticket.numWheelchairs > 0 ? (
 								<View style={styles.icon}>
 									<MaterialIcon name="accessible" size={20} color={colors.bodyTextColor} />
-									<Text style={[ styles.body, { marginLeft: 5 } ]}>{ticket.numWheelchairs}</Text>
+									<Text style={[styles.body, { marginLeft: 5 }]}>{ticket.numWheelchairs}</Text>
 								</View>
 							) : null}
 						</View>
@@ -50,8 +52,8 @@ export default class TicketLayout extends Component {
 							{ticket.returnTicket ? (
 								<IonIcon name="ios-swap" size={30} color={colors.bodyTextColor} />
 							) : (
-								<IonIcon name="ios-arrow-round-forward" size={30} color={colors.bodyTextColor} />
-							)}
+									<IonIcon name="ios-arrow-round-forward" size={30} color={colors.bodyTextColor} />
+								)}
 						</View>
 						<View style={styles.ticketTo}>
 							<Text style={styles.body}>

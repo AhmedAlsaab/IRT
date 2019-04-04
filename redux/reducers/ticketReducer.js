@@ -12,7 +12,7 @@ const initialState = {
 	ticketsLength: 0
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
 	switch (action.type) {
 		case FETCH_TICKETS:
 			const fetchedTickets = action.payload.ticket;
@@ -64,9 +64,9 @@ export default function(state = initialState, action) {
 				)
 			};
 
+		// Amend a ticket with the new data
 		case AMEND_TICKET:
 			const data = action.payload;
-			console.log(data)
 
 			return {
 				...state,
@@ -74,15 +74,16 @@ export default function(state = initialState, action) {
 					(ticket) =>
 						ticket.id === data.ticketId
 							? {
-									...ticket,
-									numWheelchairs: data.numWheelchair,
-									date: data.date,
-									time: data.time
-								}
+								...ticket,
+								numWheelchairs: data.numWheelchair,
+								date: data.date,
+								time: data.time
+							}
 							: ticket
 				)
 			};
 
+		// Favourite a ticket
 		case FAVOURITE_TICKET:
 			return {
 				...state,
@@ -91,6 +92,7 @@ export default function(state = initialState, action) {
 				)
 			};
 
+		// Remove a ticket from favourites
 		case REMOVE_FAVOURITE_TICKET:
 			return {
 				...state,
@@ -102,7 +104,7 @@ export default function(state = initialState, action) {
 		case ADD_TICKET:
 			return {
 				...state,
-				tickets: [ ...state.tickets, action.payload ],
+				tickets: [...state.tickets, action.payload],
 				ticketsLength: state.ticketsLength + 1
 			};
 

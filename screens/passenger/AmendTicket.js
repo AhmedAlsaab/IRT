@@ -34,7 +34,6 @@ class AmendTicket extends React.Component {
 
 	onSubmit = () => {
 		const ticket = this.props.navigation.state.params.ticket;
-		//Send data to the server
 		const data = {
 			ticketId: ticket.id,
 			date: this.state.date === null ? moment(ticket.date).format('YYYY-MM-DD HH:mm:ss') : this.state.date,
@@ -42,6 +41,7 @@ class AmendTicket extends React.Component {
 			numWheelchair: this.state.numWheelchair === null ? ticket.numWheelchairs : this.state.numWheelchair,
 			numPassenger: ticket.numPassengers
 		};
+		// Send the above data to the server
 		postRequestAuthorized(`http://${ip}:3000/amendTicket`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
@@ -61,6 +61,7 @@ class AmendTicket extends React.Component {
 			.catch((error) => console.log(error));
 	};
 
+	// If there are errors, parse them and return them in an array
 	parseErrors = (errorList) => {
 		var errors = {
 			title: 'Errors',
@@ -107,6 +108,8 @@ class AmendTicket extends React.Component {
 						navigateTo={this.navigateTo}
 						isBackButtonActive={1}
 					/>
+
+					{/* Display error messages for validation in an accordion */}
 					<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
 						<Content style={styles.content}>
 							{this.state.errors &&

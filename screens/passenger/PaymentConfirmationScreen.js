@@ -5,7 +5,7 @@ import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import ip from '../../server/keys/ipstore'
 
 import { connect } from 'react-redux';
@@ -43,7 +43,7 @@ class PaymentConfirmationScreen extends React.Component {
                         <View>
                             {/* Page header and introductory text */}
                             <View style={styles.introduction}>
-                                <Icon name="calendar-check-o" color={colors.bodyTextColor} size={75} style={styles.icon} />
+                                <Icon name="wallet" color={colors.bodyTextColor} size={75} style={styles.icon} />
                                 <Text style={[styles.body, { marginBottom: 15}]}>
                                     You have added  <Text style={styles.bold}>{`£${parseFloat(this.props.navigation.state.params.amount).toFixed(2)}`} </Text> to your account, you can view your balance in your wallet and see the transaction you have completed
                                 </Text>
