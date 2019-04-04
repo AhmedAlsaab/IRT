@@ -320,11 +320,12 @@ app.get('/user/cancelTicket/journey', function(req, res) {
 		(error, rows, fields) => {
 			if (error) console.log(error);
 			else {
-				return res.send(rows[0].end_time);
+				res.send(rows[0].end_time);
 			}
 		}
 	);
 });
+
 
 app.get('/driver/vehicles/getVehicles', function(req, res) {
 	const userId = localStorage.getItem('userId');
