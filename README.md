@@ -10,9 +10,8 @@
 * Examples
 * Installation
 * How to run
-* Features
-* Tests
-* Acknowledgements
+* FAQ
+* Contributors
 
 ## Introduction
 
@@ -118,6 +117,55 @@ module.exports = {
     createJWTToken,
     verifyJWTRESTRequest
 };
+```
+### Validating vehicle additions
+
+```Javascript
+app.post('/driver/vehicles/addVehicle', (req, res) => {
+	//Check for errors in user input
+	req.checkBody('make', 'Make cannot be empty').trim().notEmpty();
+	req.checkBody('model', 'Model cannot be empty').trim().notEmpty();
+	req.checkBody('registration', 'Registration cannot be empty').trim().notEmpty();
+	req.checkBody('registration', 'Must be a valid UK vehicle registration')
+		.matches(/^([A-Z]{3}\s?(\d{3}|\d{2}|d{1})\s?[A-Z])|([A-Z]\s?(\d{3}|\d{2}|\d{1})\s?[A-Z]{3})|(([A-HK-PRSVWY][A-HJ-PR-Y])\s?([0][2-9]|[1-9][0-9])\s?[A-HJ-PR-Z]{3})$/).trim();
+	req.checkBody('numPassengers', 'Number of seats cannot be empty').trim().notEmpty();
+	req.checkBody('numPassengers', 'Number of seats must be a numerical value').isNumeric();
+	req.checkBody('numWheelchairs', 'Number of wheelchairs must be a numerical value').isNumeric();
+	req.checkBody('vehicleType', 'Please select a vehicle type').not(1 || 2 || 3 || 4);
+
+	//Send errors back to client
+	const errors = req.validationErrors();
+	if (errors) {
+		return res.send({ status: 0, errors: errors });
+	}
+
+	const make = req.body.make;
+	const model = req.body.model;
+	const registration = req.body.registration;
+	const numPassengers = req.body.numPassengers;
+	const numWheelchairs = req.body.numWheelchairs;
+	const vehicleType = req.body.vehicleType;
+	const userId = localStorage.getItem('userId');
+
+	connection.query(
+		`INSERT INTO vehicle (make, model, registration, passenger_seats, wheelchair_spaces, currently_driven, fk_vehicle_type_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		[make, model, registration, numPassengers, numWheelchairs, 0, vehicleType],
+		(error, row, fields) => {
+			if (error) throw error;
+
+			connection.query(
+				`INSERT INTO user_vehicle (fk_user_id, fk_vehicle_id) VALUES (?, ?)`,
+				[userId, row.insertId],
+				(error, row, fields) => {
+					if (error) throw error;
+					else {
+						res.send({ status: 10 });
+					}
+				}
+			);
+		}
+	);
+});
 ```
 
 ## Requirements
@@ -292,18 +340,96 @@ Assuming Expo is installed on your device:
 
 >Open the camera application on your Iphone and scan the QR code
 
-## Features
+## FAQ
 
-This section isn't an exhaustive list of things you can do with the application but highlights some of the core features to get you started.
+> Invalid SDK, Response 500 & Missing dependencies
 
-### Registration & Login
+* Check that Node.js can bypass the firewall
+* Run setup.sh
+* This project runs Expo SDK 31
 
-![Application Screenshot 1](https://i.imgur.com/3nw2PAQ.png)
+> Nothing happens when I press the login / register button
 
-### Planning a Journey
+* Check that the server is running 
+* Ensure you are running the specified database version
+* Verify that Node.js can bypass the firewall
+* Have you entered the correct IP address in the ```ipstore.js``` file ?
 
-![Application Screenshot 2](https://i.imgur.com/AIMKgCE.png)
+>The server crashed
 
-### Selecting a result
+* Could be a number of problems, most commonly related your SQL credentials
+
+> When I enter a destination, no suggestion list appears
+
+* Is the provided Google Maps API key not working? 
+* Run a basic request via Postman to see if the key is working
+
+> I don't get a result after searching for a journey
+
+* Right now you can only retrieve a result if you enter 'South Clive Street' in the destination (to, not from) 
+* The starting location (from) can be as you wish
+
+> Error when adding funds via Paypal, related to /views
+
+* This is a common issue. Adjust the following in the ```server.js``` file
+```Javascript
+app.set('views', './views');
+```
+to 
+
+```Javascript
+app.set('views', '../views');
+```
+
+> I did not receive a push-notification
+
+* Ensure that you are logged in to expo prior to booking a journey
+* Ensure that notification & location permissions have been granted
+
+or the other way around
+
+> The map is blank or not working
+
+* Check the Google Maps API key
+
+> My location is invalid on the map
+
+* This depends on the location you have set on the emulator
+* You can adjust it in the emulator's settings
+* If you are using a device, ensure the relevant permissions have been given
+
+> How do I access the driver's end point?
+
+* Create a driver account by selecting 'driver' in the registartion form
+
+> How do I access the driver's route screen?
+
+* Click the map in the list of stops on the driver's side
+* This can be found at the bottom of the list of stops screen
+
+> Tracking a driver doesn't work
+
+* You need to setup two emulators for this to work
+* You need to be on track driver screen and the driver's route screen simultaniously
+* When you select 'start route' the socket is ready, you should see a bus icon on both emulators (driver and passenger)
+* In your android emulator you can use the GPX file in the ```mockRoutes``` folder to pass in a range of locations
+* Pressing the play button after importing the above file will start moving your device
+* Locations updates should then be shown on each respective end-point
+* Similarly, for iOS you can press the mock movement button in the simulator options
+
+>Couldn't get GCM token: Warning
+
+* This means you have not logged in to Expo and therefore, the device's token could not be retrieved
+
+>Unrecognized Web-Scoket
+
+* This generally means that one socket connection is not active
+* This typically means that you are not on both screens 
+
+> Initial map region cannot be null: Warning
+* This has to do with the component's loading speed and is typically not a application-breaking warning
+## Contributors
+
+## License
 
 
