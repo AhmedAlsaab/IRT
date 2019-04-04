@@ -70,6 +70,8 @@ Follow the Expo [Adnroid Studio emulator guide](https://docs.expo.io/versions/la
 
 You don't need to manually install the Expo client on your emulator/simulator, because Expo CLI will do that automatically (more on this later, but once the application launches it should automatically install Expo if you don't have it on the emulator)
 
+A suggestion is to use SDK 28: Pixel 2 XL or Nexus 6
+
 **Emulator/Simulator - iOS**
 
 Install [Xcode through the Apple app store](https://itunes.apple.com/app/xcode/id497799835). Next, open up Xcode, go to preferences and click the Components tab, install a simulator from the list.
@@ -94,50 +96,111 @@ Before we go into how to run the application, there are a few things that need t
 
 **IP Address**
 
-Firstly, navigate to the *ipstore.js* file which can be found in *server/keys* folder; within this file you need to declare your IPv4 IP address. To find out what this is run:
+Firstly, navigate to the ```ipstore.js``` file which can be found in ```server/keys``` folder; within this file you need to declare your IPv4 IP address. To find out what this is run:
 
 ```
 ipconfig
 ```
-and copy in your IPv4 address. This is how it should look:
+and copy in your IPv4 address. This is how it should look (where x represents IP Address):
 
 ```javascript
-const ip = '111.122.0.33';
+const ip = 'xxx.xxx.x.xx';
 
 module.exports = ip;
 ```
 
-The IP address is used to post and send API requests (instead of declaring localhost)
+The IP address is used to post and fetch API requests (instead of declaring localhost)
 
-By declaring your IP in this file - all the relevant functions & methods now have access to it and can sucessfully operate (make API requests)
+By declaring your IP in this file - all the relevant functions & methods now have access to it and can sucessfully operate (make API calls)
 
 **Database**
 
 There are a number of database versions supplied with this repository, this is to show how the database has transitioned over the project-phase. 
 
-Launch MYSQL WorkBench and open *db_version_eleven.sql* and *db_data_version_eleven.sql* - Both these files can be found in the *database/version_eleven* folder
+Launch MYSQL WorkBench open the ```database/version_eleven``` folder
 
-Run the schema: ```db_version_eleven``` 
+Import and run the schema: ```db_version_eleven``` 
 
-Consequently run: *db_data_version_eleven*
+Consequently import and run: ```db_data_version_eleven```
 
-**Expo Login**
+**Database Credentials**
 
-Head on back to the root directory and within the terminal or shell you have open run the following command:
+Open the ```server.js``` file which can be found in the ```server``` folder.
 
+Adjust the credentials to match your MYSQL WorkBench credentials. The IP found below is our localhost.
+
+```Javascript
+var connection = mysql.createConnection({
+	host: '127.0.0.1',
+	user: 'root',
+	database: 'transport',
+	password: ''
+});
 ```
-expo login
-```
 
-Enter your Expo account details to login to your Expo account
 
 **API Keys**
 
-In relation to convinience and efficiency, the team has provided you with a Paypal API key, Nodemailer Key and a Google Maps API key. These can be found in the keys folder and should fully work; namely, API requests should be sucessfully made with these keys. Normally, such API keys would not be shared, however as the repository is private we found it suitable. 
+In relation to convenience and efficiency, the team has provided you with a Paypal API key, Nodemailer Key and a Google Maps API key. These can be found in the keys folder and should fully work; namely, API requests should be sucessfully made with these keys. Normally, such API keys would not be shared, however as the repository is private we found it suitable. 
 
 ## How to run
 
 *While there are commands in place to simplify running the application, such as concurrently running the app/server, this following list of steps will start from the basics:*
+
+
+
+**Optional**
+
+Run ```setup.sh``` - This is a supplementary script that re-installs everything. We usually run this after a fresh clone to ensure all dependencies are installed based on ```package.json```
+
+```
+$./setup.sh
+```
+
+**Compulsary**
+
+Enter your Expo account details to login to your Expo account
+```
+expo login
+```
+
+Starting the application from the root directory:
+
+```
+expo start
+```
+Launching the server from the root directory:
+```
+nodemon server/server.js
+```
+**Expo Interface**
+
+After launching the application, you should have a web interface open automatically. This interface acts as an interactive menu where you are able to run the application through different means and methods. Additionally, ensure Node.JS has sufficient access by checking your firewall (if you are thinking of running on device)
+
+![Expo Interface Screenshot 1](https://i.imgur.com/ayUfsJq.png)
+
+**Andriod Emulator**
+
+>Run on Adroid device/emulator
+
+**iOS Simulator**
+> Run on iOS simulator
+
+**Android Device**
+
+Assuming Expo is installed on your device:
+
+>Scan QR code
+
+**iOS Device**
+
+Assuming Expo is installed on your device:
+
+>Open the camera application on your Iphone and scan the QR code
+
+
+
+
 
 
 
