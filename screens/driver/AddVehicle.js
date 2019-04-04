@@ -45,11 +45,15 @@ class AddVehicle extends React.Component {
 			currentlyDriven: 0,
 			vehicleType: vehicleType
 		};
+		// Send data to the server
 		postRequestAuthorized(`http://${ip}:3000/driver/vehicles/addVehicle`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
+						// If successfully stored, add the vehicle to the redux array and re-fetch
+						// tickets so the new vehicle is pulled into Redux in case the vehicle
+						// needs to be removed in which case the id is required.
 						this.props.addVehicle(data);
 						this.props.navigation.state.params.onFetchNewVehicleId();
 						this.navigateTo();
@@ -65,6 +69,7 @@ class AddVehicle extends React.Component {
 			.catch((error) => console.log(error));
 	};
 
+	// If there are validation errors, pass them and return them in an array
 	parseErrors = (errorList) => {
 		var errors = {
 			title: 'Errors',
@@ -82,6 +87,7 @@ class AddVehicle extends React.Component {
 		this.props.fetchVehicles();
 	}
 
+	// When a make is selected make note of the details so that models can be determined
 	onMakeSelect = (itemId, itemMake) => {
 		this.setState({
 			makeId: itemId,
@@ -90,6 +96,7 @@ class AddVehicle extends React.Component {
 		this.props.navigation.navigate('AddVehicle');
 	};
 
+	// Sets state of model and empties the previous array of models in case user selects new make
 	onModelSelect = (itemModel) => {
 		this.setState({
 			model: itemModel
@@ -98,6 +105,7 @@ class AddVehicle extends React.Component {
 		this.props.navigation.navigate('AddVehicle');
 	};
 
+	// Clear the states for model as they will change based on choice of make
 	navigateToMakeSelect = () => {
 		this.setState({ model: null, models: [] });
 		const data = {
@@ -113,6 +121,7 @@ class AddVehicle extends React.Component {
 		});
 	};
 
+	// Take the make details and determine the models to show before generating the list
 	navigateToModelSelect = () => {
 		this.determineModels();
 		const data = {
@@ -129,6 +138,7 @@ class AddVehicle extends React.Component {
 		});
 	};
 
+	// Determines the models based on make
 	determineModels = () => {
 		vehicleData.car_models.forEach((item) => {
 			if (this.state.makeId === item.make_id) {
@@ -153,6 +163,7 @@ class AddVehicle extends React.Component {
 			<Container>
 				<GlobalHeader type={3} navigateTo={this.navigateTo} header="Add a vehicle" isBackButtonActive={1} />
 				<Content>
+					{/* Display validation errors here */}
 					{this.state.errors &&
 						!!this.state.errors.length && (
 							<Accordion
@@ -256,6 +267,7 @@ class AddVehicle extends React.Component {
 									/>
 								}
 
+								{/* Vehicle type picker */}
 								<View
 									style={[
 										styles.inputContainer,
@@ -277,12 +289,7 @@ class AddVehicle extends React.Component {
 											value={0}
 										/>
 										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Bus" value={1} />
-										<Picker.Item
-											color={colors.bodyTextColor}
-											fontSize={5}
-											label="Mini Bus"
-											value={2}
-										/>
+										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Mini Bus" value={2} />
 										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Taxi" value={3} />
 										<Picker.Item color={colors.bodyTextColor} fontSize={5} label="Car" value={4} />
 									</Picker>

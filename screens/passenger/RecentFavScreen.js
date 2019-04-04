@@ -27,17 +27,20 @@ class RecentFavScreen extends Component {
 		this.props.navigation.navigate('Home');
 	};
 
+	// Used to toggle whether a journey is favourited or not
 	toggleFavouriteJourney = () => {
 		const data = {
 			ticketId: this.state.ticketId,
 			favourited: this.state.favourited
 		};
 
+		// Send to server/database
 		postRequestAuthorized(`http://${ip}:3000/toggleFavourite`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
+						// If successful, update redux tickets
 						if (this.state.favourited === 1) {
 							this.props.favourite(this.state.ticketId);
 						} else if (this.state.favourited === 0) {
@@ -55,6 +58,7 @@ class RecentFavScreen extends Component {
 			.catch((error) => console.log(error));
 	};
 
+	// Checks whether the user has any saved journeys
 	favouriteJourneys = () => {
 		var favouriteJourneys = false;
 		if (this.props.tickets.length > 0) {
@@ -68,6 +72,7 @@ class RecentFavScreen extends Component {
 		return favouriteJourneys;
 	};
 
+	// Checks whether there are any recent journeys for the user
 	recentJourneys = () => {
 		if (this.props.tickets.length > 0) return true;
 		return false;
@@ -85,9 +90,13 @@ class RecentFavScreen extends Component {
 				<Content>
 					<View style={styles.container}>
 						<Text style={styles.header}>FAVOURITE JOURNEYS</Text>
+
+						{/* If there are no saved journeys display the following */}
 						{!this.favouriteJourneys() && (
 							<Text style={styles.body}>You do not have any saved journeys</Text>
 						)}
+
+						{/* Take all users favourited journeys and display each one in a list */}
 						{this.props.tickets.map((ticket) => {
 							if (ticket.favourited === 1) {
 								return (
@@ -106,21 +115,25 @@ class RecentFavScreen extends Component {
 						})}
 
 						<Text style={styles.header}>RECENT JOURNEYS</Text>
+
+						{/* If there are no recent journeys, display the following */}
 						{!this.recentJourneys() && <Text style={styles.body}>You do not have any recent journeys</Text>}
+
+						{/* Take all users favourited journeys and display each one in a list */}
 						{this.props.tickets.map((ticket) => {
-								return (
-									<JourneyRow
-										onPress={() => {
-											this.setState({ favourited: 1, ticketId: ticket.id }, () => {
-												this.toggleFavouriteJourney();
-											});
-										}}
-										iconName="staro"
-										ticket={ticket}
-										key={uuid()}
-									/>
-								);
-							}
+							return (
+								<JourneyRow
+									onPress={() => {
+										this.setState({ favourited: 1, ticketId: ticket.id }, () => {
+											this.toggleFavouriteJourney();
+										});
+									}}
+									iconName="staro"
+									ticket={ticket}
+									key={uuid()}
+								/>
+							);
+						}
 						)}
 					</View>
 				</Content>

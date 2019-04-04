@@ -20,6 +20,7 @@ class VehicleRow extends React.Component {
 		selectDialog: false,
 	};
 
+	// Get the icon name depending on vehicle type
 	getIconName = (vehicleType) => {
 		if (vehicleType === 1) {
 			return "bus"
@@ -48,11 +49,13 @@ class VehicleRow extends React.Component {
 		data = {
 			id: id,
 		}
+		// Send data to the server
 		postRequestAuthorized(`http://${ip}:3000/driver/vehicles/removeVehicle`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
+						// If successful remove the vehicle from Redux vehicles array
 						this.props.removeVehicle(id);
 				}
 			})
@@ -76,11 +79,13 @@ class VehicleRow extends React.Component {
 			selectedVehicle: this.props.selectedVehicle,
 			vehicleToBeSelectedId: id
 		}
+		// Send data to the server
 		postRequestAuthorized(`http://${ip}:3000/driver/vehicles/selectVehicle`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
+						// If successful update the selected vehicle in redux
 						this.props.selectVehicle(data);
 				}
 			})
@@ -91,6 +96,8 @@ class VehicleRow extends React.Component {
 		vehicle = this.props.vehicle;
 		return (
 			<View style={styles.card}>
+
+				{/* Vehicle details */}
 				<View style={styles.icon}>
 					<Icon
 						name={this.getIconName(vehicle.vehicleType)}

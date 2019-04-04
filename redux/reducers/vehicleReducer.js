@@ -6,6 +6,8 @@ const initialState = {
 
 export default function (state = initialState, action) {
     switch (action.type) {
+
+        // Fetch all vehicles and set variable names before setting state
         case FETCH_VEHICLES:
             var fetchedVehicles = action.payload;
             const newVehicleList = [];
@@ -30,12 +32,14 @@ export default function (state = initialState, action) {
                 vehicles: newVehicleList,
             }
 
+        // Add a vehicle to the vehicles array
         case ADD_VEHICLE:
             return {
                 ...state,
                 vehicles: [...state.vehicles, action.payload],
             }
 
+        // Remove a vehicle from the vehicles array
         case REMOVE_VEHICLE:
             const vehicleId = action.payload;
 
@@ -44,6 +48,8 @@ export default function (state = initialState, action) {
                 vehicles: state.vehicles.filter(vehicle => vehicle.id !== vehicleId)
             }
 
+        // Check the vehicle array for a selected vehicle and the vehicle to be selected
+        // Change their values to the new select status
         case SELECT_VEHICLE:
             const data = action.payload;
 

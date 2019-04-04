@@ -20,7 +20,6 @@ class TicketsScreen extends React.Component {
 	};
 
 	openTicket = (ticketData) => {
-		console.log(ticketData)
 		this.props.navigation.navigate('Details', { ticket: ticketData });
 	};
 
@@ -40,6 +39,7 @@ class TicketsScreen extends React.Component {
 		this.props.navigation.navigate('Home');
 	};
 
+	// Checks all users tickets for tickets that have not expired
 	activeTickets = () => {
 		var activeTickets = false;
 		if (this.props.tickets.length > 0) {
@@ -53,6 +53,7 @@ class TicketsScreen extends React.Component {
 		return activeTickets;
 	}
 
+	// Checks all users tickets for tickets that have expired
 	expiredTickets = () => {
 		var expiredTickets = false;
 		if (this.props.tickets.length > 0) {
@@ -73,6 +74,8 @@ class TicketsScreen extends React.Component {
 					<GlobalHeader type={1} navigateTo={this.navigateTo} />
 					<Content>
 						<View style={styles.header}>
+
+							{/* Buttons to toggle active and expired tickets */}
 							<View style={styles.buttonContainer}>
 								{this.state.showActive === 0 ?
 									<>
@@ -96,6 +99,8 @@ class TicketsScreen extends React.Component {
 							</View>
 						</View>
 						<View style={styles.ticketContainer}>
+
+							{/* If there are no active tickets display the following */}
 							{!this.activeTickets() && this.state.showActive === 0 &&
 								<View style={styles.noTicketsContainer}>
 									<Text style={styles.noTicketsMessage}>You currently have no active tickets</Text>
@@ -108,6 +113,8 @@ class TicketsScreen extends React.Component {
 									</Button>
 								</View>
 							}
+
+							{/* If there are tickets and the active tab is selected, display each ticket in a list */}
 							{this.props.tickets !== 'undefined' && this.state.showActive === 0 && this.props.tickets.length > 0 && this.props.tickets.map((ticket) => {
 								if (ticket.expired === 0) {
 									return (
@@ -115,11 +122,15 @@ class TicketsScreen extends React.Component {
 									)
 								};
 							})}
+
+							{/* If there are no expired tickets display the following */}
 							{!this.expiredTickets() && this.state.showActive === 1 &&
 								<View style={styles.noTicketsContainer}>
 									<Text style={styles.noTicketsMessage}>You currently have no expired tickets</Text>
 								</View>
 							}
+
+							{/* If there are tickets and the expired tab is selected, display each ticket in a list */}
 							{this.props.tickets !== 'undefined' && this.state.showActive === 1 && this.props.tickets.length > 0 && this.props.tickets.map((ticket) => {
 								if (ticket.expired === 1) {
 									return (

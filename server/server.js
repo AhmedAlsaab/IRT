@@ -242,7 +242,7 @@ app.post('/booking/sendEmail', (req, res) => {
 app.post('/booking/payment', (req, res) => {
 	//Get form fields
 	const { email, amount } = req.body;
-	console.log(email, amount)
+	console.log(email, amount);
 
 	const output = `
 		<h1> Your payment details</h1>
@@ -320,7 +320,7 @@ app.get('/user/cancelTicket/journey', function(req, res) {
 		(error, rows, fields) => {
 			if (error) console.log(error);
 			else {
-				return res.send(rows[0].end_time);
+				res.send(rows[0].end_time);
 			}
 		}
 	);
@@ -510,30 +510,41 @@ app.post('/booking/book', (req, res) => {
 					.then((id) => {
 						connection.query(
 							'SELECT coordinate_id AS id FROM coordinate WHERE fk_journey_id = ? AND fk_coordinate_type_id = 2',
-							[jId],
+							[ jId ],
 							(error, row4, fields) => {
 								if (error) {
-									return connection.rollback(function () {
+									return connection.rollback(function() {
 										throw error;
 									});
 								}
 
 								connection.query(
 									'INSERT INTO ticket (no_of_passengers, no_of_wheelchairs, returnTicket, used, expired, date_of_journey, time_of_journey, date_created, fk_coordinate_id_to, fk_coordinate_id_from) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-									[numPassenger, numWheelchair, returnTicket, 0, 0, date, time, new Date(), row4[0].id, id],
+									[
+										numPassenger,
+										numWheelchair,
+										returnTicket,
+										0,
+										0,
+										date,
+										time,
+										new Date(),
+										row4[0].id,
+										id
+									],
 									(error, row2, fields) => {
 										if (error) {
-											return connection.rollback(function () {
+											return connection.rollback(function() {
 												throw error;
 											});
 										}
 
 										connection.query(
 											'INSERT INTO user_journey (fk_journey_id, fk_user_id, fk_ticket_id, paid) VALUES (?, ?, ?, ?)',
-											[jId, req.userId, row2.insertId, 1],
+											[ jId, req.userId, row2.insertId, 1 ],
 											(error, row3, fields) => {
 												if (error) {
-													return connection.rollback(function () {
+													return connection.rollback(function() {
 														throw error;
 													});
 												}
@@ -549,7 +560,8 @@ app.post('/booking/book', (req, res) => {
 										);
 									}
 								);
-							})
+							}
+						);
 					})
 					.catch((error) => {
 						throw error;
@@ -641,7 +653,8 @@ app.get('/driver/journeys', (req, res) => {
 app.get('/driver/stops', function(req, res) {
 	const journeyId = req.query.id;
 
-	connection.query(`SELECT SUM(t.no_of_passengers) AS no_of_passengers, SUM(t.no_of_wheelchairs) AS no_of_wheelchairs, c.street, c.city, j.start_time, j.end_time FROM ticket t JOIN coordinate c ON t.fk_coordinate_id_from = c.coordinate_id JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND t.cancelled = 0 AND t.expired = 0 GROUP BY c.street`,
+	connection.query(
+		`SELECT SUM(t.no_of_passengers) AS no_of_passengers, SUM(t.no_of_wheelchairs) AS no_of_wheelchairs, c.street, c.city, j.start_time, j.end_time FROM ticket t JOIN coordinate c ON t.fk_coordinate_id_from = c.coordinate_id JOIN journey j ON j.journey_id = c.fk_journey_id WHERE c.fk_journey_id = ? AND t.cancelled = 0 AND t.expired = 0 GROUP BY c.street`,
 		[ journeyId ],
 		(error, rows, fields) => {
 			if (error) throw error;
@@ -983,11 +996,10 @@ app.get('/user/tickets', async function(req, res) {
 						if (error) throw error;
 						tickets.push(rows1[1], rows1[0]);
 
-						if(rows.length === i + 1) return res.send({ticket: tickets})
+						if (rows.length === i + 1) return res.send({ ticket: tickets });
 					}
 				);
 			}
-
 		}
 	);
 });
