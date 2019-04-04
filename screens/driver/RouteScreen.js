@@ -56,6 +56,8 @@ class RouteScreen extends Component {
 		this.socket = null;
 	}
 
+	// Get the coordiante of the the start, end and waypoint coordinates, so the data can be
+	// Place on Google Maps so the driver will know where to go
 	fetchData = async () => {
 		const coordinate = await getRequestAuthorized(
 			`http://${ip}:3000/driver/schedule?id=${this.props.navigation.state.params.id}`
@@ -210,6 +212,7 @@ class RouteScreen extends Component {
 					ref={(c) => (this.mapView = c)}
 					onPress={this.onMapPress}
 				>
+					{/* Setting waypoints on the map */}
 					{this.state.data.map((stop) => (
 						<Marker
 							pinColor={'green'}
@@ -220,6 +223,7 @@ class RouteScreen extends Component {
 						/>
 					))}
 
+					{/* Setting start location on the map */}
 					{this.state.startCoords !== null && (
 						<MapView.Marker
 							pinColor="rgba(46, 49, 50, 0.5)"
@@ -230,6 +234,7 @@ class RouteScreen extends Component {
 						/>
 					)}
 
+					{/* Setting end location on the map */}
 					{this.state.endCoords !== null && (
 						<MapView.Marker
 							pinColor="rgba(46, 49, 50, 0.5)"

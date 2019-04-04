@@ -12,14 +12,19 @@ import { connect } from 'react-redux';
 import { postRequestAuthorized } from '../../API'
 
 class PaymentConfirmationScreen extends React.Component {
+
     static navigationOptions = {
         header: null
     };
 
+    // Default method for the global header that will redirect to
+	// Wallet when the back button is pressed
     navigateTo = () => {
         this.props.navigation.navigate('Wallet');
     };
 
+    // After a user has added funds to their account, an electronic receipt of the
+    // ticket will be sent to the user
     componentDidMount(){
         const data = {
             email: this.props.user.email,
@@ -103,8 +108,10 @@ const styles = StyleSheet.create({
     }
 });
 
+// Retrieve user details from the redux store 
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user
 });
 
+// Connect the component to redux
 export default connect(mapStateToProps)(PaymentConfirmationScreen);
