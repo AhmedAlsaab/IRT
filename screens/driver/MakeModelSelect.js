@@ -15,12 +15,14 @@ export default class MakeSelect extends React.Component {
 	};
 
 	componentWillMount() {
+		// If the component is about to mount decide whether alphabetical dividers are required
 		const data = this.props.navigation.state.params.data;
 		if (data.dividers === true) {
 			this.setDividers();
 		}
 	}
 
+	// Determine which divider letters are required.
 	setDividers = () => {
 		const data = this.props.navigation.state.params.data.vehicleData;
 		var previousDivider = '';
@@ -45,11 +47,13 @@ export default class MakeSelect extends React.Component {
 								dataArray={props.data.vehicleData}
 								renderRow={(item) =>
 									<>
+										{/* If dividers are required generate a separate list item for each letter */}
 										{props.data.dividers === true && this.state.dividers.includes(item.make) &&
 											<ListItem itemDivider>
 												<Text>{item.make.substring(0, 1)}</Text>
 											</ListItem>
 										}
+										{/* List make or model depending on the selectType */}
 										<ListItem
 											noIndent
 											onPress={() => {

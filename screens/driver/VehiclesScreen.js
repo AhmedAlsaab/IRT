@@ -24,6 +24,7 @@ class VehiclesScreen extends React.Component {
 		this.props.navigation.navigate('');
 	};
 
+	// Check if a vehicle is already selected and if so return it
 	selectedVehicle = () => {
 		var selectedVehicle;
 		if (this.props.vehicles.length > 0) {
@@ -36,16 +37,12 @@ class VehiclesScreen extends React.Component {
 		return selectedVehicle;
 	}
 
+	// Fetch the list of vehicles again if a new vehicle is added so that it's id can be used
 	fetchNewVehicleId = () => {
 		this.props.fetchVehicles();
 	}
 
 	render() {
-		const actions = [{
-			icon: addIcon,
-			name: 'add_vehicle',
-			position: 1
-		}];
 		return (
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
@@ -56,6 +53,8 @@ class VehiclesScreen extends React.Component {
 					}]}>
 						<Text style={styles.header}>CURRENTLY DRIVING</Text>
 					</View>
+
+					{/* If there is a vehicle selected render it */}
 					{this.selectedVehicle() ?
 						<VehicleRow vehicle={this.selectedVehicle()} activeVehicle={true} /> :
 						<Text style={styles.body}>No vehicle currently selected</Text>
@@ -69,6 +68,8 @@ class VehiclesScreen extends React.Component {
 							<Text style={styles.header}>ADD </Text><Icon name="plus-circle-outline" color={colors.brandColor} size={20} />
 						</TouchableOpacity>
 					</View>
+
+					{/* If the user has stored vehicles render them */}
 					{(this.props.vehicles && this.props.vehicles.length > 0) ?
 						this.props.vehicles.map((vehicle) => {
 							return (

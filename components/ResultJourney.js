@@ -37,8 +37,8 @@ export default class ResultJourney extends Component {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    borderBottomColor: '#dfdfdf',
-    borderBottomWidth: 1,
+    borderBottomColor: colors.lightBorder,
+    borderBottomWidth: 0.75,
     flexDirection: "row",
     alignItems: 'center'
   },
