@@ -5,6 +5,4 @@ npm-debug.*
 *.p12
 *.key
 *.mobileprovision
-google_api_key.js
-ipstore.js
 scratch/

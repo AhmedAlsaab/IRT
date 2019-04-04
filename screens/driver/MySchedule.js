@@ -6,7 +6,7 @@ import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
 import ip from '../../server/keys/ipstore';
-import { getRequestAuthorized } from '../../API' 
+import { getRequestAuthorized } from '../../API';
 
 export default class MySchedule extends React.Component {
 	static navigationOptions = {
@@ -26,15 +26,21 @@ export default class MySchedule extends React.Component {
 		}
 	};
 
+	// Fetches the list of stops from the database when the component mounts
+	// Stops are returned based on the ID of the journey (the ones assigned to the selected schedule)
+	// The data returned is stored in the data[] array (state is set)
 	componentDidMount() {
-		getRequestAuthorized(`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`)
-		.then((coordinate) => this.setState({ data: coordinate }));
+		getRequestAuthorized(
+			`http://${ip}:3000/driver/stops?id=${this.props.navigation.state.params.id}`
+		).then((coordinate) => this.setState({ data: coordinate }));
 	}
 
 	navigateTo = () => {
 		this.props.navigation.navigate('DailySchedule');
 	};
 
+	// Populates the card/container by mapping the through the data[] array
+	// Each index acts as a new list item
 	render() {
 		const RADIUS = 200;
 		const zoomAmount = 15;
@@ -56,7 +62,9 @@ export default class MySchedule extends React.Component {
 								<Content>
 									<CardItem>
 										<Icon name="my-location" size={20} color="#bcbcbc" />
-										<Text style={styles.cardHeaders}>{this.props.navigation.state.params.from}</Text>
+										<Text style={styles.cardHeaders}>
+											{this.props.navigation.state.params.from}
+										</Text>
 									</CardItem>
 									<View style={styles.middleCard}>
 										<FlatList
@@ -116,7 +124,7 @@ export default class MySchedule extends React.Component {
 						</View>
 						<MapView
 							onPress={() => {
-								this.props.navigation.navigate('Route', {id: this.props.navigation.state.params.id});
+								this.props.navigation.navigate('Route', { id: this.props.navigation.state.params.id });
 							}}
 							style={styles.map}
 							minZoomLevel={zoomAmount}
