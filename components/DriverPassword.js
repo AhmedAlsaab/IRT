@@ -9,9 +9,10 @@ import {
 	Left,
 	Right,
 } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import GlobalHeader from './GlobalHeader';
+import ip from '../server/keys/ipstore';
 import { Ionicons } from '@expo/vector-icons';
+import { postRequestAuthorized } from '../API'
 
 export default class ChangePassword extends Component {
 	static navigationOptions = {
@@ -39,14 +40,7 @@ export default class ChangePassword extends Component {
 			return alert('Enter text into the fields')
 		}
 
-		fetch(`http://${ip}:3000/userUpdatePassword`, {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({currentPassword, newPassword, confirmPassword})
-		}).then((response) => response.json())
+		postRequestAuthorized(`http://${ip}:3000/userUpdatePassword`, {currentPassword, newPassword, confirmPassword})
 		.then((responseJSON) => {
 			switch (responseJSON.status) {
 				//Success
@@ -55,7 +49,7 @@ export default class ChangePassword extends Component {
 					break;
 				//If email exist
 					case 1, 0:
-					alert('Could not update as email already exist')
+					alert('Successfully Updated Password')
 					break;
 			}
 		})

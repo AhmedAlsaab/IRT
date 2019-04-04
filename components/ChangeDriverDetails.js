@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions, TextInput } from 'react-native';
 import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import GlobalHeader from './GlobalHeader';
+import ip from '../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { getRequestAuthorized, postRequestAuthorized } from '../../API';
+import { getRequestAuthorized, postRequestAuthorized } from '../API';
 
-export default class AccountsScreen extends Component {
+export default class ChangeDriverDetails extends Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -37,15 +37,11 @@ export default class AccountsScreen extends Component {
 	};
 
 	settings = () => {
-		this.props.navigation.navigate('Settings');
+		this.props.navigation.navigate('Account');
 	};
 
 	onChangePassword = () => {
-		this.props.navigation.navigate('ChangePassword');
-	};
-
-	addAddress = () => {
-		this.props.navigation.navigate('AddAddress');
+		this.props.navigation.navigate('DriverPassword');
 	};
 
 	onChangeForename = () => {
@@ -53,11 +49,13 @@ export default class AccountsScreen extends Component {
 		postRequestAuthorized(`http://${ip}:3000/userChangeForename`, { forename })
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
+					//Success
 					case 10:
-						alert('Successfully Updated First Name');
+						alert('Updated forename');
 						break;
+					//If email exist
 					case 1:
-						alert('Unsuccessful Update. Please Try Again');
+						alert('Could not update');
 						break;
 				}
 			})
@@ -73,10 +71,11 @@ export default class AccountsScreen extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Successfully Updated Last Name');
+						alert('Updated Surname');
 						break;
+					//If email exist
 					case 1:
-						alert('Unsuccessful Update. Please Try Again');
+						alert('Could not update');
 						break;
 				}
 			})
@@ -92,7 +91,7 @@ export default class AccountsScreen extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Successfully Updated Email');
+						alert('Updated');
 						break;
 					//If email exist
 					case 1:
@@ -112,11 +111,11 @@ export default class AccountsScreen extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Successfully Updated Phone Number');
+						alert('Updated');
 						break;
 					//If email exist
 					case 1:
-						alert('Unsuccessful Update. Please Try Again');
+						alert('Could not update as email already exist');
 						break;
 				}
 			})
@@ -150,7 +149,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.forename}
 								/>
 								<TouchableOpacity onPress={this.onChangeForename}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -162,7 +161,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.surname}
 								/>
 								<TouchableOpacity onPress={this.onChangeSurname}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -174,7 +173,7 @@ export default class AccountsScreen extends Component {
 									value={this.state.email}
 								/>
 								<TouchableOpacity onPress={this.onChangeEmail}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
@@ -186,17 +185,12 @@ export default class AccountsScreen extends Component {
 									value={this.state.phoneNumber}
 								/>
 								<TouchableOpacity onPress={this.onChangeNumber}>
-									<Icon name="update" style={styles.updateIcon} />
+									<Icon name="update" size={30} style={styles.updateIcon} />
 								</TouchableOpacity>
 							</View>
 						</React.Fragment>
 					)}
 
-					<View style={styles.secondaryButtonContainer}>
-						<Button bordered danger style={styles.button} onPress={this.addAddress}>
-							<Text style={styles.buttonText}>Add Address</Text>
-						</Button>
-					</View>
 					<View style={styles.secondaryButtonContainer}>
 						<Button bordered danger style={styles.button} onPress={this.onChangePassword}>
 							<Text style={styles.buttonText}>Update Password</Text>

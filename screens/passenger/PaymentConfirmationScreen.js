@@ -1,58 +1,54 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Content, Container, Button, Text, StyleProvider } from 'native-base';
+import { Content, Container, Button, Text, StyleProvider, Item, Row } from 'native-base';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ip from '../../server/keys/ipstore'
 
-class ConfirmationScreen extends React.Component {
+import { connect } from 'react-redux';
+import { postRequestAuthorized } from '../../API'
+
+class PaymentConfirmationScreen extends React.Component {
     static navigationOptions = {
         header: null
     };
 
-    state = {
-        isLoadingComplete: false,
-        data: [],
-        date: new Date(),
-        dateOptions: { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' },
-        total: 0.0
+    navigateTo = () => {
+        this.props.navigation.navigate('Wallet');
     };
 
-    navigateTo = () => {
-        this.props.navigation.navigate('Home');
-    };
+    componentDidMount(){
+        const data = {
+            email: this.props.user.email,
+            amount: this.props.navigation.state.params.amount
+        }
+
+        postRequestAuthorized(`http://${ip}:3000/booking/payment`, data)
+    }
 
     render() {
-        const booking = this.props.navigation.state.params;
         return (
             <StyleProvider style={getTheme(platform)}>
                 <Container>
-                    <GlobalHeader
-                        type={3}
-                        header="Booking Confirmation"
-                        navigateTo={this.navigateTo}
-                        isBackButtonActive={1}
-                    />
                     <Content>
+                        <GlobalHeader
+                            type={3}
+                            header="Payment Confirmation"
+                            navigateTo={this.navigateTo}
+                            isBackButtonActive={1}
+                        />
                         <View>
                             {/* Page header and introductory text */}
                             <View style={styles.introduction}>
                                 <Icon name="calendar-check-o" color={colors.bodyTextColor} size={75} style={styles.icon} />
-                                <Text style={styles.body}>
-                                    Thank you for booking your journey with us on <Text style={styles.bold}>{booking.date}</Text> at <Text style={styles.bold}>{booking.time}</Text>.
+                                <Text style={[styles.body, { marginBottom: 15}]}>
+                                    You have added  <Text style={styles.bold}>{`£${parseFloat(this.props.navigation.state.params.amount).toFixed(2)}`} </Text> to your account, you can view your balance in your wallet and see the transaction you have completed
                                 </Text>
-                                <View style={styles.coordinates}>
-                                    <Text><Text style={styles.bold}>From: </Text><Text style={styles.body}>{booking.data.startLocation}</Text></Text>
-                                    <Text><Text style={styles.bold}>To: </Text><Text style={styles.body}>{booking.data.endLocation}</Text></Text>
-                                </View>
                                 <Text style={styles.body}>
-                                    You will shortly receive an e-mail confirmation with the full details of your booking.
-                                </Text>
-                                <Text style={[styles.body, { marginTop: 15 }]}>
-                                    Please remember your chosen time is approximate and you will be notified again on the day of
-                                    travel with updated travel times.
+                                    You will shortly receive an e-mail confirmation with details of this transaction.
                                 </Text>
                                 <View style={styles.buttonContainer}>
                                     <Button
@@ -107,4 +103,8 @@ const styles = StyleSheet.create({
     }
 });
 
-export default ConfirmationScreen;
+const mapStateToProps = (state) => ({
+	user: state.userReducer.user
+});
+
+export default connect(mapStateToProps)(PaymentConfirmationScreen);

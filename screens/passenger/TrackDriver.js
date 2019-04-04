@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Platform, View, StyleSheet, Button, Image, Dimensions, Text } from 'react-native';
 import { Location, Permissions, Notifications } from 'expo';
-import MapView, { Polyline, Marker } from 'react-native-maps';
-import ip from '../../ipstore';
+import MapView, { Marker } from 'react-native-maps';
+import ip from '../../server/keys/ipstore';
 import geolib from 'geolib';
 import socketIO from 'socket.io-client';
 import { YellowBox } from 'react-native';
@@ -77,6 +77,9 @@ export default class TrackDriver extends Component {
 		console.log(token);
 	};
 
+	// Sends the notification to the server hosted by EXPO specifically for push notifications
+	// The server sends the noification back with the specfied values (fetched from the indicated state)
+	// Sends it to the provided GCM / Device Token
 	sendPushNotification = () => {
 		let response = fetch('https://exp.host/--/api/v2/push/send', {
 			method: 'POST',
@@ -169,6 +172,8 @@ export default class TrackDriver extends Component {
 	};
 
 	render() {
+		// Pass the location returned from the socket into the marker / bus icon
+		// Only run it when the driver is on the way (value is true)
 		const pickupLocation = this.props.navigation.state.params;
 		let driverMarker = null;
 		if (this.state.isDriverOnTheWay) {

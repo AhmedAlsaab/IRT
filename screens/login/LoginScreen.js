@@ -2,17 +2,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { Accordion, Button, Container, Content, Text } from 'native-base';
 import React, { Component } from 'react';
 import { TextInput, View, AsyncStorage, KeyboardAvoidingView, Dimensions, StyleSheet } from 'react-native';
-import colors from '../constants/Colors';
-import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ipstore';
-import { postRequestNotAuthorized } from '../API';
+import colors from '../../constants/Colors';
+import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../server/keys/ipstore';
+import { postRequestNotAuthorized } from '../../API';
 
 import { connect } from 'react-redux';
-import { addUser } from '../redux/actions/userAction';
+import { addUser } from '../../redux/actions/userAction';
 
 class loginScreen extends Component {
 	state = {
-		email: 'vuilleumierl@cardiff.ac.uk',
+		email: 'SimonOM@cardiff.ac.uk',
 		password: 'Qwerty123',
 		errors: [],
 
@@ -73,6 +73,16 @@ class loginScreen extends Component {
 								expanded={0}
 							/>
 						)}
+
+						{typeof (this.props.navigation.state.params) !== 'undefined' && this.props.navigation.state.params.success === 10 &&
+							<Accordion
+								dataArray={[{ title: 'Success', content: 'Your account has been created' }]}
+								icon="add"
+								expandedIcon="remove"
+								contentStyle={styles.errorStyle}
+								expanded={0}
+							/>
+						}
 
 						<View style={styles.contentContainer}>
 							<View style={styles.titleContainer}>

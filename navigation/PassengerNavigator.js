@@ -6,20 +6,21 @@ import colors from '../constants/Colors';
 import TabBarIcon from '../components/TabBarIcon';
 import JourneyScreen from '../screens/passenger/JourneyScreen';
 import SummaryScreen from '../screens/passenger/SummaryScreen';
-import TicketDetail from '../screens/TicketDetail';
-import TicketsScreen from '../screens/TicktetsScreen';
+import TicketDetail from '../components/TicketDetail';
+import TicketsScreen from '../screens/passenger/TicktetsScreen';
 import AccountsScreen from '../screens/passenger/AccountsScreen';
 import AddFundsScreen from '../screens/passenger/AddFundsScreen';
 import WalletScreen from '../screens/passenger/WalletScreen';
 import TrackDriver from '../screens/passenger/TrackDriver';
 import ConfirmationScreen from '../screens/passenger/ConfirmationScreen';
 import RecentFavScreen from '../screens/passenger/RecentFavScreen';
-import AmendTicket from './../screens/AmendTicket';
+import AmendTicket from '../screens/passenger/AmendTicket';
 import ResultScreen from '../screens/passenger/ResultScreen';
-import ChangePassword from '../screens/passenger/ChangePassword';
-import ContactScreen from '../screens/passenger/ContactScreen';
-import ChangeDetailsScreen from '../screens/passenger/ChangeDetailsScreen';
-import AddressScreen from '../screens/passenger/AddressScreen';
+import ChangePassword from '../components/ChangePassword';
+import ContactScreen from '../components/ContactScreen';
+import ChangeDetailsScreen from '../components/ChangeDetailsScreen';
+import AddressScreen from '../components/AddressScreen';
+import PaymentConfirmationScreen from '../screens/passenger/PaymentConfirmationScreen'
 
 const JourneyStack = createStackNavigator(
 	{
@@ -61,7 +62,8 @@ TicketsStack.navigationOptions = {
 const WalletStack = createStackNavigator(
 	{
 		Wallet: WalletScreen,
-		AddFunds: AddFundsScreen
+		AddFunds: AddFundsScreen,
+		PaymentConfirmation: PaymentConfirmationScreen 
 	},
 	{ initialRouteName: 'Wallet' }
 );
@@ -78,7 +80,7 @@ const AccountStack = createStackNavigator(
 		Settings: AccountsScreen,
 		ChangeDetails: ChangeDetailsScreen,
 		ChangePassword: ChangePassword,
-		AddAddress: AddressScreen
+		AddAddress: AddressScreen,
 	},
 	{ initialRouteName: 'Account' }
 );

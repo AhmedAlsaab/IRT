@@ -3,8 +3,8 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 import PassengerNavigator from './PassengerNavigator';
 import DriverNavigator from './DriverNavigator';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegistrationScreen';
+import LoginScreen from '../screens/login/LoginScreen';
+import RegisterScreen from '../screens/login/RegistrationScreen';
 
 
 export default createAppContainer(

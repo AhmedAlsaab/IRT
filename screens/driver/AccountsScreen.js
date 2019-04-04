@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
 import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getRequestAuthorized } from '../../API';
 

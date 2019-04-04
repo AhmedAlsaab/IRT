@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import moment from 'moment';
-import colors from '../../constants/Colors'
+import colors from '../constants/Colors'
 
 import { connect } from 'react-redux';
-import { fetchTransactions } from '../../redux/actions/transactionAction';
+import { fetchTransactions } from '../redux/actions/transactionAction';
 
 class WalletTransaction extends Component {
 

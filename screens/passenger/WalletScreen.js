@@ -3,9 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import { Container, Content, Text } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 
-import WalletBalance from './WalletBalance';
-import WalletTransaction from './WalletTransaction';
-import WalletHeader from './WalletHeader';
+import WalletBalance from '../../components/WalletBalance';
+import WalletTransaction from '../../components/WalletTransaction';
+import WalletHeader from '../../components/WalletHeader';
 
 export default class WalletScreen extends React.Component {
 	static navigationOptions = {

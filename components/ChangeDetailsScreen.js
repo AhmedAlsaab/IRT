@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Dimensions, TextInput } from 'react-native';
-import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import { Button, Container, Text, Content } from 'native-base';
+import GlobalHeader from './GlobalHeader';
+import ip from '../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { getRequestAuthorized, postRequestAuthorized } from '../../API';
+import { getRequestAuthorized, postRequestAuthorized } from '../API';
 
-export default class ChangeDriverDetails extends Component {
+export default class AccountsScreen extends Component {
 	static navigationOptions = {
 		header: null
 	};
@@ -37,11 +37,15 @@ export default class ChangeDriverDetails extends Component {
 	};
 
 	settings = () => {
-		this.props.navigation.navigate('Account');
+		this.props.navigation.navigate('Settings');
 	};
 
 	onChangePassword = () => {
-		this.props.navigation.navigate('DriverPassword');
+		this.props.navigation.navigate('ChangePassword');
+	};
+
+	addAddress = () => {
+		this.props.navigation.navigate('AddAddress');
 	};
 
 	onChangeForename = () => {
@@ -49,13 +53,11 @@ export default class ChangeDriverDetails extends Component {
 		postRequestAuthorized(`http://${ip}:3000/userChangeForename`, { forename })
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
-					//Success
 					case 10:
-						alert('Updated forename');
+						alert('Successfully Updated First Name');
 						break;
-					//If email exist
 					case 1:
-						alert('Could not update');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -71,11 +73,10 @@ export default class ChangeDriverDetails extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated Surname');
+						alert('Successfully Updated Last Name');
 						break;
-					//If email exist
 					case 1:
-						alert('Could not update');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -91,7 +92,7 @@ export default class ChangeDriverDetails extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated');
+						alert('Successfully Updated Email');
 						break;
 					//If email exist
 					case 1:
@@ -111,11 +112,11 @@ export default class ChangeDriverDetails extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Updated');
+						alert('Successfully Updated Phone Number');
 						break;
 					//If email exist
 					case 1:
-						alert('Could not update as email already exist');
+						alert('Unsuccessful Update. Please Try Again');
 						break;
 				}
 			})
@@ -177,7 +178,7 @@ export default class ChangeDriverDetails extends Component {
 								</TouchableOpacity>
 							</View>
 							<View style={styles.inputContainer}>
-								<Icon name="person" size={32} style={styles.inputIcons} />
+								<Icon name="phone-android" size={32} style={styles.inputIcons} />
 								<TextInput
 									onChangeText={(text) => this.setState({ phoneNumber: text })}
 									placeholder="Phone Number"
@@ -191,6 +192,11 @@ export default class ChangeDriverDetails extends Component {
 						</React.Fragment>
 					)}
 
+					<View style={styles.secondaryButtonContainer}>
+						<Button bordered danger style={styles.button} onPress={this.addAddress}>
+							<Text style={styles.buttonText}>Add Address</Text>
+						</Button>
+					</View>
 					<View style={styles.secondaryButtonContainer}>
 						<Button bordered danger style={styles.button} onPress={this.onChangePassword}>
 							<Text style={styles.buttonText}>Update Password</Text>

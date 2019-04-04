@@ -5,7 +5,7 @@ import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import { getRequestAuthorized } from '../../API' 
 
 export default class MySchedule extends React.Component {
@@ -56,7 +56,7 @@ export default class MySchedule extends React.Component {
 								<Content>
 									<CardItem>
 										<Icon name="my-location" size={20} color="#bcbcbc" />
-										<Text style={styles.cardHeaders}>Cardiff Central</Text>
+										<Text style={styles.cardHeaders}>{this.props.navigation.state.params.from}</Text>
 									</CardItem>
 									<View style={styles.middleCard}>
 										<FlatList
@@ -107,7 +107,7 @@ export default class MySchedule extends React.Component {
 								</Content>
 								<CardItem header bordered>
 									<Icon name="location-on" size={20} color="#bcbcbc" />
-									<Text style={styles.cardHeaders}>Cardiff University </Text>
+									<Text style={styles.cardHeaders}>{this.props.navigation.state.params.to}</Text>
 								</CardItem>
 							</View>
 						</Card>

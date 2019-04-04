@@ -1,14 +1,15 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, StyleSheet } from 'react-native'
 import { Container, Content } from 'native-base';
 import Icon from 'react-native-vector-icons/Entypo';
-import ip from '../../ipstore'
-import key from '../../google_api_key'
+import ip from '../../server/keys/ipstore'
+import key from '../../server/keys/google_api_key'
 import moment from 'moment';
 import { getRequestAuthorized } from '../../API'
 
 import GlobalHeader from '../../components/GlobalHeader';
-import ResultJourney from './ResultJourney'
+import ResultJourney from '../../components/ResultJourney'
+import colors from '../../constants/Colors';
 
 class ResultScreen extends Component {
 
@@ -31,7 +32,7 @@ class ResultScreen extends Component {
     }
 
     componentDidMount() {
-        const { lat, lng, endCity, endStreet, numPassenger } = this.props.navigation.state.params;
+        const { lat, lng, endCity, endStreet, numPassenger, returnTicket } = this.props.navigation.state.params;
 
         getRequestAuthorized(`http://${ip}:3000/journeyResults?street=${endStreet}&city=${endCity}`)
             .then(response => {
@@ -94,7 +95,7 @@ class ResultScreen extends Component {
 
                                     if (newTotalTime <= totalTotalMinutes && departDuration.asSeconds() >= 0) {
                                         this.setState({
-                                            journey: [...this.state.journey, <ResultJourney key={id} departDays={departDays} departHours={departHours} departMinutes={departMinutes} totalHours={totalHours} totalMinutes={totalMinutes} startDate={startDate} endDate={endDate} onClick={() => this.onJourneyPress(id)} passengers={numPassenger} />]
+                                            journey: [...this.state.journey, <ResultJourney key={id} departDays={departDays} departHours={departHours} departMinutes={departMinutes} totalHours={totalHours} totalMinutes={totalMinutes} startDate={startDate} endDate={endDate} returnTicket={returnTicket} onClick={() => this.onJourneyPress(id)} passengers={numPassenger} />]
                                         })
                                     }           
                                 })
@@ -128,33 +129,69 @@ class ResultScreen extends Component {
         const { city, street, endCity, endStreet } = this.props.navigation.state.params;
         return (
             <Container>
-                <GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
+                <GlobalHeader type={3} header="Select a Journey" navigateTo={this.navigateTo} isBackButtonActive={1} />
                 <Content>
-                    <View style={{ padding: 25, flexDirection: 'column', borderBottomColor: '#dfdfdf', borderBottomWidth: 1 }}>
-                        <Text style={{ fontSize: 25 }}>SELECT A JOURNEY</Text>
-                        <View style={{ flexDirection: 'column', marginTop: 20 }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Icon name="location-pin" size={20} style={{ flex: 1 }} />
-                                <Text style={{ flex: 11, fontSize: 15 }}>{`${street}, ${city}`}</Text>
+                    <View style={styles.journeyContainer}>
+                        <View style={styles.journeyDetails}>
+                            <View style={styles.locationContainer}>
+                                <Icon name="location-pin" size={20} color={colors.emphasisTextColor} style={{ flex: 1 }} />
+                                <Text style={styles.locationText}>{`${street}, ${city}`}</Text>
                             </View>
                             <View>
-                                <Icon name="dots-two-vertical" size={20} />
+                                <Icon name="dots-two-vertical" size={20} color={colors.emphasisTextColor} />
                             </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Icon name="flag" size={20} style={{ flex: 1 }} />
-                                <Text style={{ flex: 11, fontSize: 15 }}>{`${endStreet}, ${endCity}`}</Text>
+                            <View style={styles.locationContainer}>
+                                <Icon name="flag" size={20} color={colors.emphasisTextColor} style={{ flex: 1 }} />
+                                <Text style={styles.locationText}>{`${endStreet}, ${endCity}`}</Text>
                             </View>
                         </View>
                     </View>
-                    {this.state.journey.length > 0 ? this.state.journey : <Text style={{ padding: 15, borderBottomColor: '#dfdfdf', borderBottomWidth: 1, width: '100%' }}>No journeys' available</Text>}
-                    <View style={{ alignItems: "center", padding: 25 }}>
-                        <Text>Nothing Available?</Text>
-                        <Text style={{ color: '#ff0000', marginTop: 5 }}>CONTACT US</Text>
+                    {this.state.journey.length > 0 ? this.state.journey : <Text style={styles.noJourneyAvailable}>No journeys' available</Text>}
+                    <View style={styles.nothingAvailableContainer}>
+                        <Text style={styles.body}>Nothing Available?</Text>
+                        <Text style={styles.contactUs}>CONTACT US</Text>
                     </View>
                 </Content>
             </Container>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    journeyContainer: {
+        padding: 25,
+        flexDirection: 'column',
+        borderBottomColor: colors.lightBorder,
+        borderBottomWidth: 0.75
+    },
+    journeyDetails: {
+        flexDirection: 'column',
+    },
+    locationContainer: {
+        flexDirection: 'row'
+    },
+    locationText: {
+        flex: 11,
+        fontSize: 15,
+        color: colors.emphasisTextColor
+    },
+    noJourneyAvailable: {
+        padding: 15,
+        borderBottomColor: colors.lightBorder,
+        borderBottomWidth: 0.75,
+        width: '100%'
+    },
+    nothingAvailableContainer: {
+        alignItems: "center",
+        padding: 25
+    },
+    contactUs: {
+        color: colors.brandColor,
+        marginTop: 5
+    },
+    body: {
+        color: colors.bodyTextColor
+    }
+});
 
 export default ResultScreen

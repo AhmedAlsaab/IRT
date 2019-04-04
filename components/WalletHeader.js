@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet, Dimensions} from 'react-native'
-import colors from '../../constants/Colors'
+import colors from '../constants/Colors'
 
 export default class WalletHeader extends Component {
   render() {

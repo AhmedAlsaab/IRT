@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
-import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
-import { Ionicons } from '@expo/vector-icons';
-import { postRequestAuthorized } from '../../API';
+import { StyleSheet, View, TextInput, Dimensions, TouchableOpacity } from 'react-native';
+import { Button, Container, Text, Content } from 'native-base';
+import GlobalHeader from './GlobalHeader';
+import ip from '../server/keys/ipstore';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { postRequestAuthorized } from '../API';
+import colors from '../constants/Colors';
+
 
 export default class ChangePassword extends Component {
 	static navigationOptions = {
@@ -37,7 +39,7 @@ export default class ChangePassword extends Component {
 				switch (responseJSON.status) {
 					//Success
 					case 10:
-						alert('Successfully Updated Phone Number');
+						alert('Successfully Updated Password');
 						break;
 					//If email exist
 					case (1, 0):
@@ -55,45 +57,51 @@ export default class ChangePassword extends Component {
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content>
-					<View>
-						<Text style={styles.title}>Change Password:</Text>
+					<View style={styles.contentContainer}>
+							<View style={styles.titleContainer}>
+								<Text style={styles.title}>Password</Text>
+							</View>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<Icon name="lock" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({ currentPassword: text })}
 							placeholder="Current Password"
 							style={styles.input}
 							secureTextEntry={this.state.secureTextEntry}
 						/>
+						<TouchableOpacity onPress={this.onShowPassword}>
+							<Icon name="remove-red-eye" size={30} style={styles.updateIcon} />
+						</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<Icon name="lock" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({ newPassword: text })}
 							placeholder="New Password"
 							style={styles.input}
 							secureTextEntry={this.state.secureTextEntry}
 						/>
+						<TouchableOpacity onPress={this.onShowPassword}>
+							<Icon name="remove-red-eye" size={30} style={styles.updateIcon} />
+						</TouchableOpacity>
 					</View>
 					<View style={styles.inputContainer}>
-						<Ionicons name="md-lock" size={32} style={styles.inputIcons} />
+						<Icon name="lock" size={32} style={styles.inputIcons} />
 						<TextInput
 							onChangeText={(text) => this.setState({ confirmPassword: text })}
 							placeholder="Confirm Password"
 							style={styles.input}
 							secureTextEntry={this.state.secureTextEntry}
 						/>
+						<TouchableOpacity onPress={this.onShowPassword}>
+							<Icon name="remove-red-eye" size={30} style={styles.updateIcon} />
+						</TouchableOpacity>
 					</View>
 
 					<View style={styles.buttonContainer}>
 						<Button danger style={styles.button} onPress={this.onChangePassword}>
-							<Text>CHANGE PASSWORD</Text>
-						</Button>
-					</View>
-					<View style={styles.buttonContainer}>
-						<Button danger style={styles.button} onPress={this.onShowPassword}>
-							<Text>SHOW PASSWORD</Text>
+							<Text>UPDATE</Text>
 						</Button>
 					</View>
 				</Content>
@@ -102,33 +110,48 @@ export default class ChangePassword extends Component {
 	}
 }
 
-const width = '80%';
+const width = '70%';
+const buttonWidth = '40%';
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
 	input: {
 		flex: 1,
-		padding: 10
+		padding: 10,
+		color: colors.emphasisTextColor
 	},
 	inputIcons: {
 		width: 50,
 		padding: 10,
-		textAlign: 'center'
+		textAlign: 'center',
+		color: colors.emphasisTextColor
 	},
 	inputContainer: {
 		flexDirection: 'row',
 		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
+		borderBottomColor: colors.lightBorder,
 		alignItems: 'center',
 		width,
 		alignSelf: 'center',
 		justifyContent: 'center'
 	},
+	contentContainer: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'flex-end'
+	},
+	titleContainer: {
+		paddingTop: 30,
+		paddingBottom: 5,
+		width
+	},
 	title: {
 		textAlign: 'left',
 		fontSize: 30,
 		fontWeight: 'bold',
-		color: 'gray'
+		color: colors.emphasisTextColor,
+		marginBottom: 20
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -137,11 +160,16 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	button: {
-		width: '100%',
+		width: buttonWidth,
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor
 	},
 	buttontext: {
-		color: '#000000'
+		color: '#000000',
+		fontSize: 20
+	},
+	updateIcon: {
+		padding: 6,
+		color: colors.emphasisTextColor,
 	}
 });
