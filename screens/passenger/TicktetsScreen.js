@@ -1,12 +1,12 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Content, Container, Button, Text, StyleProvider } from 'native-base';
-import getTheme from '../native-base-theme/components';
-import platform from '../native-base-theme/variables/platform';
-import GlobalHeader from '../components/GlobalHeader';
-import TicketLayout from './TicketLayout';
+import getTheme from '../../native-base-theme/components';
+import platform from '../../native-base-theme/variables/platform';
+import GlobalHeader from '../../components/GlobalHeader';
+import TicketLayout from '../../components/TicketLayout';
 import uuid from 'uuid/v4';
-import colors from '../constants/Colors';
+import colors from '../../constants/Colors';
 
 import { connect } from 'react-redux';
 
@@ -20,6 +20,7 @@ class TicketsScreen extends React.Component {
 	};
 
 	openTicket = (ticketData) => {
+		console.log(ticketData)
 		this.props.navigation.navigate('Details', { ticket: ticketData });
 	};
 

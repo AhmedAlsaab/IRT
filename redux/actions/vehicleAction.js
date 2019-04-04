@@ -1,5 +1,5 @@
 import { ADD_VEHICLE, REMOVE_VEHICLE, FETCH_VEHICLES, SELECT_VEHICLE } from './types';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import { getRequestAuthorized } from '../../API';
 
 export function addVehicle(vehicle) {

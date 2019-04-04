@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity, Dimensions } from 'react-native';
 import { Button, Container, Text, Content } from 'native-base';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { getRequestAuthorized } from '../../API';
 
@@ -106,9 +106,9 @@ export default class AccountsScreen extends Component {
 							<Text style={styles.secondaryButtontext}>Emergency Contacts</Text>
 						</Button>
 					</View>
-					<View style={styles.secondaryButtonContainer}>
-						<Button bordered danger style={styles.button} onPress={this.logout}>
-							<Text style={styles.buttonText}>Log Out</Text>
+					<View style={styles.buttonContainer}>
+						<Button danger style={styles.button} onPress={this.logout}>
+							<Text style={styles.buttonText}>LOG OUT</Text>
 						</Button>
 					</View>
 				</Content>
@@ -117,6 +117,7 @@ export default class AccountsScreen extends Component {
 	}
 }
 const width = '100%';
+const buttonWidth = '40%';
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -139,7 +140,8 @@ const styles = StyleSheet.create({
 	},
 	secondaryButtonContainer: {
 		flexDirection: 'row',
-		marginTop: 25
+		marginTop: 25,
+		marginBottom: 20
 	},
 	secondaryButton: {
 		width: '100%',
@@ -149,24 +151,43 @@ const styles = StyleSheet.create({
 	secondaryButtontext: {
 		color: '#ff0000'
 	},
-	buttonText: {
-		color: 'white'
+	buttonContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		marginTop: 30,
+		justifyContent: 'center'
+	},
+	button: {
+		width: buttonWidth,
+		justifyContent: 'center',
+		backgroundColor: colors.brandColor
+	},
+	buttontext: {
+		color: '#000000',
+		fontSize: 20
 	},
 	detailContainer: {
 		flexDirection: 'row',
 		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
+		borderBottomColor: colors.lightBorder,
 		width,
-		justifyContent: 'center'
+		justifyContent: 'center',
+		color: colors.emphasisTextColor
+	},
+	updateIcon: {
+		padding: 6,
+		color: colors.emphasisTextColor
 	},
 	detailView: {
 		flex: 1,
 		paddingLeft: 10,
-		fontSize: 16
+		fontSize: 16,
+		color: colors.emphasisTextColor
 	},
 	inputIcons: {
 		width: 50,
 		padding: 10,
-		textAlign: 'center'
+		textAlign: 'center',
+		color: colors.emphasisTextColor
 	}
 });

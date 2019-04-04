@@ -1,37 +1,56 @@
-import React, { Component } from 'react'
-import { View, StyleSheet } from 'react-native'
-import { Input } from 'native-base';
+import React from 'react'
+import { View, StyleSheet, TextInput } from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
-import Colors from '../constants/Colors';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import colors from '../constants/Colors';
 
-const CustomInput = props => {
-    return (
-        <View style={styles.inputContainer}>
-            <Ionicons name={props.icon} size={32} style={styles.inputIcons}></Ionicons>
-            <Input placeholder={props.placeholder} style={styles.input} placeholderTextColor={'#cccccc'}></Input>
-        </View>
-    )
+export default class CustomInput extends React.Component {
+    render() {
+        return (
+            <View
+                style={[styles.inputContainer,
+                {
+                    borderBottomColor: this.props.focused
+                        ? colors.brandColor
+                        : colors.lightBorder
+                }]}
+            >
+                <MaterialIcon
+                    name={this.props.iconName}
+                    size={20}
+                    color={this.props.focused ? colors.emphasisTextColor : colors.bodyTextColor}
+                />
+                <TextInput
+                    placeholder={this.props.placeholder}
+                    placeholderTextColor={
+                        this.props.focused ? colors.emphasisTextColor : colors.bodyTextColor
+                    }
+                    style={[styles.input,
+                    {
+                        color: this.props.focused
+                            ? colors.emphasisTextColor
+                            : colors.bodyTextColor
+                    }]}
+                    onChangeText={this.props.onChangeText}
+                    value={this.props.value}
+                    onFocus={this.props.onFocus}
+                    onBlur={this.props.onBlur}
+                    ref={this.props.onRef && this.props.onRef}
+                />
+            </View>
+        )
+    }
 }
 
-const width = '80%';
 const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ff6666',
-        alignItems: 'center',
-        width,
-        marginBottom: 10
+        borderBottomWidth: 0.75,
+        alignItems: 'center'
     },
     input: {
-        margin: 10
-        
-    },
-    inputIcons: {
-        width: 50,
+        width: '100%',
         padding: 10,
-        textAlign: 'center'
-    }
+        color: colors.bodyTextColor
+    },
 })
-
-export default CustomInput;

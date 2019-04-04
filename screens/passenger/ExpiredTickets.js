@@ -3,14 +3,14 @@ import { StyleSheet, View, TouchableHighlight, Keyboard, ScrollView, TouchableOp
 // import API_KEY from '../google_api_key';
 import _ from 'lodash';
 import { Content, Container, Button, Text, Item, Input, StyleProvider } from 'native-base';
-import getTheme from '../native-base-theme/components';
-import platform from '../native-base-theme/variables/platform';
-import GlobalHeader from '../components/GlobalHeader';
-import tickets from './data';
-import ip from '../ipstore';
+import getTheme from '../../native-base-theme/components';
+import platform from '../../native-base-theme/variables/platform';
+import GlobalHeader from '../../components/GlobalHeader';
+import tickets from '../data';
+import ip from '../../server/keys/ipstore';
 import { getRequestAuthorized } from '../../API';
 
-import TicketLayout from './TicketLayout';
+import TicketLayout from '../../components/TicketLayout';
 import { ACTION_ZEN_MODE_EVENT_RULE_SETTINGS } from 'expo/build/IntentLauncherAndroid/IntentLauncherAndroid';
 
 export default class TicketsScreen extends React.Component {

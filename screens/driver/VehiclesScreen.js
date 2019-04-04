@@ -8,15 +8,12 @@ import uuid from 'uuid/v4';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { connect } from 'react-redux';
-import VehicleRow from './VehicleRow';
+import VehicleRow from '../../components/VehicleRow';
 import { fetchVehicles } from '../../redux/actions/vehicleAction';
 
 class VehiclesScreen extends React.Component {
 	static navigationOptions = {
 		header: null
-	};
-	state = {
-
 	};
 
 	navigateToAddVehicle = () => {
@@ -64,7 +61,7 @@ class VehiclesScreen extends React.Component {
 						<Text style={styles.body}>No vehicle currently selected</Text>
 					}
 					<View style={[styles.headerContainer, {
-						borderBottomColor: (this.props.vehicles.length > 0) ? colors.lightBorder : '#fff',
+						borderBottomColor: (this.props.vehicles.length > 0) ? colors.lightBorder : colors.backgroundColor,
 						borderBottomWidth: (this.props.vehicles.length > 0) ? 0.75 : 0
 					}]}>
 						<Text style={styles.header}>YOUR VEHICLES</Text>

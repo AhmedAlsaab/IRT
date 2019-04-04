@@ -2,17 +2,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { Accordion, Button, Container, Content, Text } from 'native-base';
 import React, { Component } from 'react';
 import { Dimensions, Picker, StyleSheet, TextInput, View, KeyboardAvoidingView } from 'react-native';
-import GlobalHeader from '../components/GlobalHeader';
-import ip from '../ipstore';
-import colors from '../constants/Colors';
-import { postRequestNotAuthorized } from '../API';
+import GlobalHeader from '../../components/GlobalHeader';
+import ip from '../../server/keys/ipstore';
+import colors from '../../constants/Colors';
+import { postRequestNotAuthorized } from '../../API';
 
 class RegistrationScreen extends Component {
 	state = {
 		firstName: 'Martin',
 		lastName: 'Jones',
 		phoneNumber: '07914287655',
-		email: 'vuilleumierl@cardiff.ac.uk',
+		email: 'SimonOM@cardiff.ac.uk',
 		password: 'Qwerty123',
 		passwordConfirm: 'Qwerty123',
 		type: 1,
@@ -111,6 +111,9 @@ class RegistrationScreen extends Component {
 						)}
 
 						<View style={styles.contentContainer}>
+						<View style={styles.titleContainer}>
+								<Text style={styles.title}>REGISTRATION</Text>
+							</View>
 							<View
 								style={[
 									styles.inputContainer,
@@ -421,7 +424,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end'
 	},
 	titleContainer: {
-		paddingTop: 30,
 		paddingBottom: 5,
 		width
 	},

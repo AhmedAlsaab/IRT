@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Text } from 'native-base';
-import colors from '../../constants/Colors'
+import colors from '../constants/Colors'
 
 import { connect } from 'react-redux';
 

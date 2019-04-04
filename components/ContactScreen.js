@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Container, Text, Header, Content, List, ListItem, Left, Right, Icon, Accordion } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
+import GlobalHeader from './GlobalHeader';
 const dataArray = [
 	{
 		title: 'City of Cardiff Council',

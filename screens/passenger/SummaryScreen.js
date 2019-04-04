@@ -8,8 +8,8 @@ import moment from 'moment';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
-import ip from '../../ipstore';
-import WalletBalance from './WalletBalance';
+import ip from '../../server/keys/ipstore';
+import WalletBalance from '../../components/WalletBalance';
 import uuid from 'uuid/v4';
 import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
@@ -18,6 +18,7 @@ import { userPayForTicket } from '../../redux/actions/userAction';
 import { addTicket } from '../../redux/actions/ticketAction';
 import colors from '../../constants/Colors';
 import { postRequestAuthorized } from '../../API';
+import SummaryRow from '../../components/SummaryRow';
 
 class SummaryScreen extends React.Component {
 	static navigationOptions = {
@@ -98,7 +99,7 @@ class SummaryScreen extends React.Component {
 			Expo.Notifications.createChannelAndroidAsync('reminders', {
 				name: 'Reminders',
 				priority: 'max',
-				vibrate: [0, 250, 250, 250]
+				vibrate: [ 0, 250, 250, 250 ]
 			});
 		}
 	}
@@ -107,7 +108,7 @@ class SummaryScreen extends React.Component {
 	}
 
 	payForTicket = () => {
-		if (this.props.user.funds - this.state.total <= 0) {
+		if (this.props.user.funds - this.state.total < 0) {
 			//Throw error, not enough money to pay
 			return;
 		}
@@ -285,6 +286,9 @@ class SummaryScreen extends React.Component {
 		console.log(token);
 	};
 
+	// Sends the notification to the server hosted by EXPO specifically for push notifications
+	// The server sends the noification back with the specfied values (fetched from the indicated state)
+	// Sends it to the provided GCM / Device Token
 	sendPushNotification = () => {
 		const { date, street } = this.props.navigation.state.params.jData;
 
@@ -345,51 +349,37 @@ class SummaryScreen extends React.Component {
 								</View>
 								<View style={styles.details}>
 									<View>
-										<View style={styles.icon}>
-											<MaterialIcon name="date-range" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{moment(data.date).format('MMMM Do YYYY')}
-											</Text>
-										</View>
-										<View style={styles.icon}>
-											<MaterialIcon name="access-time" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>{moment(data.time).format('LT')}</Text>
-										</View>
-										<View style={styles.icon}>
-											<MaterialIcon name="my-location" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{data.street}, {data.city}
-											</Text>
-										</View>
-									</View>
-
-									<View>
-										<View style={styles.icon}>
-											<MaterialIcon name="location-on" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{data.endStreet}, {data.endCity}
-											</Text>
-										</View>
-										<View style={styles.icon}>
-											<MaterialIcon name="people" size={20} color={colors.bodyTextColor} />
-											<Text style={styles.cardBody}>
-												{data.numPassenger}
-												{data.numPassenger > 1 ? ' Passengers' : ' Passenger'}
-											</Text>
-										</View>
-										{data.numWheelchair > 0 ? (
-											<View style={styles.icon}>
-												<MaterialIcon
-													name="accessible"
-													size={20}
-													color={colors.bodyTextColor}
-												/>
-												<Text style={styles.cardBody}>
-													{data.numWheelchair}
-													{data.numWheelchair > 1 ? ' Wheelchairs' : ' Wheelchair'}
-												</Text>
-											</View>
-										) : null}
+										<SummaryRow
+											iconName="date-range"
+											value={moment(data.date).format('MMMM Do YYYY')}
+										/>
+										<SummaryRow iconName="access-time" value={moment(data.time).format('LT')} />
+										<SummaryRow
+											iconName="my-location"
+											value={[ data.street ] + ', ' + [ data.city ]}
+										/>
+										<SummaryRow
+											iconName="location-on"
+											value={[ data.endStreet ] + ', ' + [ data.endCity ]}
+										/>
+										<SummaryRow
+											iconName="people"
+											value={
+												[ data.numPassenger ] +
+												' ' +
+												[ data.numPassenger > 1 ? 'Passengers' : 'Passenger' ]
+											}
+										/>
+										{data.numWheelchair > 0 && (
+											<SummaryRow
+												iconName="accessible"
+												value={
+													[ data.numWheelchair ] +
+													' ' +
+													[ data.numWheelchair > 1 ? 'Wheelchairs' : 'Wheelchair' ]
+												}
+											/>
+										)}
 									</View>
 								</View>
 							</View>
@@ -417,7 +407,7 @@ class SummaryScreen extends React.Component {
 										<View style={styles.buttonContainer}>
 											<Button
 												danger
-												style={[styles.button, { backgroundColor: colors.brandColor }]}
+												style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 												onPress={this.payForTicket}
 											>
 												<Text>Pay</Text>
@@ -440,7 +430,7 @@ class SummaryScreen extends React.Component {
 											<View style={styles.buttonContainer}>
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: colors.brandColor }]}
+													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 													onPress={this.payForTicket}
 												>
 													<Text style={styles.buttonText}>Pay</Text>
@@ -448,7 +438,7 @@ class SummaryScreen extends React.Component {
 
 												<Button
 													danger
-													style={[styles.button, { backgroundColor: colors.brandColor }]}
+													style={[ styles.button, { backgroundColor: colors.brandColor } ]}
 													onPress={() => {
 														this.props.navigation.navigate('AddFunds');
 													}}
@@ -457,7 +447,7 @@ class SummaryScreen extends React.Component {
 												</Button>
 											</View>
 											<View
-												style={[styles.buttonContainer, { marginTop: -5, marginBottom: 25 }]}
+												style={[ styles.buttonContainer, { marginTop: -5, marginBottom: 25 } ]}
 											>
 												<Button
 													bordered
@@ -511,26 +501,6 @@ const styles = StyleSheet.create({
 	details: {
 		width: '90%'
 	},
-	journeyInfo: {
-		flex: 1,
-		flexDirection: 'column',
-		alignItems: 'center',
-		width: '30%'
-	},
-	cardBody: {
-		color: colors.bodyTextColor,
-		marginLeft: 6
-	},
-	cardVehicle: {
-		fontSize: 13,
-		color: 'gray',
-		marginLeft: 6
-	},
-	icon: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 15
-	},
 	paymentInfo: {
 		width: '80%',
 		alignSelf: 'center'
@@ -559,11 +529,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignItems: 'center',
 		marginTop: 20
-	},
-	balance: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		marginBottom: 8
 	},
 	buttonContainer: {
 		flex: 1,
@@ -619,7 +584,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user,
-	ticketslength: state.ticketReducer.ticketsLength,
+	ticketslength: state.ticketReducer.ticketsLength
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SummaryScreen);

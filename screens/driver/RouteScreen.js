@@ -1,12 +1,12 @@
 import { Button, Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, TextInput, Image, AsyncStorage } from 'react-native';
-import { Constants, Location, Permissions, TaskManager } from 'expo';
+import { Dimensions, StyleSheet, View, Image } from 'react-native';
+import { Location, Permissions } from 'expo';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
-import API_KEY from '../../google_api_key';
-import ip from '../../ipstore';
+import API_KEY from '../../server/keys/google_api_key';
+import ip from '../../server/keys/ipstore';
 import socketIO from 'socket.io-client';
 
 import uuid from 'uuid/v4';
@@ -121,7 +121,8 @@ class RouteScreen extends Component {
 		});
 	}
 
-	// Background Tracking - Needs Redux ? - > Not sending data right now to socket
+	// Background Tracking -> Not in use
+	// Requires EXPO SDK 32 (Not working on NSA Laptops)
 	trackDriverLocationBackground = async () => {
 		await Location.startLocationUpdatesAsync('firstTask', {
 			accuracy: Location.Accuracy.High,
@@ -131,23 +132,23 @@ class RouteScreen extends Component {
 		console.log('Tracking?');
 	};
 
-	// Foreground Tracking - Works
+	// Foreground Tracking - Works & in use
 	// Emits to socket new coordinates every 3 seconds
 	trackDriverLocationForeground = async () => {
 		let locationWatch = await Location.watchPositionAsync(
 			{
+				// Track location changes at the specified distance and time interval
 				accuracy: Location.Accuracy.High,
 				timeInterval: 3000,
 				distanceInterval: 5
 			},
 			(loc) => {
+				// with each location change emit the new location to the driverLocation socket
 				if (loc.timestamp) {
 					this.socket.emit('driverLocation', {
 						latitude: loc.coords.latitude,
 						longitude: loc.coords.longitude
 					});
-					//  this.props.dispatch(setGps(loc));
-
 					this.setState({
 						latDriver: loc.coords.latitude,
 						longDriver: loc.coords.longitude
@@ -164,10 +165,8 @@ class RouteScreen extends Component {
 	};
 
 	render() {
-		//if (this.state.longDriver == null) return null;
-
 		let driverMarker = null;
-
+		// Update the bus icon with the new location changes on the map by passing the locations to the marker
 		if (this.state.driverStartedRoute) {
 			driverMarker = (
 				<Marker
@@ -180,6 +179,9 @@ class RouteScreen extends Component {
 			);
 		}
 
+		// MapViewDirections is a library
+		// the 'data' array is passed in as waypoints
+		// 'data' array contains coordinates retrieved from the database that act as pickup locations
 		return (
 			<View style={StyleSheet.absoluteFill}>
 				<View style={styles.bottom}>
@@ -197,7 +199,6 @@ class RouteScreen extends Component {
 						</View>
 					</Button>
 				</View>
-
 				<MapView
 					initialRegion={{
 						latitude: LATITUDE,
@@ -238,11 +239,9 @@ class RouteScreen extends Component {
 							description={'End destination of the service'}
 						/>
 					)}
-
 					{this.state.data.length >= 1 && (
 						<MapViewDirections
 							origin={this.state.startCoords}
-							//	waypoints={this.state.coordinates.length > 2 ? this.state.coordinates.slice(1, -1) : null}
 							waypoints={this.state.data}
 							destination={this.state.endCoords}
 							apikey={API_KEY}
@@ -336,11 +335,7 @@ const styles = StyleSheet.create({
 	},
 	calloutView: {
 		flexDirection: 'row',
-		// backgroundColor: 'rgba(255, 255, 255, 0.9)',
-		// borderRadius: 10,
-		// width: '40%',
 		marginLeft: '5%',
-		// marginRight: '30%',
 		marginTop: 30
 	},
 	calloutSearch: {
@@ -352,6 +347,9 @@ const styles = StyleSheet.create({
 });
 
 export default RouteScreen;
+
+// Tracking location changes in the background (while application is not running)
+// Requires EXPO SDK 32 - Not in use right now
 
 // Background location tracker
 // TaskManager.defineTask('firstTask', async ({ data, error }) => {

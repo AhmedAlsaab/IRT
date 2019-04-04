@@ -2,13 +2,13 @@ import { Text } from 'native-base';
 import React from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import Dialog, { DialogFooter, DialogButton, DialogContent, DialogTitle, SlideAnimation } from 'react-native-popup-dialog';
-import colors from '../../constants/Colors';
+import colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import ip from '../../ipstore';
+import ip from '../server/keys/ipstore';
 
 import { connect } from 'react-redux';
-import { removeVehicle, selectVehicle } from '../../redux/actions/vehicleAction';
-import { postRequestAuthorized } from '../../API'
+import { removeVehicle, selectVehicle } from '../redux/actions/vehicleAction';
+import { postRequestAuthorized } from '../API'
 
 class VehicleRow extends React.Component {
 	static navigationOptions = {

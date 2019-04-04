@@ -11,9 +11,9 @@ import VehiclesScreen from './../screens/driver/VehiclesScreen';
 import AccountsScreen from './../screens/driver/AccountsScreen';
 import AddVehicle from './../screens/driver/AddVehicle';
 import MakeModelSelect from '../screens/driver/MakeModelSelect';
-import EmergencyContact from '../screens/driver/EmergencyContact';
-import ChangeDriverDetails from '../screens/driver/ChangeDriverDetails';
-import DriverPassword from '../screens/driver/DriverPassword';
+import EmergencyContact from '../components/EmergencyContact';
+import ChangeDriverDetails from '../components/ChangeDriverDetails';
+import DriverPassword from '../components/DriverPassword';
 
 const MyScheduleStack = createStackNavigator(
 	{

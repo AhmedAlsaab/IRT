@@ -1,5 +1,5 @@
 import { FETCH_TRANSACTIONS, ADD_TRANSACTION } from './types';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import { getRequestAuthorized } from '../../API';
 
 export function addTransaction(transaction) {

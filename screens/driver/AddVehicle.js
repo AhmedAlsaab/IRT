@@ -3,13 +3,14 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View, TextInput, KeyboardAvoidingView, Picker } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
 import colors from '../../constants/Colors';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 var vehicleData = require('../../vehicleData.json');
 
 import { connect } from 'react-redux';
 import { addVehicle } from './../../redux/actions/vehicleAction';
 import { fetchVehicles } from '../../redux/actions/vehicleAction';
 import { postRequestAuthorized } from '../../API';
+import CustomInput from './../../components/CustomInput';
 
 class AddVehicle extends React.Component {
 	static navigationOptions = {
@@ -74,7 +75,7 @@ class AddVehicle extends React.Component {
 			errors.content += errorList[i].msg + '\n';
 		}
 
-		return [ errors ];
+		return [errors];
 	};
 
 	componentDidUpdate() {
@@ -153,15 +154,15 @@ class AddVehicle extends React.Component {
 				<GlobalHeader type={3} navigateTo={this.navigateTo} header="Add a vehicle" isBackButtonActive={1} />
 				<Content>
 					{this.state.errors &&
-					!!this.state.errors.length && (
-						<Accordion
-							dataArray={this.state.errors}
-							icon="add"
-							expandedIcon="remove"
-							contentStyle={styles.errorStyle}
-							expanded={0}
-						/>
-					)}
+						!!this.state.errors.length && (
+							<Accordion
+								dataArray={this.state.errors}
+								icon="add"
+								expandedIcon="remove"
+								contentStyle={styles.errorStyle}
+								expanded={0}
+							/>
+						)}
 					{this.state.error && (
 						<Accordion
 							dataArray={this.state.error}
@@ -205,82 +206,24 @@ class AddVehicle extends React.Component {
 								</TouchableOpacity>
 
 								{/* Car registration */}
-								<View
-									style={[
-										styles.inputContainer,
-										{
-											borderBottomColor: this.state.registrationFocused
-												? colors.brandColor
-												: colors.lightBorder
-										}
-									]}
-								>
-									<TextInput
-										placeholder="Registration"
-										placeholderTextColor={
-											this.state.registrationFocused ? (
-												colors.emphasisTextColor
-											) : (
-												colors.bodyTextColor
-											)
-										}
-										style={[
-											styles.input,
-											{
-												color: this.state.registrationFocused
-													? colors.emphasisTextColor
-													: colors.bodyTextColor
-											}
-										]}
-										onChangeText={(registration) => {
-											this.setState({ registration });
-										}}
-										value={this.state.registration ? this.state.registration.toString() : null}
-										onFocus={() => {
-											this.setState({ registrationFocused: true });
-										}}
-										onBlur={() => {
-											this.setState({ registrationFocused: false });
-										}}
-									/>
-								</View>
+								<CustomInput
+									focused={this.state.registrationFocused}
+									placeholder={"Registration"}
+									value={this.state.registration ? this.state.registration.toString() : null}
+									onFocus={() => this.setState({ registrationFocused: true })}
+									onBlur={() => this.setState({ registrationFocused: false })}
+									onChangeText={(value) => this.setState({ registration: value })}
+								/>
 
 								{/* Car number of seats */}
-								<View
-									style={[
-										styles.inputContainer,
-										{
-											borderBottomColor: this.state.numSeatsFocused
-												? colors.brandColor
-												: colors.lightBorder
-										}
-									]}
-								>
-									<TextInput
-										placeholder="No. of passenger seats"
-										placeholderTextColor={
-											this.state.numSeatsFocused ? colors.emphasisTextColor : colors.bodyTextColor
-										}
-										style={[
-											styles.input,
-											{
-												color: this.state.numSeatsFocused
-													? colors.emphasisTextColor
-													: colors.bodyTextColor
-											}
-										]}
-										onChangeText={(numSeats) => {
-											this.setState({ numSeats });
-										}}
-										value={this.state.numSeats ? this.state.numSeats.toString() : null}
-										onFocus={() => {
-											this.setState({ numSeatsFocused: true });
-										}}
-										onBlur={() => {
-											this.setState({ numSeatsFocused: false });
-										}}
-									/>
-								</View>
+								<CustomInput
+									focused={this.state.numSeatsFocused}
+									placeholder={"No. of passenger seats"}
+									value={this.state.numSeats ? this.state.numSeats.toString() : null}
+									onFocus={() => this.setState({ numSeatsFocused: true })}
+									onBlur={() => this.setState({ numSeatsFocused: false })}
+									onChangeText={(value) => this.setState({ numSeats: value })}
+								/>
 
 								{/* Wheelchair spaces option */}
 								<ListItem
@@ -302,50 +245,16 @@ class AddVehicle extends React.Component {
 								</ListItem>
 
 								{/* Car number of wheelchairs */}
-								{this.state.wheelchairAccess ? (
-									<View
-										style={[
-											styles.inputContainer,
-											{
-												borderBottomColor: this.state.wheelchairAccessFocused
-													? colors.brandColor
-													: colors.lightBorder,
-												marginLeft: 28
-											}
-										]}
-									>
-										<TextInput
-											placeholder="No. of wheelchair spaces"
-											placeholderTextColor={
-												this.state.wheelchairAccessFocused ? (
-													colors.emphasisTextColor
-												) : (
-													colors.bodyTextColor
-												)
-											}
-											style={[
-												styles.input,
-												{
-													color: this.state.wheelchairAccessFocused
-														? colors.emphasisTextColor
-														: colors.bodyTextColor
-												}
-											]}
-											onChangeText={(numWheelchairs) => {
-												this.setState({ numWheelchairs });
-											}}
-											value={
-												this.state.numWheelchairs ? this.state.numWheelchairs.toString() : null
-											}
-											onFocus={() => {
-												this.setState({ wheelchairAccessFocused: true });
-											}}
-											onBlur={() => {
-												this.setState({ wheelchairAccessFocused: false });
-											}}
-										/>
-									</View>
-								) : null}
+								{this.state.wheelchairAccess &&
+									<CustomInput
+										focused={this.state.wheelchairAccessFocused}
+										placeholder={"No. of wheelchair spaces"}
+										value={this.state.numWheelchairs ? this.state.numWheelchairs.toString() : null}
+										onFocus={() => this.setState({ wheelchairAccessFocused: true })}
+										onBlur={() => this.setState({ wheelchairAccessFocused: false })}
+										onChangeText={(value) => this.setState({ numWheelchairs: value })}
+									/>
+								}
 
 								<View
 									style={[

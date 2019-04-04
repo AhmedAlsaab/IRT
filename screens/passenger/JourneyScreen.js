@@ -3,85 +3,72 @@ import _ from 'lodash';
 import moment from 'moment';
 import { Button, Container, Content, StyleProvider, Text, ListItem, CheckBox, Body } from 'native-base';
 import React, { Component } from 'react';
-import {
-	Keyboard,
-	StyleSheet,
-	TouchableHighlight,
-	TouchableOpacity,
-	View,
-	TextInput,
-	Platform,
-	KeyboardAvoidingView
-} from 'react-native';
+import { Keyboard, StyleSheet, TouchableHighlight, View, Platform, KeyboardAvoidingView } from 'react-native';
 import Collapsible from 'react-native-collapsible';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
-import API_KEY from '../../google_api_key';
+import API_KEY from '../../server/keys/google_api_key';
 import getTheme from '../../native-base-theme/components';
 import platform from '../../native-base-theme/variables/platform';
 import colors from '../../constants/Colors';
-import { Location, Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { fetchTickets } from '../../redux/actions/ticketAction';
+import CustomInput from '../../components/CustomInput';
+import CustomDateTimePicker from './../../components/CustomDateTimePicker';
 
 class JourneyScreen extends Component {
 	static navigationOptions = {
 		header: null
 	};
 
-	// Temporary states --> These should be in app.js
 	constructor(props) {
 		super(props);
 		this.state = {
+			//Input focus states
 			fromFocused: false,
 			toFocused: false,
 			groupFocused: false,
 			wheelchairFocused: false,
 
-			switchValue: false,
-			error: '',
-			latitude: 0,
-			longitude: 0,
 			locationPredictions: [],
 
+			//Toggable states
 			isCollapsed: true,
 			isDatePickerVisible: false,
 			isTimePickerVisible: false,
 
+			//Inputs
 			from: null,
 			to: null,
 			date: null,
 			time: null,
-			numPassenger: 1,
-			numWheelchair: 0,
+			numPassenger: null,
+			numWheelchair: null,
 			returnTicket: false,
 
 			//StartLocation
 			locationPredictions: [],
-			placeID:
-				'EhxTb3V0aCBQYXJrIFJvYWQsIENhcmRpZmYsIFVLIi4qLAoUChIJpatKxdccbkgRQ2yDFI_iUzESFAoSCamRx0IRO1oCEXoliDJDoPjE',
-			street: 'South Park Road',
-			city: 'Cardiff',
-			country: 'UK',
-			lat: 51.4816575,
-			lng: -3.1458798,
+			placeID: '',
+			street: '',
+			city: '',
+			country: '',
+			lat: 0,
+			lng: 0,
 			startType: 3,
 
 			//EndLocation
 			endLocationPredictions: [],
-			endPlaceID:
-				'Eh9Tb3V0aCBDbGl2ZSBTdHJlZXQsIENhcmRpZmYsIFVLIi4qLAoUChIJpSXnPloDbkgRaZvKffcCrskSFAoSCfVT7DTUAm5IEQ5nhmXbBjQU',
-			endStreet: 'South Clive Street',
-			endCity: 'Cardiff',
-			endCountry: 'UK',
-			endLat: 51.4599197,
-			endLng: -3.1844829,
+			endPlaceID: '',
+			endStreet: '',
+			endCity: '',
+			endCountry: '',
+			endLat: 0,
+			endLng: 0,
 			endType: 2,
 
 			destination: '',
 			endDestination: ''
 		};
+		// Limiting the amount requests made whilst a user enters data into the input
 		this.startPositionDebounced = _.debounce(this.startPosition, 500);
 		this.endLocationDebounced = _.debounce(this.endLocation, 500);
 	}
@@ -97,14 +84,6 @@ class JourneyScreen extends Component {
 			});
 		}
 	}
-
-	handleNumPassengersChange = (value) => {
-		this.setState({ numPassenger: value });
-	};
-
-	handleNumWheelchairChange = (value) => {
-		this.setState({ numWheelchair: value });
-	};
 
 	// Functionality to show/hide the date picker and to set the state
 	_showDatePicker = () => this.setState({ isDatePickerVisible: true });
@@ -124,11 +103,6 @@ class JourneyScreen extends Component {
 		this._hideTimePicker();
 	};
 
-	_handleSwitchToggle = () =>
-		this.setState((state) => ({
-			switchValue: !state.switchValue
-		}));
-
 	// Toggles advanced search inputs
 	toggleAdvanced = () => {
 		this.setState({
@@ -136,10 +110,9 @@ class JourneyScreen extends Component {
 		});
 	};
 
-	// Restricited search to cardiff - Check Coords
-	// Radius of search is 3000 meters from location coords
-	// Strictbounds ensures that no suggestions appear that are not within these paramaters
-
+	// Takes in the place Id's returned from the input (start & end)  to get the coordinates of each location
+	// Requires both input's before running the function
+	// Once the coordinates have been returned, the data is stored in specified variable states
 	getRouteDirections = async () => {
 		const { placeID, endPlaceID, date, time } = this.state;
 
@@ -151,7 +124,7 @@ class JourneyScreen extends Component {
 			const response = await fetch(
 				`https://maps.googleapis.com/maps/api/directions/json?origin=place_id:${placeID}&destination=place_id:${endPlaceID}&key=${API_KEY}`
 			);
-			// const startLoc = "EhlRdWVlbiBTdHJlZXQsIENhcmRpZmYsIFVLIi4qLAoUChIJd_pfUbccbkgR8GM8fGAnzNYSFAoSCamRx0IRO1oCEXoliDJDoPjE";
+
 			const json = await response.json();
 			const points = PolyLine.decode(json.routes[0].overview_polyline.points);
 			iStartLat = json.routes[0].legs[0].start_location.lat;
@@ -167,15 +140,17 @@ class JourneyScreen extends Component {
 				endLat: iEndLat,
 				endLng: iEndLng,
 				predictions: [],
-				// destination: destinationName,
 				routeResponse: json
 			});
 			Keyboard.dismiss();
-			//  this.map.fitToCoordinates(pointCoords);
 		} catch (error) {
 			console.error(error);
 		}
 	};
+
+	// Restricited search to cardiff - Check Coords
+	// Radius of search is 3000 meters from location coords
+	// Strictbounds ensures that no suggestions appear that are not within these paramaters
 
 	// Get Start Location
 	async startPosition(destination) {
@@ -187,6 +162,10 @@ class JourneyScreen extends Component {
 			locationPredictions: jsonResult.predictions
 		});
 	}
+
+	// Restricited search to cardiff - Check Coords
+	// Radius of search is 3000 meters from location coords
+	// Strictbounds ensures that no suggestions appear that are not within these paramaters
 
 	// Get End Location
 	async endLocation(endDestination) {
@@ -201,6 +180,7 @@ class JourneyScreen extends Component {
 
 	// Populate the input field with selected prediction
 	// Start Location Prediction
+	// Once input has been selected, run the getRoute function
 	pressedPrediction(
 		prediction,
 		selectedPredictionID,
@@ -227,6 +207,7 @@ class JourneyScreen extends Component {
 
 	// Populate the input field with selected prediction
 	// End Location Prediction
+	// Once input has been selected, run the getRoute function
 	pressedEndPrediction(
 		prediction,
 		selectedEndPredictionID,
@@ -254,6 +235,9 @@ class JourneyScreen extends Component {
 		this.props.navigation.navigate('');
 	};
 
+	// Sends the stored states to the next screen onSubmit (when the search button has been pressed)
+	// Checks that the values are not 0 before sending
+	// Clears the states & text input after search has been pressed
 	async onSubmit() {
 		await this.checkPassengerState();
 		const { placeID, endPlaceID, date, time, numPassenger, numWheelchair } = this.state;
@@ -301,20 +285,21 @@ class JourneyScreen extends Component {
 			to: null,
 			date: null,
 			time: null,
-			numPassenger: 1,
-			numWheelchair: 0,
+			numPassenger: null,
+			numWheelchair: null,
 			returnTicket: false,
 			destination: '',
-			endDestination: ''
+			endDestination: '',
+			isCollapsed: true
 		});
 	}
 
+	//Checks the state of the group options and makes assumptions based on lack of input
 	checkPassengerState = () => {
-		if (this.state.isCollapsed) {
-			this.setState({ numPassenger: 1, numWheelchair: 0 });
-		} else if (!this.state.isCollapsed && this.state.numPassenger === null) {
-			this.setState({ numWheelchair: 0, numPassenger: 1 });
-		} else if (!this.state.isCollapsed && this.state.numWheelchair === (null || 0)) {
+		if (this.state.numPassenger === null) {
+			this.setState({ numPassenger: 1 });
+		}
+		if (this.state.numWheelchair === null) {
 			this.setState({ numWheelchair: 0 });
 		}
 	};
@@ -325,6 +310,7 @@ class JourneyScreen extends Component {
 
 	render() {
 		// Start Location Predictions - Suggestion List
+		// Specifying the values I want to return from the predictions array by indicating the index
 		const locationPredictions = this.state.locationPredictions.map((prediction) => (
 			<TouchableHighlight
 				onPress={() => {
@@ -342,7 +328,8 @@ class JourneyScreen extends Component {
 				<Text style={styles.locationSuggestion}>{prediction.description}</Text>
 			</TouchableHighlight>
 		));
-		// End Location Predictions - Suggestion Lis
+		// End Location Predictions - Suggestion List
+		// Specifying the values I want to return from the predictions array by indicating the index
 		const endLocationPredictions = this.state.endLocationPredictions.map((prediction) => (
 			<TouchableHighlight
 				onPress={() => {
@@ -375,163 +362,65 @@ class JourneyScreen extends Component {
 								</View>
 
 								{/* Starting location field */}
-								<View
-									style={[
-										styles.inputContainer,
-										{
-											borderBottomColor: this.state.fromFocused
-												? colors.brandColor
-												: colors.lightBorder
-										}
-									]}
-								>
-									<Icon
-										name="my-location"
-										size={20}
-										color={this.state.fromFocused ? colors.emphasisTextColor : colors.bodyTextColor}
-										style={styles.inputIcons}
-									/>
-									<TextInput
-										placeholder="From"
-										placeholderTextColor={
-											this.state.fromFocused ? colors.emphasisTextColor : colors.bodyTextColor
-										}
-										style={[
-											styles.input,
-											{
-												color: this.state.fromFocused
-													? colors.emphasisTextColor
-													: colors.bodyTextColor
-											}
-										]}
-										onChangeText={(destination) => {
-											this.setState({ destination });
-											this.startPositionDebounced(destination);
-										}}
-										value={this.state.destination}
-										onFocus={() => {
-											this.setState({ fromFocused: true });
-										}}
-										onBlur={() => {
-											this.setState({ fromFocused: false });
-										}}
-										ref={(ref) => (this.textInputFrom = ref)}
-									/>
-								</View>
+								<CustomInput
+									focused={this.state.fromFocused}
+									iconName="my-location"
+									placeholder={'From'}
+									value={this.state.destination}
+									onFocus={() => this.setState({ fromFocused: true })}
+									onBlur={() => this.setState({ fromFocused: false })}
+									onChangeText={(destination) => {
+										this.setState({ destination });
+										this.startPositionDebounced(destination);
+									}}
+									onRef={(ref) => (this.textInputFrom = ref)}
+								/>
 								{locationPredictions}
 
 								{/* Destination field */}
-								<View
-									style={[
-										styles.inputContainer,
-										{
-											borderBottomColor: this.state.toFocused
-												? colors.brandColor
-												: colors.lightBorder
-										}
-									]}
-								>
-									<Icon
-										name="location-on"
-										size={20}
-										color={this.state.toFocused ? colors.emphasisTextColor : colors.bodyTextColor}
-										style={styles.inputIcons}
-									/>
-									<TextInput
-										placeholder="To"
-										placeholderTextColor={
-											this.state.toFocused ? colors.emphasisTextColor : colors.bodyTextColor
-										}
-										style={[
-											styles.input,
-											{
-												color: this.state.toFocused
-													? colors.emphasisTextColor
-													: colors.bodyTextColor
-											}
-										]}
-										onChangeText={(endDestination) => {
-											this.setState({ endDestination });
-											this.endLocationDebounced(endDestination);
-										}}
-										value={this.state.endDestination}
-										onFocus={() => {
-											this.setState({ toFocused: true });
-										}}
-										onBlur={() => {
-											this.setState({ toFocused: false });
-										}}
-										ref={(ref) => (this.textInputTo = ref)}
-									/>
-								</View>
+								<CustomInput
+									focused={this.state.toFocused}
+									iconName="location-on"
+									placeholder={'To'}
+									value={this.state.endDestination}
+									onFocus={() => this.setState({ toFocused: true })}
+									onBlur={() => this.setState({ toFocused: false })}
+									onChangeText={(endDestination) => {
+										this.setState({ endDestination });
+										this.endLocationDebounced(endDestination);
+									}}
+									onRef={(ref) => (this.textInputTo = ref)}
+								/>
 								{endLocationPredictions}
 
 								{/* Date picker */}
-								<TouchableOpacity onPress={this._showDatePicker}>
-									<View
-										style={[
-											styles.inputContainer,
-											{ borderBottomColor: colors.lightBorder, height: 50 }
-										]}
-									>
-										<Icon
-											name="date-range"
-											size={20}
-											color={colors.bodyTextColor}
-											style={styles.inputIcons}
-										/>
-										{this.state.date ? (
-											<TextInput style={styles.dateTime}>
-												{moment(this.state.date).format('Do MMM YY')}
-											</TextInput>
-										) : (
-											<Text style={styles.dateTime}>Date</Text>
-										)}
-									</View>
-								</TouchableOpacity>
-								<DateTimePicker
+								<CustomDateTimePicker
+									placeholder="Date"
+									onPress={this._showDatePicker}
+									mode="date"
 									isVisible={this.state.isDatePickerVisible}
 									onConfirm={(value) => this._handleDatePicked(value)}
 									onCancel={this._hideDatePicker}
-									mode="date"
+									iconName="date-range"
+									format="Do MMM YY"
+									value={this.state.date}
 								/>
 
 								{/* Time picker */}
-								<TouchableOpacity onPress={this._showTimePicker}>
-									<View
-										style={[
-											styles.inputContainer,
-											{ borderBottomColor: colors.lightBorder, height: 50 }
-										]}
-									>
-										<Icon
-											name="access-time"
-											size={20}
-											color={colors.bodyTextColor}
-											style={styles.inputIcons}
-										/>
-										{this.state.time ? (
-											<Text style={styles.dateTime}>{moment(this.state.time).format('LT')}</Text>
-										) : (
-											<Text style={styles.dateTime}>Time</Text>
-										)}
-									</View>
-								</TouchableOpacity>
-								<DateTimePicker
+								<CustomDateTimePicker
+									placeholder="Time"
+									onPress={this._showTimePicker}
+									mode="time"
 									isVisible={this.state.isTimePickerVisible}
 									onConfirm={(value) => this._handleTimePicked(value)}
 									onCancel={this._hideTimePicker}
-									mode="time"
+									iconName="access-time"
+									format="LT"
+									value={this.state.time}
 								/>
 
 								{/* Return journey option */}
-								<ListItem
-									style={{
-										marginLeft: 0,
-										borderBottomWidth: 0.75,
-										borderBottomColor: colors.lightBorder
-									}}
-								>
+								<ListItem style={styles.listItem}>
 									<CheckBox
 										checked={this.state.returnTicket}
 										onPress={() => this.setState({ returnTicket: !this.state.returnTicket })}
@@ -545,117 +434,29 @@ class JourneyScreen extends Component {
 								{/* Advanced search fields, expands and collapses on button click. */}
 								<Collapsible collapsed={this.state.isCollapsed}>
 									<View>
-										<View
-											style={[
-												styles.inputContainer,
-												{
-													borderBottomColor: this.state.groupFocused
-														? colors.brandColor
-														: colors.lightBorder
-												}
-											]}
-										>
-											<Icon
-												name="people"
-												size={20}
-												color={
-													this.state.groupFocused ? (
-														colors.emphasisTextColor
-													) : (
-														colors.bodyTextColor
-													)
-												}
-												style={styles.inputIcons}
-											/>
-											<TextInput
-												keyboardType="numeric"
-												maxLength={1}
-												placeholder="Group size"
-												placeholderTextColor={
-													this.state.groupFocused ? (
-														colors.emphasisTextColor
-													) : (
-														colors.bodyTextColor
-													)
-												}
-												style={[
-													styles.input,
-													{
-														color: this.state.groupFocused
-															? colors.emphasisTextColor
-															: colors.bodyTextColor
-													}
-												]}
-												value={
-													this.state.numPassenger ? this.state.numPassenger.toString() : null
-												}
-												onChangeText={(value) => this.handleNumPassengersChange(value)}
-												onFocus={() => {
-													this.setState({ groupFocused: true });
-												}}
-												onBlur={() => {
-													this.setState({ groupFocused: false });
-												}}
-												ref={(ref) => (this.textInputGroupSize = ref)}
-											/>
-										</View>
+										<CustomInput
+											focused={this.state.groupFocused}
+											iconName="people"
+											placeholder={'Group size'}
+											value={this.state.numPassenger ? this.state.numPassenger.toString() : null}
+											onFocus={() => this.setState({ groupFocused: true })}
+											onBlur={() => this.setState({ groupFocused: false })}
+											onChangeText={(value) => this.setState({ numPassenger: value })}
+											onRef={(ref) => (this.textInputGroupSize = ref)}
+										/>
 
-										<View
-											style={[
-												styles.inputContainer,
-												{
-													borderBottomColor: this.state.wheelchairFocused
-														? colors.brandColor
-														: colors.lightBorder
-												}
-											]}
-										>
-											<Icon
-												name="accessible"
-												size={20}
-												color={
-													this.state.wheelchairFocused ? (
-														colors.emphasisTextColor
-													) : (
-														colors.bodyTextColor
-													)
-												}
-												style={styles.inputIcons}
-											/>
-											<TextInput
-												maxLength={1}
-												keyboardType="numeric"
-												placeholder="No. of wheelchairs"
-												placeholderTextColor={
-													this.state.wheelchairFocused ? (
-														colors.emphasisTextColor
-													) : (
-														colors.bodyTextColor
-													)
-												}
-												style={[
-													styles.input,
-													{
-														color: this.state.wheelchairFocused
-															? colors.emphasisTextColor
-															: colors.bodyTextColor
-													}
-												]}
-												value={
-													this.state.numWheelchair ? (
-														this.state.numWheelchair.toString()
-													) : null
-												}
-												onChangeText={(value) => this.handleNumWheelchairChange(value)}
-												onFocus={() => {
-													this.setState({ wheelchairFocused: true });
-												}}
-												onBlur={() => {
-													this.setState({ wheelchairFocused: false });
-												}}
-												ref={(ref) => (this.textInputWheelChair = ref)}
-											/>
-										</View>
+										<CustomInput
+											focused={this.state.wheelchairFocused}
+											iconName="accessible"
+											placeholder={'No. of wheelchairs'}
+											value={
+												this.state.numWheelchair ? this.state.numWheelchair.toString() : null
+											}
+											onFocus={() => this.setState({ wheelchairFocused: true })}
+											onBlur={() => this.setState({ wheelchairFocused: false })}
+											onChangeText={(value) => this.setState({ numWheelchair: value })}
+											onRef={(ref) => (this.textInputWheelChair = ref)}
+										/>
 									</View>
 								</Collapsible>
 
@@ -698,21 +499,6 @@ const styles = StyleSheet.create({
 	content: {
 		flex: 1
 	},
-	dateTime: {
-		marginLeft: 8,
-		color: colors.bodyTextColor,
-		fontSize: 14
-	},
-	inputContainer: {
-		flexDirection: 'row',
-		borderBottomWidth: 0.75,
-		alignItems: 'center'
-	},
-	input: {
-		width: '100%',
-		padding: 10,
-		color: colors.bodyTextColor
-	},
 	locationSuggestion: {
 		color: colors.emphasisTextColor,
 		backgroundColor: 'white',
@@ -726,9 +512,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		alignSelf: 'center',
 		justifyContent: 'flex-end'
-	},
-	map: {
-		...StyleSheet.absoluteFillObject
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -757,8 +540,10 @@ const styles = StyleSheet.create({
 		color: colors.bodyTextColor,
 		fontSize: 14
 	},
-	checkboxContainer: {
-		justifyContent: 'flex-start'
+	listItem: {
+		marginLeft: 0,
+		borderBottomWidth: 0.75,
+		borderBottomColor: colors.lightBorder
 	}
 });
 

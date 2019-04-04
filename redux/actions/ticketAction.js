@@ -6,7 +6,7 @@ import {
 	FAVOURITE_TICKET,
 	REMOVE_FAVOURITE_TICKET
 } from './types';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import { getRequestAuthorized } from '../../API';
 
 export function cancelTicket(ticketId) {
@@ -47,6 +47,7 @@ export function addTicket(ticket) {
 export function fetchTickets() {
 	return function(dispatch) {
 		getRequestAuthorized(`http://${ip}:3000/user/tickets`).then((response) => {
+			console.log(response)
 			dispatch({
 				type: FETCH_TICKETS,
 				payload: response

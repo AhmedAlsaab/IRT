@@ -13,7 +13,7 @@ import {
 	Icon,
 	Accordion
 } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
+import GlobalHeader from './GlobalHeader';
 const dataArray = [
 	{title: "City of Cardiff Council", content: "Website: www.cardiff.gov.uk" + '\n' + "Contact Number:029 2087 2087"},
 	{title: "Bridgeend County Borough Council", content: "Website: www.bridgend.gov.uk" + '\n' + "Contact Number:01656 643643"},

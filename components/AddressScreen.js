@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
 import { Button, Container, Text, Header, Content, Left, Right } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import GlobalHeader from './GlobalHeader';
+import ip from '../server/keys/ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { postRequestAuthorized } from '../../API';
+import colors from '../constants/Colors';
+import { postRequestAuthorized } from '../API';
+
 
 export default class ChangePassword extends Component {
 	static navigationOptions = {
@@ -12,10 +14,10 @@ export default class ChangePassword extends Component {
 	};
 
 	state = {
-		city: 'Cardiff',
-		street: 'Queens',
-		house_number: '12',
-		postcode: 'CF34 H6J'
+		city: '',
+		street: '',
+		house_number: '',
+		postcode: ''
 	};
 
 	navigateTo = () => {
@@ -49,8 +51,10 @@ export default class ChangePassword extends Component {
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} isBackButtonActive={1} />
 				<Content>
-					<View>
-						<Text style={styles.title}>Add Address:</Text>
+				<View style={styles.contentContainer}>
+							<View style={styles.titleContainer}>
+								<Text style={styles.title}>Address</Text>
+							</View>
 					</View>
 					<View style={styles.inputContainer}>
 						<Icon name="location-city" size={32} style={styles.updateIcon} />
@@ -71,7 +75,7 @@ export default class ChangePassword extends Component {
 						/>
 					</View>
 					<View style={styles.inputContainer}>
-						<Icon name="location-city" size={32} style={styles.updateIcon} />
+						<Icon name="location-city" color={colors.emphasisTextColor} size={32} style={styles.updateIcon} />
 						<TextInput
 							onChangeText={(text) => this.setState({ house_number: text })}
 							placeholder="House Number"
@@ -101,40 +105,47 @@ export default class ChangePassword extends Component {
 }
 
 const width = '80%';
+const buttonWidth = '40%';
 const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
 	input: {
 		flex: 1,
-		padding: 10
+		padding: 10,
+		color: colors.emphasisTextColor
 	},
 	inputIcons: {
 		width: 50,
 		padding: 10,
-		textAlign: 'center'
-	},
-	button: {
-		width: '100%',
-		justifyContent: 'center',
-		backgroundColor: '#ff0000'
-	},
-	buttonText: {
-		color: 'white'
+		textAlign: 'center',
+		color: colors.emphasisTextColor
 	},
 	inputContainer: {
 		flexDirection: 'row',
 		borderBottomWidth: 2,
-		borderBottomColor: '#ff0000',
+		borderBottomColor: colors.lightBorder,
 		alignItems: 'center',
 		width,
 		alignSelf: 'center',
 		justifyContent: 'center'
 	},
+	contentContainer: {
+		flex: 1,
+		flexDirection: 'column',
+		alignItems: 'center',
+		justifyContent: 'flex-end'
+	},
+	titleContainer: {
+		paddingTop: 30,
+		paddingBottom: 5,
+		width
+	},
 	title: {
 		textAlign: 'left',
 		fontSize: 30,
 		fontWeight: 'bold',
-		color: 'gray'
+		color: colors.emphasisTextColor,
+		marginBottom: 20
 	},
 	buttonContainer: {
 		flexDirection: 'row',
@@ -143,11 +154,16 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 	},
 	button: {
-		width: '40%',
+		width: buttonWidth,
 		justifyContent: 'center',
-		backgroundColor: '#ff0000'
+		backgroundColor: colors.brandColor
 	},
 	buttontext: {
-		color: '#000000'
+		color: '#000000',
+		fontSize: 20
+	},
+	updateIcon: {
+		padding: 6,
+		color: colors.emphasisTextColor,
 	}
 });

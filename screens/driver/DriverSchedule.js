@@ -5,7 +5,7 @@ import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import MapView from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import ip from '../../server/keys/ipstore';
 import { getRequestAuthorized } from '../../API';
 
 import { connect } from 'react-redux';
@@ -65,7 +65,6 @@ class DriverSchedule extends React.Component {
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<Content padder>
-					{console.log(this.state.journeys.length)}
 					{this.state.journeys.map((journey, key) => {
 						return (
 							<View style={styles.cardContainer} key={key}>
@@ -83,7 +82,9 @@ class DriverSchedule extends React.Component {
 												size={40}
 												onPress={() => {
 													this.props.navigation.navigate('SelectedJourney', {
-														id: journey.id
+														id: journey.id,
+														from: `${journey.fromStreet}, ${journey.fromCity}`,
+														to: `${journey.toStreet}, ${journey.toCity}`
 													});
 												}}
 											/>

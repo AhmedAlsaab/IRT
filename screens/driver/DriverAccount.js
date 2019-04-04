@@ -12,8 +12,8 @@ import {
 	Right,
 	Accordion
 } from 'native-base';
-import GlobalHeader from '../../components/GlobalHeader';
-import ip from '../../ipstore';
+import GlobalHeader from './GlobalHeader';
+import ip from '../ipstore';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
