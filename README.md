@@ -17,7 +17,7 @@
 
 This application has been built for our client, Transport for Wales, as part of our large-team project module. It represents the work we have carried out over the last 8 weeks as a group.
 
-The objective of this application is to provide a cross-platform mobile application that seamlessly allows users to book transport for a desired journey; introducing means of public transport for residents situated in rural areas; namely, passengers that do not have spontaneous access to commercial, fixed-schedule transport. Through the IRT app, Transport for Wales in conjunction with the Welsh Government seeks to improve transport connectivity, employability and directly influence economical growth.
+The objective of this project is to provide a cross-platform mobile application that seamlessly allows users to book transport for a desired journey; introducing means of public transport for residents situated in rural areas; namely, passengers that do not have spontaneous access to commercial, fixed-schedule transport. Through the IRT app, Transport for Wales in conjunction with the Welsh Government seeks to improve transport connectivity, employability and directly influence economical growth.
 
 ## Build Status
 
@@ -430,6 +430,17 @@ or the other way around
 * This has to do with the component's loading speed and is typically not a application-breaking warning
 ## Contributors
 
+Oliver Simon
+
+Ahmed Alsaab
+
+Laura Vuilleumier
+
+Idunah Araneta
+
+Konstantinos-Marinos Papathanasiou
+
 ## License
 
+[MIT License]()
 
