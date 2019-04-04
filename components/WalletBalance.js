@@ -3,6 +3,7 @@ import { StyleSheet, View, Dimensions } from 'react-native';
 import { Button, Text } from 'native-base';
 import colors from '../constants/Colors'
 
+// Method to connect redux and the component
 import { connect } from 'react-redux';
 
 class WalletBalance extends Component {
@@ -10,6 +11,7 @@ class WalletBalance extends Component {
 		if (this.props.type == 2) {
 			return (
 				<React.Fragment>
+					{/* Show the amount of funds a user has in their account */}
 					<Text style={{ color: colors.emphasisTextColor, fontWeight: 'bold' }}>{`£${parseFloat(this.props.user.funds).toFixed(2)}`}</Text>
 					<Text style={styles.body}>Wallet Balance</Text>
 				</React.Fragment>
@@ -18,9 +20,12 @@ class WalletBalance extends Component {
 			return (
 				<View style={styles.balanceContainer}>
 					<Text style={styles.body}>YOUR BALANCE</Text>
+					
+					{/* Show the amount of funds a user has in their account */}
 					<Text style={styles.balanceSpacing}>{`£${parseFloat(this.props.user.funds).toFixed(2)}`}</Text>
 					<View>
 						{this.props.type === 1 && (
+							// If the prop 'type' = 1, show the add funds button and call the method in 'WalletScreen' to redirect to AddFunds
 							<Button danger style={styles.button} onPress={this.props.onSubmit}>
 								<Text>Add Funds</Text>
 							</Button>
@@ -72,8 +77,11 @@ const styles = StyleSheet.create({
 	}
 });
 
+// Retrieve user details from the redux store which include
+// the amount of funds they have, which will be used to diplay the balance
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user
 });
 
+// Connect the component to redux
 export default connect(mapStateToProps)(WalletBalance);

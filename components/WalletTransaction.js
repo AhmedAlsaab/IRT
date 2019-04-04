@@ -3,12 +3,16 @@ import { StyleSheet, Text, View } from 'react-native'
 import moment from 'moment';
 import colors from '../constants/Colors'
 
+// Method to connect redux and the component
 import { connect } from 'react-redux';
+
+// Method to fetch the transactions of a user from the redux store
 import { fetchTransactions } from '../redux/actions/transactionAction';
 
 class WalletTransaction extends Component {
 
 	componentDidMount() {
+		// fetching user transactions
 		this.props.fetchTransactions();
 	}
 
@@ -21,6 +25,8 @@ class WalletTransaction extends Component {
 						<Text style={styles.right}>{`£${parseFloat(transaction.current_funds).toFixed(2)}`}</Text>
 					</View>
 					<View style={styles.purchaseRow}>
+					{/* Depending on the kind of transaction the user has made, different text will display
+					the dfferent options are Funds Added, Ticket Purchased, Concessionary Ticket and Cancelled Ticket */}
 						<Text style={styles.purchaseBold}>{transaction.type}</Text>
 							{transaction.fk_transaction_type_id === 1 && <Text style={styles.purchaseBold}>- £{parseFloat(transaction.spent_funds).toFixed(2)}</Text>} 
 							{transaction.fk_transaction_type_id === 2 && <Text style={styles.purchaseBold}>+ £{parseFloat(transaction.spent_funds).toFixed(2)}</Text>} 
@@ -77,8 +83,10 @@ const styles = StyleSheet.create({
 	},
 });
 
+// Retrieve user transactions from the redux store 
 const mapStateToProps = state => ({
 	transactions: state.transactionReducer.transactions
 })
 
+// Connect the component to redux
 export default connect(mapStateToProps, { fetchTransactions })(WalletTransaction);

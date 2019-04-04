@@ -1,5 +1,10 @@
 import { AsyncStorage } from 'react-native';
 
+// REST methods to make GET/POST requests to the server
+// that will automatically deal with sending the JWT in the request header.
+
+// There are two different kinds of requests GET/POST that are authenticated with JWT
+// and GET/POST that are not authenticated with JWT.
 export const postRequestAuthorized = async function(url, data) {
 	const jwt = await AsyncStorage.getItem('tfwJWT');
 	return fetch(url, {

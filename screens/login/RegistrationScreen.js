@@ -9,12 +9,12 @@ import { postRequestNotAuthorized } from '../../API';
 
 class RegistrationScreen extends Component {
 	state = {
-		firstName: 'Martin',
-		lastName: 'Jones',
-		phoneNumber: '07914287655',
-		email: 'SimonOM@cardiff.ac.uk',
-		password: 'Qwerty123',
-		passwordConfirm: 'Qwerty123',
+		firstName: '',
+		lastName: '',
+		phoneNumber: '',
+		email: '',
+		password: '',
+		passwordConfirm: '',
 		type: 1,
 		errors: [],
 
@@ -39,20 +39,23 @@ class RegistrationScreen extends Component {
 			type: this.state.type
 		};
 
+		// Registering a user in the database
 		postRequestNotAuthorized(`http://${ip}:3000/register`, data)
 			.then((responseJSON) => {
 				switch (responseJSON.status) {
-					//Success
+					// If a user register successfully
 					case 10:
 						this.props.navigation.navigate('Login', { success: 10 });
 						break;
-					//User Exists
+					// If an account with the same email exists
+					// Send error message to say the account exists
 					case 1:
 						this.setState({
 							errors: [ { title: 'Errors', content: 'Account already exists' } ]
 						});
 						break;
-					//Input Validation Failed
+					// If user input validation was not up to standard
+					// Send error messages about the fields that need correct info
 					case 0:
 						this.setState({
 							errors: this.parseErrors(responseJSON.errors)
@@ -63,6 +66,8 @@ class RegistrationScreen extends Component {
 			.catch((error) => console.log(error));
 	};
 
+	// Input validation errors parsed to make the 
+	// errors readable for the users
 	parseErrors = (errorList) => {
 		var errors = {
 			title: 'Errors',
@@ -76,10 +81,12 @@ class RegistrationScreen extends Component {
 		return [ errors ];
 	};
 
+	// Navigate to Login when the 'Login' button is pressed
 	onAccountClick = () => {
 		return this.props.navigation.navigate('Login');
 	};
 
+	// Default method for the global header
 	navigateTo = () => {
 		this.props.navigation.navigate('');
 	};
@@ -90,6 +97,7 @@ class RegistrationScreen extends Component {
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
 					<Content style={styles.content}>
+						{/* Show Errors if they exists */}
 						{this.state.errors &&
 						!!this.state.errors.length && (
 							<Accordion
@@ -100,6 +108,7 @@ class RegistrationScreen extends Component {
 								expanded={0}
 							/>
 						)}
+						{/* Show Errors if they exists */}
 						{this.state.error && (
 							<Accordion
 								dataArray={this.state.error}

@@ -9,8 +9,13 @@ import colors from '../../constants/Colors'
 
 import WalletBalance from '../../components/WalletBalance';
 
+// Method to connect redux and the component
 import { connect } from 'react-redux';
+
+// Method to add a transaction of a user to the redux store
 import { addTransaction } from '../../redux/actions/transactionAction';
+
+// Methods to update a users funds
 import { updateUserFunds } from '../../redux/actions/userAction';
 
 class AddFundsScreen extends React.Component {
@@ -27,14 +32,24 @@ class AddFundsScreen extends React.Component {
 		amountFocused: false,
 	};
 
+	// When the 'Paypal' button is selected, check to see if a user has
+	// Entered a minimum of £5 and if they have, show the PayPal WebView
 	onPaypalSubmit = () => {
-		if (this.state.amount <= 5) return; //throw error
+		if (this.state.amount < 5) return; //throw error
 		this.setState({
 			showModal: true,
 			status: 'Pending'
 		});
 	};
 
+	// When a user succeeded in adding funds to the account with PayPal
+	// A transaction will be added to the redux store
+	// The user funds wil update in the redux store
+	// And the payment status will be updated to 'Success'
+	// Finally, the user will be navigation the the payment confirmation screen.
+
+	// When a user fails to pay, the WebView will close
+	// And the payment status will be updated to 'Cancelled'
 	handleResponse = (data) => {
 		if (data.title === 'success') {
 			const { amount, funds } = this.state;
@@ -62,21 +77,11 @@ class AddFundsScreen extends React.Component {
 		}
 	};
 
-	onDebitCreditSubmit = () => {
-		// const { amount } = this.state;
-		// this.props.onAddTransaction({
-		// 	current_funds: parseFloat(parseInt(this.props.user.funds) + parseInt(amount)).toFixed(2),
-		// 	date: new Date(),
-		// 	fk_transaction_type_id: 2,
-		// 	fk_user_id: null,
-		// 	spent_funds: amount,
-		// 	transaction_id: uuid(),
-		// 	type: 'Funds added'
-		// });
+	// When a debit card is pressed
+	onDebitCreditSubmit = () => { };
 
-		// this.props.onUpdateUserFunds(amount);
-	};
-
+	// On text input focus, clear the text inside the input field
+	// to allow the user to easily enter data
 	onAmountFocus = () => {
 		new Promise((resolve, reject) => {
 			this.setState({ amount: 0.0, amountFocused: true });
@@ -86,10 +91,13 @@ class AddFundsScreen extends React.Component {
 		});
 	};
 
+	// Set the state to the amount a user entered
 	onAmountEnter = (amount) => {
 		this.setState({ amount });
 	};
 
+	// Default method for the global header that will redirect to
+	// Wallet when the back button is pressed
 	navigateTo = () => {
 		this.props.navigation.navigate('Wallet');
 	};
@@ -141,6 +149,10 @@ class AddFundsScreen extends React.Component {
 						visible={this.state.showModal}
 						onRequestClose={() => this.setState({ showModal: false })}
 					>
+					{/* This is the WebView that will bring up the paypal web browser on the phone, 
+					the source of the webview is that view that will display when the webview opens and
+					the injected javascript is submitting the form information when the WebView has been opened which directly goes to paypal,
+					the amount is sent as a GET request to the server and then the server deals with the redirecting on the views until the payment is finished */}
 						<WebView
 							style={styles.webview}
 							source={{ uri: `http://${ip}:3000/paypal-button` }}
@@ -149,6 +161,7 @@ class AddFundsScreen extends React.Component {
 								.amount}; document.paypal.submit()`}
 						/>
 					</Modal>
+					{/* Lets the user know if their payment is either cancelled, pending or completed */}
 					<Text style={[styles.body, {marginBottom: 50}]}>PAYMENT STATUS: {this.state.status}</Text>
 				</Content>
 			</Container>
@@ -233,10 +246,14 @@ const styles = StyleSheet.create({
 	}
 });
 
+// Retrieve user details from the redux store 
 const mapStateToProps = (state) => ({
 	user: state.userReducer.user
 });
 
+
+// Send data to the redux store such as updating the user funds
+// and adding transactions recently made to the store
 const mapDispatchToProps = (dispatch) => {
 	return {
 		onAddTransaction: (transaction) => dispatch(addTransaction(transaction)),
@@ -244,4 +261,5 @@ const mapDispatchToProps = (dispatch) => {
 	};
 };
 
+// Connect the component to redux
 export default connect(mapStateToProps, mapDispatchToProps)(AddFundsScreen);

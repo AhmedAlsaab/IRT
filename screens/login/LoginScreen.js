@@ -12,8 +12,8 @@ import { addUser } from '../../redux/actions/userAction';
 
 class loginScreen extends Component {
 	state = {
-		email: 'SimonOM@cardiff.ac.uk',
-		password: 'Qwerty123',
+		email: '',
+		password: '',
 		errors: [],
 
 		isEmailFocused: false,
@@ -21,19 +21,28 @@ class loginScreen extends Component {
 	};
 
 	onLoginClick = () => {
+		// Error message to show
 		const message = [ { title: 'Errors', content: 'Provide correct credentials' } ];
 
+		// Credentials sent to the server
 		const data = {
 			email: this.state.email,
 			password: this.state.password
 		};
 
+		// Send Credentials to the server and recive a response
 		postRequestNotAuthorized(`http://${ip}:3000/login`, data)
 			.then(async (responseJSON) => {
+
+				// If the server response status is not 10 (successful)
+				// Then throw the error message above
 				if (responseJSON.status != 10) {
 					return this.setState({ errors: message });
 				}
 
+				// If the server status is a success retrieve the user_type (Passenger or Driver)
+				// Then navigate them to the correct interface. In addtion, store the JWT in storage
+				// that will be used to confirm API request are authentic
 				switch (responseJSON.content.fk_user_type_id) {
 					case 1:
 						await AsyncStorage.setItem('tfwJWT', responseJSON.token);
@@ -49,10 +58,12 @@ class loginScreen extends Component {
 			.catch((error) => console.log(error));
 	};
 
+	// Navigate to Register screen when 'Register' is pressed
 	onRegisterClick = () => {
 		return this.props.navigation.navigate('Register');
 	};
 
+	// Default method for the global header
 	navigateTo = () => {
 		this.props.navigation.navigate('');
 	};
@@ -63,6 +74,7 @@ class loginScreen extends Component {
 				<KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
 					<Content style={styles.content}>
 						<GlobalHeader type={2} navigateTo={this.navigateTo} />
+						{/* Show Errors if they exists */}
 						{this.state.errors &&
 						!!this.state.errors.length && (
 							<Accordion
@@ -74,6 +86,8 @@ class loginScreen extends Component {
 							/>
 						)}
 
+						{/* If a user successfully registers, show a success message and let them know that their account
+						has been created. */}
 						{typeof (this.props.navigation.state.params) !== 'undefined' && this.props.navigation.state.params.success === 10 &&
 							<Accordion
 								dataArray={[{ title: 'Success', content: 'Your account has been created' }]}

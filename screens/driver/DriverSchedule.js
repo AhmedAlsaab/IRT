@@ -20,6 +20,8 @@ class DriverSchedule extends React.Component {
 		journeys: []
 	};
 
+	// Get the drivers schedule he will be partaking in for that day, it contains basic informatiom
+	// to get a grasp on what the schedule is
 	componentDidMount() {
 		this.props.fetchVehicles();
 		getRequestAuthorized(`http://${ip}:3000/driver/journeys`).then((response) => {
@@ -45,16 +47,8 @@ class DriverSchedule extends React.Component {
 
 				journey = {};
 			}
-			console.log(this.state.journeys);
 		});
 	}
-
-	TestStates = () => {
-		const data = {
-			coordsArray: this.state.data
-		};
-		console.log(data);
-	};
 
 	navigateTo = () => {
 		this.props.navigation.navigate('');
@@ -65,6 +59,7 @@ class DriverSchedule extends React.Component {
 			<Container>
 				<GlobalHeader type={1} navigateTo={this.navigateTo} />
 				<Content padder>
+				{/* map through the schedule list that the driver will have to make and display the results */}
 					{this.state.journeys.map((journey, key) => {
 						return (
 							<View style={styles.cardContainer} key={key}>
