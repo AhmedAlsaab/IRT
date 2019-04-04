@@ -26,6 +26,100 @@ As of 05/04/2019 - Development has been halted as our project is coming to an en
 
 ## Examples
 
+### Tracking a driver
+
+```Javascript
+	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
+	// Retrieving data from the driver side via the driver to passenger socket
+	async checkDriver() {
+		const socket = socketIO.connect(`http://${ip}:3000`);
+		socket.on('connect', () => {
+			console.log('client connected');
+			socket.emit('trackVehicle');
+		});
+
+		socket.on('driverLocation', (driverLocation) => {
+			const pointCoords = [ ...this.state.pointCoords, driverLocation ];
+			const { latitude, longitude } = this.props.navigation.state.params;
+			this.setState({
+				isDriverOnTheWay: true,
+				driverLocation: driverLocation
+			});
+
+			// Check if the driver's (point) position is within x amount of metre from user's position
+			let isNearby = geolib.isPointInCircle(
+				// Vehicle Position
+				{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
+				// Point/User Position (checking if above has entered region below)
+				{ latitude: this.state.lat, longitude: this.state.long },
+				// Radius in metre
+				20
+			);
+			// If if it's true or false, set state and distance
+			if (isNearby === true) {
+				let distance = geolib.getDistance(
+					// User Position
+					{ latitude: driverLocation.latitude, longitude: driverLocation.longitude },
+					// Point Position
+					{ latitude, longitude }
+				);
+				this.setState({
+					withinRadius: 'Yes',
+					Distance: distance
+				});
+				console.log('ENTERED REGION', distance);
+				this.sendPushNotification();
+			} else {
+				this.setState({
+					withinRadius: 'No',
+					Distance: 'Unknown'
+				});
+			}
+		});
+	}
+```
+### JWT Authentication
+```Javascript
+
+
+var jwt = require('jsonwebtoken');
+var config = require('./config');
+
+function verifyJWTToken(token) {
+    return new Promise((resolve, reject) => {
+        if (token === 'undefined') reject(error);
+        jwt.verify(token, config.jwtsecret, (error, decoded) => {
+            if (error || !decoded) {
+                return reject(error);
+            } else return resolve(decoded);
+        });
+    });
+}
+
+function createJWTToken(id) {
+    return jwt.sign({ id: id }, config.jwtsecret, { expiresIn: 86400, algorithm: 'HS256' });
+}
+
+function verifyJWTRESTRequest(req, res, next) {
+    if (req.headers.authorization === undefined)
+        return res.status(400).send({ message: 'Invalid auth token provided.' });
+
+    verifyJWTToken(req.headers.authorization.split(' ')[1])
+        .then((token) => {
+            req.userId = token.id;
+            next();
+        })
+        .catch((error) => {
+            return res.status(400).json({ message: 'Invalid auth token provided.' });
+        });
+}
+
+module.exports = {
+    createJWTToken,
+    verifyJWTRESTRequest
+};
+```
+
 ## Requirements
 
  [Node.js](https://nodejs.org/en/)
@@ -198,11 +292,18 @@ Assuming Expo is installed on your device:
 
 >Open the camera application on your Iphone and scan the QR code
 
+## Features
 
+This section isn't an exhaustive list of things you can do with the application but highlights some of the core features to get you started.
 
+### Registration & Login
 
+![Application Screenshot 1](https://i.imgur.com/3nw2PAQ.png)
 
+### Planning a Journey
 
+![Application Screenshot 2](https://i.imgur.com/AIMKgCE.png)
 
+### Selecting a result
 
 
