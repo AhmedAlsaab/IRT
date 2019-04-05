@@ -27,7 +27,7 @@ As of 05/04/2019 - Development has been halted as our project is coming to an en
 
 ### Tracking a driver
 
-```JavaScript
+```javascript
 	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
 	// Retrieving data from the driver side via the driver to passenger socket
 	async checkDriver() {
@@ -78,7 +78,7 @@ As of 05/04/2019 - Development has been halted as our project is coming to an en
 	}
 ```
 ### JWT Authentication
-```JavaScript
+```javascript
 
 
 var jwt = require('jsonwebtoken');
@@ -120,7 +120,7 @@ module.exports = {
 ```
 ### Validating vehicle additions
 
-```JavaScript
+```javascript
 app.post('/driver/vehicles/addVehicle', (req, res) => {
 	//Check for errors in user input
 	req.checkBody('make', 'Make cannot be empty').trim().notEmpty();
@@ -245,7 +245,7 @@ ipconfig
 ```
 and copy in your IPv4 address. This is how it should look (where x represents IP Address):
 
-```JavaScript
+```javascript
 const ip = 'xxx.xxx.x.xx';
 
 module.exports = ip;
@@ -271,7 +271,7 @@ Open the ```server.js``` file which can be found in the ```server``` folder.
 
 Adjust the credentials to match your MYSQL WorkBench credentials. The IP found below is our localhost.
 
-```JavaScript
+```javascript
 var connection = mysql.createConnection({
 	host: '127.0.0.1',
 	user: 'root',
@@ -372,12 +372,12 @@ Assuming Expo is installed on your device:
 > Error when adding funds via PayPal, related to /views
 
 * This is a common issue. Adjust the following in the ```server.js``` file
-```JavaScript
+```javascript
 app.set('views', './views');
 ```
 to 
 
-```JavaScript
+```javascript
 app.set('views', '../views');
 ```
 
