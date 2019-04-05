@@ -17,7 +17,7 @@
 
 This application has been built for our client, Transport for Wales, as part of our large-team project module. It represents the work we have carried out over the last 8 weeks as a group.
 
-The objective of this project is to provide a cross-platform mobile application that seamlessly allows users to book transport for a desired journey; introducing means of public transport for residents situated in rural areas; namely, passengers that do not have spontaneous access to commercial, fixed-schedule transport. Through the IRT app, Transport for Wales in conjunction with the Welsh Government seeks to improve transport connectivity, employability and directly influence economical growth.
+The objective of this project is to provide a cross-platform mobile application that seamlessly allows users to book transport for a desired journey; introducing means of public transport for residents situated in rural areas; namely, passengers that do not have spontaneous access to commercial, fixed-schedule transport. Through the IRT app, Transport for Wales in conjunction with the Welsh Government seeks to improve transport connectivity, employability and directly influence economic growth.
 
 ## Build Status
 
@@ -27,7 +27,7 @@ As of 05/04/2019 - Development has been halted as our project is coming to an en
 
 ### Tracking a driver
 
-```Javascript
+```javascript
 	// Socket connection -- connecting passengers to a vehicle tracking socket in the server
 	// Retrieving data from the driver side via the driver to passenger socket
 	async checkDriver() {
@@ -78,7 +78,7 @@ As of 05/04/2019 - Development has been halted as our project is coming to an en
 	}
 ```
 ### JWT Authentication
-```Javascript
+```javascript
 
 
 var jwt = require('jsonwebtoken');
@@ -120,7 +120,7 @@ module.exports = {
 ```
 ### Validating vehicle additions
 
-```Javascript
+```javascript
 app.post('/driver/vehicles/addVehicle', (req, res) => {
 	//Check for errors in user input
 	req.checkBody('make', 'Make cannot be empty').trim().notEmpty();
@@ -195,12 +195,12 @@ Finally, to view and interact with some of the advanced functionality, such as p
 
 [MYSQL WorkBench](https://dev.mysql.com/downloads/workbench/)
 
-Generally, the recomended installation is a good choice to download
+Generally, the recommended installation is a good choice to download
 >To be able to install and run MySQL Workbench on Windows your system needs to have libraries listed below installed. The listed items are provided as links to the corresponding download pages where you can fetch the necessary files.
 >* [Microsoft .NET Framework 4.5](https://www.microsoft.com/en-us/download/details.aspx?id=30653)
 >* [Visual C++ Redistributable for Visual Studio 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48145)
 
-**Running  an Expo App on your device**
+**Running an Expo App on your device**
 
 [Download for Android from the Play Store](https://play.google.com/store/apps/details?id=host.exp.exponent) or [for iOS from the App Store](https://search.itunes.apple.com/WebObjects/MZContentLink.woa/wa/link?path=apps%2fexponent)
 
@@ -208,7 +208,7 @@ Generally, the recomended installation is a good choice to download
 
 **Emulator/Simulator - Android**
 
-Follow the Expo [Adnroid Studio emulator guide](https://docs.expo.io/versions/latest/workflow/android-studio-emulator/) to set up Android tools and create a virtual device. Start up the virtual device when it's ready.
+Follow the Expo [Android Studio emulator guide](https://docs.expo.io/versions/latest/workflow/android-studio-emulator/) to set up Android tools and create a virtual device. Start up the virtual device when it's ready.
 
 You don't need to manually install the Expo client on your emulator/simulator, because Expo CLI will do that automatically (more on this later, but once the application launches it should automatically install Expo if you don't have it on the emulator)
 
@@ -230,7 +230,7 @@ Once the simulator is open and you have a project open in Expo Dev Tools, you ca
 npm install
 ```
 
-If npm is not a recognized command, ensure you have sucessfully installed  [Node.js](https://nodejs.org/en/)
+If npm is not a recognized command, ensure you have successfully installed [Node.js](https://nodejs.org/en/)
 
 ## Setup
 
@@ -253,7 +253,7 @@ module.exports = ip;
 
 The IP address is used to post and fetch API requests (instead of declaring localhost)
 
-By declaring your IP in this file - all the relevant functions & methods now have access to it and can sucessfully operate (make API calls)
+By declaring your IP in this file - all the relevant functions & methods now have access to it and can successfully operate (make API calls)
 
 **Database**
 
@@ -263,7 +263,7 @@ Launch MYSQL WorkBench open the ```database/version_eleven``` folder
 
 Import and run the schema: ```db_version_eleven``` 
 
-Consequently import and run: ```db_data_version_eleven```
+Subsequently, import and run: ```db_data_version_eleven```
 
 **Database Credentials**
 
@@ -271,7 +271,7 @@ Open the ```server.js``` file which can be found in the ```server``` folder.
 
 Adjust the credentials to match your MYSQL WorkBench credentials. The IP found below is our localhost.
 
-```Javascript
+```javascript
 var connection = mysql.createConnection({
 	host: '127.0.0.1',
 	user: 'root',
@@ -283,7 +283,7 @@ var connection = mysql.createConnection({
 
 **API Keys**
 
-In relation to convenience and efficiency, the team has provided you with a Paypal API key, Nodemailer Key and a Google Maps API key. These can be found in the keys folder and should fully work; namely, API requests should be sucessfully made with these keys. Normally, such API keys would not be shared, however as the repository is private we found it suitable. 
+In relation to convenience and efficiency, the team has provided you with a Paypal API key, Nodemailer Key and a Google Maps API key. These can be found in the keys folder and should fully work; namely, API requests should be successfully made with these keys. Normally, such API keys would not be shared, however as the repository is private we found it suitable. 
 
 ## How to run
 
@@ -299,7 +299,7 @@ Run ```setup.sh``` - This is a supplementary script that re-installs everything.
 $./setup.sh
 ```
 
-**Compulsary**
+**Compulsory**
 
 Enter your Expo account details to login to your Expo account
 ```
@@ -317,13 +317,13 @@ nodemon server/server.js
 ```
 **Expo Interface**
 
-After launching the application, you should have a web interface open automatically. This interface acts as an interactive menu where you are able to run the application through different means and methods. Additionally, ensure Node.JS has sufficient access by checking your firewall (if you are thinking of running on device)
+After launching the application, you should have a web interface open automatically. This interface acts as an interactive menu where you can run the application through different means and methods. Additionally, ensure Node.JS has sufficient access by checking your firewall (if you are thinking of running on device)
 
 ![Expo Interface Screenshot 1](https://i.imgur.com/ayUfsJq.png)
 
-**Andriod Emulator**
+**Android Emulator**
 
->Run on Adroid device/emulator
+>Run on Android device/emulator
 
 **iOS Simulator**
 > Run on iOS simulator
@@ -332,13 +332,13 @@ After launching the application, you should have a web interface open automatica
 
 Assuming Expo is installed on your device:
 
->Scan QR code
+>Scan QR code within the Expo app
 
 **iOS Device**
 
 Assuming Expo is installed on your device:
 
->Open the camera application on your Iphone and scan the QR code
+>Open the camera application on your iPhone and scan the QR code
 
 ## FAQ
 
@@ -366,18 +366,18 @@ Assuming Expo is installed on your device:
 
 > I don't get a result after searching for a journey
 
-* Right now you can only retrieve a result if you enter 'South Clive Street' in the destination (to, not from) 
+* Right now, you can only retrieve a result if you enter 'South Clive Street' in the destination (to, not from) 
 * The starting location (from) can be as you wish
 
-> Error when adding funds via Paypal, related to /views
+> Error when adding funds via PayPal, related to /views
 
 * This is a common issue. Adjust the following in the ```server.js``` file
-```Javascript
+```javascript
 app.set('views', './views');
 ```
 to 
 
-```Javascript
+```javascript
 app.set('views', '../views');
 ```
 
@@ -400,7 +400,7 @@ or the other way around
 
 > How do I access the driver's end point?
 
-* Create a driver account by selecting 'driver' in the registartion form
+* Create a driver account by selecting 'driver' in the registration form
 
 > How do I access the driver's route screen?
 
@@ -410,7 +410,7 @@ or the other way around
 > Tracking a driver doesn't work
 
 * You need to setup two emulators for this to work
-* You need to be on track driver screen and the driver's route screen simultaniously
+* You need to be on track driver screen and the driver's route screen simultaneously
 * When you select 'start route' the socket is ready, you should see a bus icon on both emulators (driver and passenger)
 * In your android emulator you can use the GPX file in the ```mockRoutes``` folder to pass in a range of locations
 * Pressing the play button after importing the above file will start moving your device
@@ -421,7 +421,7 @@ or the other way around
 
 * This means you have not logged in to Expo and therefore, the device's token could not be retrieved
 
->Unrecognized Web-Scoket
+>Unrecognized Web-Socket
 
 * This generally means that one socket connection is not active
 * This typically means that you are not on both screens 
