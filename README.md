@@ -280,6 +280,18 @@ var connection = mysql.createConnection({
 });
 ```
 
+**Paypal Credentials**
+
+A mock sandbox account has also been provided. Once you are testing the application and arrive at the PayPal screen use the following credentials:
+
+Username:
+
+>transport@gmail.com
+
+Password:
+
+>12345678
+
 
 **API Keys**
 
@@ -313,7 +325,7 @@ expo start
 ```
 Launching the server from the root directory:
 ```
-nodemon server/server.js
+node server/server.js
 ```
 **Expo Interface**
 
@@ -366,7 +378,7 @@ Assuming Expo is installed on your device:
 
 > I don't get a result after searching for a journey
 
-* Right now, you can only retrieve a result if you enter 'South Clive Street' in the destination (to, not from) 
+* Right now, you can only retrieve a result if you enter 'South Clive Street' in the destination (to) 
 * The starting location (from) can be as you wish
 
 > Error when adding funds via PayPal, related to /views
