@@ -77,6 +77,8 @@ connection.connect((error) => {
 	else console.log('Connected to MySQL Database');
 });
 
+// Paypal API Key to send money to the Merchant account
+// Mode 'sandbox' for development
 paypal.configure({
 	mode: 'sandbox', //sandbox or live
 	client_id: paypalApiKey.client_id,
@@ -111,6 +113,7 @@ app.get('/journey', (req, res) => {
 	);
 });
 
+// API to register a user
 app.post('/register', (req, res) => {
 	//Check for errors in user input
 	req.checkBody('firstName', 'First name cannot be empty').notEmpty().trim();
@@ -158,7 +161,9 @@ app.post('/register', (req, res) => {
 	});
 });
 
+// API to login
 app.post('/login', (req, res) => {
+	// Server side validation to check the input is not empty
 	req.checkBody('email', null).notEmpty().trim();
 	req.checkBody('password', null).notEmpty().trim();
 
@@ -166,11 +171,12 @@ app.post('/login', (req, res) => {
 	if (errors) {
 		return res.send({ status: 0 });
 	}
-
+	// Checks for an existing email (based on input)
 	connection.query('SELECT * FROM user WHERE email = ? LIMIT 1', [ req.body.email ], (error, rows, fields) => {
 		if (error) throw error;
 		if (rows.length < 1) return res.send({ status: 0 });
-
+		// Bcrypt checks the password entered vs the encypted password persisted in the database for a match
+		// Once sucessfully matched, a JWT token is created & sent to corresponding user
 		bcrypt.compare(req.body.password, rows[0].password, (error, success) => {
 			if (error) throw error;
 			if (!success) return res.send({ status: 0 });
@@ -182,6 +188,8 @@ app.post('/login', (req, res) => {
 		});
 	});
 });
+
+// API for the email booking-confirmation
 
 app.post('/booking/sendEmail', (req, res) => {
 	//Get form fields
@@ -239,10 +247,10 @@ app.post('/booking/sendEmail', (req, res) => {
 	main().catch(console.error);
 });
 
+// API for the payment confirmation
 app.post('/booking/payment', (req, res) => {
 	//Get form fields
 	const { email, amount } = req.body;
-	console.log(email, amount);
 
 	const output = `
 		<h1> Your payment details</h1>
@@ -284,6 +292,7 @@ app.post('/booking/payment', (req, res) => {
 	main().catch(console.error);
 });
 
+// Returns the driver's schedule based on the provided (selected) journey ID
 app.get('/driver/schedule', function(req, res) {
 	const journeyId = req.query.id;
 	connection.query(
@@ -298,6 +307,7 @@ app.get('/driver/schedule', function(req, res) {
 	);
 });
 
+// Returns the pickup locations associated with the selected ticket
 app.get('/ticket/pickup', function(req, res) {
 	const { id } = req.query;
 	connection.query(
@@ -312,6 +322,8 @@ app.get('/ticket/pickup', function(req, res) {
 	);
 });
 
+// API to return the departure time entered by the user
+// This is used to determine whether a fee should be applied (if the cancellation time is within a specified window, a fee should apply)
 app.get('/user/cancelTicket/journey', function(req, res) {
 	const { ticketId } = req.query;
 	connection.query(
@@ -326,6 +338,7 @@ app.get('/user/cancelTicket/journey', function(req, res) {
 	);
 });
 
+// API to return a list of vehicles
 app.get('/driver/vehicles/getVehicles', function(req, res) {
 	const userId = localStorage.getItem('userId');
 
@@ -345,6 +358,7 @@ app.get('/driver/vehicles/getVehicles', function(req, res) {
 	);
 });
 
+// API to post a selected vehicle
 app.post('/driver/vehicles/addVehicle', (req, res) => {
 	//Check for errors in user input
 	req.checkBody('make', 'Make cannot be empty').trim().notEmpty();
@@ -376,6 +390,7 @@ app.post('/driver/vehicles/addVehicle', (req, res) => {
 
 	const userId = localStorage.getItem('userId');
 
+	// Inserts the selected vehicle into the corresponding user account
 	connection.query(
 		`INSERT INTO vehicle (make, model, registration, passenger_seats, wheelchair_spaces, currently_driven,
 			fk_vehicle_type_id)
@@ -399,6 +414,7 @@ app.post('/driver/vehicles/addVehicle', (req, res) => {
 	);
 });
 
+// API to remove vehicles
 app.post('/driver/vehicles/removeVehicle', (req, res) => {
 	const vehicleId = req.body.id;
 
@@ -418,6 +434,7 @@ app.post('/driver/vehicles/removeVehicle', (req, res) => {
 	);
 });
 
+// API that updates the currently active (selected) vehicle
 app.post('/driver/vehicles/selectVehicle', (req, res) => {
 	const vehicleToBeSelectedId = req.body.vehicleToBeSelectedId;
 	const selectedVehicle = req.body.selectedVehicle;
@@ -446,6 +463,8 @@ app.post('/driver/vehicles/selectVehicle', (req, res) => {
 	);
 });
 
+// API to book a journey
+// Ensures that no duplicate coordinates in the same journey are persisted to the database
 app.post('/booking/book', (req, res) => {
 	const {
 		place_id,
@@ -463,6 +482,7 @@ app.post('/booking/book', (req, res) => {
 	} = req.body.jData;
 	const { jId } = req.body;
 
+	// Starts an SQL transaction
 	connection.beginTransaction((err) => {
 		if (err) throw error;
 
@@ -575,6 +595,7 @@ app.get('/paypal-button', (req, res) => {
 	res.render('index');
 });
 
+// API to create a PayPal payment
 app.get('/paypal', (req, res) => {
 	localStorage.setItem('paypalAmount', parseFloat(req.query.amount).toFixed(2));
 	var create_payment_json = {
@@ -616,6 +637,7 @@ app.get('/paypal', (req, res) => {
 	});
 });
 
+// API that returns the funds for the corresponding user
 app.get('/user/amount', (req, res) => [
 	connection.query('SELECT funds FROM user WHERE user_id = ?', [ req.userId ], (error, rows, fields) => {
 		if (error) throw error;
@@ -625,6 +647,7 @@ app.get('/user/amount', (req, res) => [
 	})
 ]);
 
+// API that returns a list of transactions carried out by the user
 app.get('/user/transactions', (req, res) => [
 	connection.query(
 		'SELECT t.*, tt.type FROM transaction t JOIN transaction_type tt ON tt.transaction_type_id = t.fk_transaction_type_id WHERE fk_user_id = ? ORDER BY date DESC',
@@ -638,6 +661,7 @@ app.get('/user/transactions', (req, res) => [
 	)
 ]);
 
+// API that returns a list of journey's the driver has been assigned to (their schedule)
 app.get('/driver/journeys', (req, res) => {
 	connection.query(
 		`SELECT j.*, c.* FROM journey j JOIN coordinate c ON j.journey_id = c.fk_journey_id WHERE c.fk_coordinate_type_id = 1 OR c.fk_coordinate_type_id = 2 AND c.removed = 0`,
@@ -650,6 +674,7 @@ app.get('/driver/journeys', (req, res) => {
 	);
 });
 
+// API that returns a list of pickup locations for the driver based on the selected journey
 app.get('/driver/stops', function(req, res) {
 	const journeyId = req.query.id;
 
@@ -665,6 +690,8 @@ app.get('/driver/stops', function(req, res) {
 	);
 });
 
+// API that returns the sucessfull payment screen in the PayPal window
+// This API executes the payment after they have pressed the confirm button
 app.get('/success', (req, res) => {
 	var PayerID = req.query.PayerID;
 	var paymentId = req.query.paymentId;
@@ -707,6 +734,7 @@ app.get('/success', (req, res) => {
 	});
 });
 
+// API that adds transactions to the specified user account
 app.post('/user/addTransaction', (req, res) => {
 	const current_funds = req.body.current_funds;
 	const spent_funds = req.body.spent_funds;
@@ -731,6 +759,8 @@ app.post('/user/addTransaction', (req, res) => {
 	);
 });
 
+// API that updates the tickets in the database for the specified user
+// From active to cancelled
 app.post('/user/cancelTicket', (req, res) => {
 	const { ticketId, amount, cancellationFeeApplied } = req.body;
 
@@ -800,10 +830,12 @@ app.post('/user/cancelTicket', (req, res) => {
 	});
 });
 
+// PayPal payment cancellation
 app.get('/cancel', (req, res) => {
 	res.render('cancel');
 });
 
+// API to return the user's details
 app.get('/userDetails', function(req, res) {
 	connection.query(
 		'SELECT forename, surname, email, phone_number FROM user WHERE user_id = ?',
@@ -816,6 +848,7 @@ app.get('/userDetails', function(req, res) {
 	);
 });
 
+// API to update the user's first name
 app.post('/userChangeForename', function(req, res) {
 	const forename = req.body.forename;
 
@@ -830,6 +863,7 @@ app.post('/userChangeForename', function(req, res) {
 	);
 });
 
+// API to update the user's lastname
 app.post('/userChangeSurname', function(req, res) {
 	const surname = req.body.surname;
 
@@ -844,6 +878,7 @@ app.post('/userChangeSurname', function(req, res) {
 	);
 });
 
+// API to update the user's contact number
 app.post('/userChangePhoneNumber', function(req, res) {
 	const phoneNumber = req.body.phoneNumber;
 
@@ -858,6 +893,7 @@ app.post('/userChangePhoneNumber', function(req, res) {
 	);
 });
 
+// API to update the user's email
 app.post('/userChangeEmail', function(req, res) {
 	const email = req.body.email;
 
@@ -877,6 +913,7 @@ app.post('/userChangeEmail', function(req, res) {
 	});
 });
 
+// API to update & add the user's address
 app.post('/addAddress', function(req, res) {
 	const city = req.body.city;
 	const street = req.body.street;
@@ -924,6 +961,7 @@ app.post('/addAddress', function(req, res) {
 	});
 });
 
+// API to update the user's password
 app.post('/userUpdatePassword', function(req, res) {
 	const { currentPassword, newPassword, confirmPassword } = req.body;
 	req
@@ -965,6 +1003,7 @@ app.post('/userUpdatePassword', function(req, res) {
 	);
 });
 
+// API to return a list ticket id's that have not expired
 app.get('/tickets', function(req, res) {
 	connection.query('SELECT ticket_id FROM ticket WHERE expired = 0', function(error, rows, fields) {
 		if (error) throw error;
@@ -973,6 +1012,7 @@ app.get('/tickets', function(req, res) {
 	});
 });
 
+// API to return a list of ticket Id's that have expired
 app.get('/ticketsExpired', function(req, res) {
 	connection.query('SELECT ticket_id FROM ticket WHERE expired = 1', function(error, rows, fields) {
 		if (error) throw error;
@@ -980,6 +1020,9 @@ app.get('/ticketsExpired', function(req, res) {
 		res.send({ ticket: rows });
 	});
 });
+
+// API to return ticket data related to a specified user
+// Used to render a list of tickets
 app.get('/user/tickets', async function(req, res) {
 	connection.query(
 		'SELECT t.ticket_id, t.fk_coordinate_id_to, t.fk_coordinate_id_from from ticket t join user_journey uj on uj.fk_ticket_id = t.ticket_id where uj.fk_user_id = ?',
@@ -1004,6 +1047,7 @@ app.get('/user/tickets', async function(req, res) {
 	);
 });
 
+// API to return ticket id's alonng with journey information based on a user's id
 app.get('/user/tickets/id', function(req, res) {
 	connection.query(
 		'SELECT ticket_id FROM ticket t JOIN user_journey uj ON uj.fk_ticket_id = t.ticket_id WHERE uj.fk_user_id = ?',
@@ -1016,6 +1060,7 @@ app.get('/user/tickets/id', function(req, res) {
 	);
 });
 
+// API to return a list of journey results
 app.get('/journeyResults', (req, res) => {
 	const street = req.query.street;
 	const city = req.query.city;
@@ -1030,6 +1075,8 @@ app.get('/journeyResults', (req, res) => {
 	);
 });
 
+// API to update the favourites field
+// Used to determine whether a journey should be shown as a favourite or normal journey
 app.post('/toggleFavourite', (req, res) => {
 	const ticketId = req.body.ticketId;
 	const favourited = req.body.favourited;
@@ -1047,6 +1094,7 @@ app.post('/toggleFavourite', (req, res) => {
 	);
 });
 
+// API to update specific fields associated with a ticket
 app.post('/amendTicket', (req, res) => {
 	req.checkBody('numWheelchair', 'Please enter a numeric value for wheelchairs.').isNumeric();
 	req
