@@ -287,7 +287,7 @@ A mock sandbox (with mock funds) account is required to login and checkout via P
 
 **API Keys**
 
-~~In relation to convenience and efficiency, the team has provided you with a Paypal API key, Nodemailer Key and a Google Maps API key. These can be found in the keys folder and should fully work; namely, API requests should be successfully made with these keys. Normally, such API keys would not be shared, however as the repository is private we found it suitable. ~~
+~~In relation to convenience and efficiency, the team has provided you with a Paypal API key, Nodemailer Key and a Google Maps API key. These can be found in the keys folder and should fully work; namely, API requests should be successfully made with these keys. Normally, such API keys would not be shared, however as the repository is private we found it suitable.~~
 
 As the repository is now publicly available, please provide your own set of keys in the corresponding files.
 
