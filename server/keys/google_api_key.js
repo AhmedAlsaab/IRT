@@ -1,6 +1,6 @@
 // Usually in gitignore
-// Made public for convenience / marking purposes
 
-const API_KEY = 'AIzaSyCi8FeDrBNSAKm1XpETb7Odx-ePjC5CWzA';
+
+const API_KEY = 'YOUR KEY HERE';
 
 module.exports = API_KEY;
